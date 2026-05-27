@@ -1,0 +1,690 @@
+{
+  "postId": "p20230501948641a7bc92f",
+  "timestamp": "2026-05-17T20:24:50.167Z",
+  "htmlStructure": {
+    "containers": {
+      "divs": 69,
+      "main": "found",
+      "article": "not found",
+      "sections": 0,
+      "tables": 1,
+      "forms": 3
+    },
+    "divsByText": [
+      {
+        "class": "notification-canvas alarm-pane alarm_slide",
+        "id": "site_alarm_slidemenu",
+        "textLength": 557,
+        "preview": "알림\n\t\t\t\t\t\t\t\t\t\t\t설정\n\t\t\t\t\t\t\t\t\t\t뒤로\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t알림 설정\n\t\t\t\t\t뒤로\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\n\t\t\t\t\t\n\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t"
+      },
+      {
+        "class": "tse-scrollable _scroll_wrap",
+        "id": "",
+        "textLength": 557,
+        "preview": "알림\n\t\t\t\t\t\t\t\t\t\t\t설정\n\t\t\t\t\t\t\t\t\t\t뒤로\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t알림 설정\n\t\t\t\t\t뒤로\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\n\t\t\t\t\t\n\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t"
+      },
+      {
+        "class": "tse-content tab-content _is_tse_content",
+        "id": "",
+        "textLength": 557,
+        "preview": "알림\n\t\t\t\t\t\t\t\t\t\t\t설정\n\t\t\t\t\t\t\t\t\t\t뒤로\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t알림 설정\n\t\t\t\t\t뒤로\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\n\t\t\t\t\t\n\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t"
+      },
+      {
+        "class": "site_alarm_setting_wrap",
+        "id": "site_alarm_setting_wrap",
+        "textLength": 359,
+        "preview": "게시물 알림\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t내 글 반응\t\t\t\t\t\t\t\t\t\t\t\t\t내가 작성한 게시물이나 댓글에 다른 사람이 댓"
+      },
+      {
+        "class": "offcanvas-block alarm-setting",
+        "id": "",
+        "textLength": 359,
+        "preview": "게시물 알림\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t내 글 반응\t\t\t\t\t\t\t\t\t\t\t\t\t내가 작성한 게시물이나 댓글에 다른 사람이 댓"
+      },
+      {
+        "class": "_scroll_wrap",
+        "id": "site_alarm_menu_tap_wrap",
+        "textLength": 359,
+        "preview": "게시물 알림\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t내 글 반응\t\t\t\t\t\t\t\t\t\t\t\t\t내가 작성한 게시물이나 댓글에 다른 사람이 댓"
+      },
+      {
+        "class": "tab-content",
+        "id": "",
+        "textLength": 359,
+        "preview": "게시물 알림\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t내 글 반응\t\t\t\t\t\t\t\t\t\t\t\t\t내가 작성한 게시물이나 댓글에 다른 사람이 댓"
+      },
+      {
+        "class": "tab-pane active",
+        "id": "",
+        "textLength": 359,
+        "preview": "게시물 알림\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t내 글 반응\t\t\t\t\t\t\t\t\t\t\t\t\t내가 작성한 게시물이나 댓글에 다른 사람이 댓"
+      },
+      {
+        "class": "notify-body",
+        "id": "",
+        "textLength": 359,
+        "preview": "게시물 알림\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t내 글 반응\t\t\t\t\t\t\t\t\t\t\t\t\t내가 작성한 게시물이나 댓글에 다른 사람이 댓"
+      },
+      {
+        "class": "profile-area ",
+        "id": "",
+        "textLength": 251,
+        "preview": "정지훈\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tap05020@nate.com\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t"
+      }
+    ],
+    "postDataElements": [
+      {
+        "tag": "HTML",
+        "class": " js cssanimations",
+        "id": "",
+        "textLength": 1936,
+        "preview": "1일 동안 보지 않음\n피씨천국\n \nPC방 팝니다\nPC방 삽니다\n중고장터\n구인구직\n커뮤니티\n공지사항\n고객센터\n\n시작페이지\n\n\t\n정보 수정\n정보 수정\n푸시 알람\n정지훈\n알림\n로그아웃\n피씨천국\n\t\nPC방 팝니다\nPC방 삽니다\n중고장터\n구인구직\n커뮤니티\n공지사항\n고객센터\n\t\n"
+      },
+      {
+        "tag": "BODY",
+        "class": "doz_sys  _body_menu_m2019122695c21805e40ff  mobile-nav-on  mobile_nav_dep3  page  new_header_site  loggedin new_fixed_header_disable fixed-menu-on",
+        "id": "doz_body",
+        "textLength": 1936,
+        "preview": "1일 동안 보지 않음\n피씨천국\n \nPC방 팝니다\nPC방 삽니다\n중고장터\n구인구직\n커뮤니티\n공지사항\n고객센터\n\n시작페이지\n\n\t\n정보 수정\n정보 수정\n푸시 알람\n정지훈\n알림\n로그아웃\n피씨천국\n\t\nPC방 팝니다\nPC방 삽니다\n중고장터\n구인구직\n커뮤니티\n공지사항\n고객센터\n\t\n"
+      },
+      {
+        "tag": "DIV",
+        "class": "section_wrap  pc_section    section_first _section_first   mobile_section_first    side_basic     ",
+        "id": "s2019122809f968c59d897",
+        "textLength": 1720,
+        "preview": "성인PC방\n\t\n일반PC방\n\t\n기타업종\n\n성인PC방\n\n서울\n경기도\n강원도\n인천광역시\n충청북도\n충청남도\n경상북도\n경상남도\n전라북도\n전라남도\n제주도\n[성인판매] 서울 74\n검색\n게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 "
+      },
+      {
+        "tag": "MAIN",
+        "class": "",
+        "id": "",
+        "textLength": 1720,
+        "preview": "성인PC방\n\t\n일반PC방\n\t\n기타업종\n\n성인PC방\n\n서울\n경기도\n강원도\n인천광역시\n충청북도\n충청남도\n경상북도\n경상남도\n전라북도\n전라남도\n제주도\n[성인판매] 서울 74\n검색\n게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 "
+      },
+      {
+        "tag": "DIV",
+        "class": "inside",
+        "id": "",
+        "textLength": 1720,
+        "preview": "성인PC방\n\t\n일반PC방\n\t\n기타업종\n\n성인PC방\n\n서울\n경기도\n강원도\n인천광역시\n충청북도\n충청남도\n경상북도\n경상남도\n전라북도\n전라남도\n제주도\n[성인판매] 서울 74\n검색\n게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 "
+      },
+      {
+        "tag": "DIV",
+        "class": "doz_row",
+        "id": "",
+        "textLength": 1698,
+        "preview": "성인PC방\n\n서울\n경기도\n강원도\n인천광역시\n충청북도\n충청남도\n경상북도\n경상남도\n전라북도\n전라남도\n제주도\n[성인판매] 서울 74\n검색\n게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 :"
+      },
+      {
+        "tag": "DIV",
+        "class": "col-dz col-dz-10",
+        "id": "",
+        "textLength": 1640,
+        "preview": "[성인판매] 서울 74\n검색\n게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...\n루피****\n16시간"
+      },
+      {
+        "tag": "DIV",
+        "class": "doz_row",
+        "id": "",
+        "textLength": 1640,
+        "preview": "[성인판매] 서울 74\n검색\n게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...\n루피****\n16시간"
+      },
+      {
+        "tag": "DIV",
+        "class": "col-dz col-dz-10",
+        "id": "",
+        "textLength": 1640,
+        "preview": "[성인판매] 서울 74\n검색\n게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...\n루피****\n16시간"
+      },
+      {
+        "tag": "DIV",
+        "class": "",
+        "id": "w20191228a769bdc16d89d",
+        "textLength": 1640,
+        "preview": "[성인판매] 서울 74\n검색\n게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...\n루피****\n16시간"
+      },
+      {
+        "tag": "DIV",
+        "class": "_widget_data ",
+        "id": "",
+        "textLength": 1640,
+        "preview": "[성인판매] 서울 74\n검색\n게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...\n루피****\n16시간"
+      },
+      {
+        "tag": "DIV",
+        "class": "widget board _list_wrap m-margin-on",
+        "id": "",
+        "textLength": 1640,
+        "preview": "[성인판매] 서울 74\n검색\n게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...\n루피****\n16시간"
+      },
+      {
+        "tag": "DIV",
+        "class": "li_table  row_01 type_row container_border",
+        "id": "post_card_b20191228a11181297f164",
+        "textLength": 1595,
+        "preview": "게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...\n루피****\n16시간전\n조회수 27\n 0\n 0\n\t"
+      },
+      {
+        "tag": "UL",
+        "class": "list m-padding-on",
+        "id": "",
+        "textLength": 148,
+        "preview": "게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...\n루피****\n16시간전\n조회수 27\n 0\n 0"
+      },
+      {
+        "tag": "SPAN",
+        "class": "post_link_wrap",
+        "id": "",
+        "textLength": 148,
+        "preview": "게시판 썸네일\n\t\n강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...\n루피****\n16시간전\n조회수 27\n 0\n 0"
+      },
+      {
+        "tag": "DIV",
+        "class": "clearfix table-cell list-group list_text_title",
+        "id": "",
+        "textLength": 138,
+        "preview": "강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...\n루피****\n16시간전\n조회수 27\n 0\n 0"
+      },
+      {
+        "tag": "LI",
+        "class": "tit",
+        "id": "",
+        "textLength": 112,
+        "preview": "강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ..."
+      },
+      {
+        "tag": "A",
+        "class": "title_link _fade_link",
+        "id": "",
+        "textLength": 112,
+        "preview": "강서구화곡동 N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ..."
+      },
+      {
+        "tag": "SMALL",
+        "class": "body_font_color_50 text-block blocked",
+        "id": "",
+        "textLength": 103,
+        "preview": "1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ..."
+      },
+      {
+        "tag": "UL",
+        "class": "list m-padding-on",
+        "id": "",
+        "textLength": 139,
+        "preview": "성인PC방 매매 N\n1. 매물업종 : 성인PC방2. 매물위치 : 강서구 화곡동(곰달래길)3. 실평수 : 12평4. 해당층 : 1층5. 보증금 : 2천만원6. 희망권리금 : 2천만원(신규시설 8월이내...\n김영****\n20시간전\n조회수 23\n 0\n 0"
+      },
+      {
+        "tag": "SPAN",
+        "class": "post_link_wrap",
+        "id": "",
+        "textLength": 139,
+        "preview": "성인PC방 매매 N\n1. 매물업종 : 성인PC방2. 매물위치 : 강서구 화곡동(곰달래길)3. 실평수 : 12평4. 해당층 : 1층5. 보증금 : 2천만원6. 희망권리금 : 2천만원(신규시설 8월이내...\n김영****\n20시간전\n조회수 23\n 0\n 0"
+      },
+      {
+        "tag": "DIV",
+        "class": "clearfix table-cell list-group list_text_title",
+        "id": "",
+        "textLength": 139,
+        "preview": "성인PC방 매매 N\n1. 매물업종 : 성인PC방2. 매물위치 : 강서구 화곡동(곰달래길)3. 실평수 : 12평4. 해당층 : 1층5. 보증금 : 2천만원6. 희망권리금 : 2천만원(신규시설 8월이내...\n김영****\n20시간전\n조회수 23\n 0\n 0"
+      },
+      {
+        "tag": "LI",
+        "class": "tit",
+        "id": "",
+        "textLength": 113,
+        "preview": "성인PC방 매매 N\n1. 매물업종 : 성인PC방2. 매물위치 : 강서구 화곡동(곰달래길)3. 실평수 : 12평4. 해당층 : 1층5. 보증금 : 2천만원6. 희망권리금 : 2천만원(신규시설 8월이내..."
+      },
+      {
+        "tag": "A",
+        "class": "title_link _fade_link",
+        "id": "",
+        "textLength": 113,
+        "preview": "성인PC방 매매 N\n1. 매물업종 : 성인PC방2. 매물위치 : 강서구 화곡동(곰달래길)3. 실평수 : 12평4. 해당층 : 1층5. 보증금 : 2천만원6. 희망권리금 : 2천만원(신규시설 8월이내..."
+      },
+      {
+        "tag": "SMALL",
+        "class": "body_font_color_50 text-block blocked",
+        "id": "",
+        "textLength": 102,
+        "preview": "1. 매물업종 : 성인PC방2. 매물위치 : 강서구 화곡동(곰달래길)3. 실평수 : 12평4. 해당층 : 1층5. 보증금 : 2천만원6. 희망권리금 : 2천만원(신규시설 8월이내..."
+      },
+      {
+        "tag": "UL",
+        "class": "list m-padding-on",
+        "id": "",
+        "textLength": 143,
+        "preview": "게시판 썸네일\n\t\n서울 동대문구pc N\n1. 매물업종 : 성인PC방2. 매물위치 : 답십리3. 실평수 : 84. 해당층 : 1층5. 보증금 : 5006. 희망권리금 : 15007. 월세 : 858. 시설집기 ...\n한라****\n1일전\n조회수 47\n 0\n 0"
+      },
+      {
+        "tag": "SPAN",
+        "class": "post_link_wrap",
+        "id": "",
+        "textLength": 143,
+        "preview": "게시판 썸네일\n\t\n서울 동대문구pc N\n1. 매물업종 : 성인PC방2. 매물위치 : 답십리3. 실평수 : 84. 해당층 : 1층5. 보증금 : 5006. 희망권리금 : 15007. 월세 : 858. 시설집기 ...\n한라****\n1일전\n조회수 47\n 0\n 0"
+      },
+      {
+        "tag": "DIV",
+        "class": "clearfix table-cell list-group list_text_title",
+        "id": "",
+        "textLength": 133,
+        "preview": "서울 동대문구pc N\n1. 매물업종 : 성인PC방2. 매물위치 : 답십리3. 실평수 : 84. 해당층 : 1층5. 보증금 : 5006. 희망권리금 : 15007. 월세 : 858. 시설집기 ...\n한라****\n1일전\n조회수 47\n 0\n 0"
+      },
+      {
+        "tag": "LI",
+        "class": "tit",
+        "id": "",
+        "textLength": 109,
+        "preview": "서울 동대문구pc N\n1. 매물업종 : 성인PC방2. 매물위치 : 답십리3. 실평수 : 84. 해당층 : 1층5. 보증금 : 5006. 희망권리금 : 15007. 월세 : 858. 시설집기 ..."
+      },
+      {
+        "tag": "A",
+        "class": "title_link _fade_link",
+        "id": "",
+        "textLength": 109,
+        "preview": "서울 동대문구pc N\n1. 매물업종 : 성인PC방2. 매물위치 : 답십리3. 실평수 : 84. 해당층 : 1층5. 보증금 : 5006. 희망권리금 : 15007. 월세 : 858. 시설집기 ..."
+      },
+      {
+        "tag": "SMALL",
+        "class": "body_font_color_50 text-block blocked",
+        "id": "",
+        "textLength": 97,
+        "preview": "1. 매물업종 : 성인PC방2. 매물위치 : 답십리3. 실평수 : 84. 해당층 : 1층5. 보증금 : 5006. 희망권리금 : 15007. 월세 : 858. 시설집기 ..."
+      },
+      {
+        "tag": "UL",
+        "class": "list m-padding-on",
+        "id": "",
+        "textLength": 168,
+        "preview": "게시판 썸네일\n\t\n상계동(수락산역 근처) 성인 PC방 매물 등록합니다. N\n1. 매물업종 : 성인PC방2. 매물위치 : 서울 노원구 상계동(수락산역 인근)3. 실평수 : 17평4. 해당층 : 2층5. 보증금 : 2,000만원 또는 1,300만원6. 희망권...\n전***"
+      },
+      {
+        "tag": "SPAN",
+        "class": "post_link_wrap",
+        "id": "",
+        "textLength": 168,
+        "preview": "게시판 썸네일\n\t\n상계동(수락산역 근처) 성인 PC방 매물 등록합니다. N\n1. 매물업종 : 성인PC방2. 매물위치 : 서울 노원구 상계동(수락산역 인근)3. 실평수 : 17평4. 해당층 : 2층5. 보증금 : 2,000만원 또는 1,300만원6. 희망권...\n전***"
+      },
+      {
+        "tag": "DIV",
+        "class": "clearfix table-cell list-group list_text_title",
+        "id": "",
+        "textLength": 158,
+        "preview": "상계동(수락산역 근처) 성인 PC방 매물 등록합니다. N\n1. 매물업종 : 성인PC방2. 매물위치 : 서울 노원구 상계동(수락산역 인근)3. 실평수 : 17평4. 해당층 : 2층5. 보증금 : 2,000만원 또는 1,300만원6. 희망권...\n전****\n1일전\n조회수 "
+      },
+      {
+        "tag": "LI",
+        "class": "tit",
+        "id": "",
+        "textLength": 135,
+        "preview": "상계동(수락산역 근처) 성인 PC방 매물 등록합니다. N\n1. 매물업종 : 성인PC방2. 매물위치 : 서울 노원구 상계동(수락산역 인근)3. 실평수 : 17평4. 해당층 : 2층5. 보증금 : 2,000만원 또는 1,300만원6. 희망권..."
+      },
+      {
+        "tag": "A",
+        "class": "title_link _fade_link",
+        "id": "",
+        "textLength": 135,
+        "preview": "상계동(수락산역 근처) 성인 PC방 매물 등록합니다. N\n1. 매물업종 : 성인PC방2. 매물위치 : 서울 노원구 상계동(수락산역 인근)3. 실평수 : 17평4. 해당층 : 2층5. 보증금 : 2,000만원 또는 1,300만원6. 희망권..."
+      },
+      {
+        "tag": "SMALL",
+        "class": "body_font_color_50 text-block blocked",
+        "id": "",
+        "textLength": 103,
+        "preview": "1. 매물업종 : 성인PC방2. 매물위치 : 서울 노원구 상계동(수락산역 인근)3. 실평수 : 17평4. 해당층 : 2층5. 보증금 : 2,000만원 또는 1,300만원6. 희망권..."
+      },
+      {
+        "tag": "UL",
+        "class": "list m-padding-on",
+        "id": "",
+        "textLength": 162,
+        "preview": "게시판 썸네일\n\t\n남구로역 5번출구 판매합니다 N\n1. 매물업종 : 성인PC방2. 매물위치 : 남구로역 5번출구앞3. 실평수 : 134. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 8507. 월세 : 1208. 시설...\n범실****\n2026-05-13\n"
+      },
+      {
+        "tag": "SPAN",
+        "class": "post_link_wrap",
+        "id": "",
+        "textLength": 162,
+        "preview": "게시판 썸네일\n\t\n남구로역 5번출구 판매합니다 N\n1. 매물업종 : 성인PC방2. 매물위치 : 남구로역 5번출구앞3. 실평수 : 134. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 8507. 월세 : 1208. 시설...\n범실****\n2026-05-13\n"
+      },
+      {
+        "tag": "DIV",
+        "class": "clearfix table-cell list-group list_text_title",
+        "id": "",
+        "textLength": 152,
+        "preview": "남구로역 5번출구 판매합니다 N\n1. 매물업종 : 성인PC방2. 매물위치 : 남구로역 5번출구앞3. 실평수 : 134. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 8507. 월세 : 1208. 시설...\n범실****\n2026-05-13\n조회수 99\n 0\n"
+      },
+      {
+        "tag": "LI",
+        "class": "tit",
+        "id": "",
+        "textLength": 121,
+        "preview": "남구로역 5번출구 판매합니다 N\n1. 매물업종 : 성인PC방2. 매물위치 : 남구로역 5번출구앞3. 실평수 : 134. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 8507. 월세 : 1208. 시설..."
+      },
+      {
+        "tag": "A",
+        "class": "title_link _fade_link",
+        "id": "",
+        "textLength": 121,
+        "preview": "남구로역 5번출구 판매합니다 N\n1. 매물업종 : 성인PC방2. 매물위치 : 남구로역 5번출구앞3. 실평수 : 134. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 8507. 월세 : 1208. 시설..."
+      },
+      {
+        "tag": "SMALL",
+        "class": "body_font_color_50 text-block blocked",
+        "id": "",
+        "textLength": 103,
+        "preview": "1. 매물업종 : 성인PC방2. 매물위치 : 남구로역 5번출구앞3. 실평수 : 134. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 8507. 월세 : 1208. 시설..."
+      },
+      {
+        "tag": "UL",
+        "class": "list m-padding-on",
+        "id": "",
+        "textLength": 157,
+        "preview": "게시판 썸네일\n\t\n화곡동 성인pc N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동358-53. 실평수 : 50평4. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 3000화곡7. 월세 : 2308. ...\n화곡1동****\n2026-05-13\n조회수 9"
+      },
+      {
+        "tag": "SPAN",
+        "class": "post_link_wrap",
+        "id": "",
+        "textLength": 157,
+        "preview": "게시판 썸네일\n\t\n화곡동 성인pc N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동358-53. 실평수 : 50평4. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 3000화곡7. 월세 : 2308. ...\n화곡1동****\n2026-05-13\n조회수 9"
+      },
+      {
+        "tag": "DIV",
+        "class": "clearfix table-cell list-group list_text_title",
+        "id": "",
+        "textLength": 147,
+        "preview": "화곡동 성인pc N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동358-53. 실평수 : 50평4. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 3000화곡7. 월세 : 2308. ...\n화곡1동****\n2026-05-13\n조회수 90\n 0\n 3"
+      },
+      {
+        "tag": "LI",
+        "class": "tit",
+        "id": "",
+        "textLength": 114,
+        "preview": "화곡동 성인pc N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동358-53. 실평수 : 50평4. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 3000화곡7. 월세 : 2308. ..."
+      },
+      {
+        "tag": "A",
+        "class": "title_link _fade_link",
+        "id": "",
+        "textLength": 114,
+        "preview": "화곡동 성인pc N\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동358-53. 실평수 : 50평4. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 3000화곡7. 월세 : 2308. ..."
+      },
+      {
+        "tag": "SMALL",
+        "class": "body_font_color_50 text-block blocked",
+        "id": "",
+        "textLength": 103,
+        "preview": "1. 매물업종 : 성인PC방2. 매물위치 : 화곡동358-53. 실평수 : 50평4. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 3000화곡7. 월세 : 2308. ..."
+      },
+      {
+        "tag": "UL",
+        "class": "list m-padding-on",
+        "id": "",
+        "textLength": 160,
+        "preview": "게시판 썸네일\n\t\n신월동 독점 성인피씨방 N\n1. 매물업종 : 성인PC방2. 매물위치 : 신월3동시장 먹자골목초입3. 실평수 : 40평4. 해당층 : 지하1층5. 보증금 : 1000만원6. 희망권리금 : 2000만원(조절가능...\n김영****\n2026-05-08\n조회수"
+      },
+      {
+        "tag": "SPAN",
+        "class": "post_link_wrap",
+        "id": "",
+        "textLength": 160,
+        "preview": "게시판 썸네일\n\t\n신월동 독점 성인피씨방 N\n1. 매물업종 : 성인PC방2. 매물위치 : 신월3동시장 먹자골목초입3. 실평수 : 40평4. 해당층 : 지하1층5. 보증금 : 1000만원6. 희망권리금 : 2000만원(조절가능...\n김영****\n2026-05-08\n조회수"
+      },
+      {
+        "tag": "DIV",
+        "class": "clearfix table-cell list-group list_text_title",
+        "id": "",
+        "textLength": 150,
+        "preview": "신월동 독점 성인피씨방 N\n1. 매물업종 : 성인PC방2. 매물위치 : 신월3동시장 먹자골목초입3. 실평수 : 40평4. 해당층 : 지하1층5. 보증금 : 1000만원6. 희망권리금 : 2000만원(조절가능...\n김영****\n2026-05-08\n조회수 207\n 1\n 0"
+      },
+      {
+        "tag": "LI",
+        "class": "tit",
+        "id": "",
+        "textLength": 118,
+        "preview": "신월동 독점 성인피씨방 N\n1. 매물업종 : 성인PC방2. 매물위치 : 신월3동시장 먹자골목초입3. 실평수 : 40평4. 해당층 : 지하1층5. 보증금 : 1000만원6. 희망권리금 : 2000만원(조절가능..."
+      },
+      {
+        "tag": "A",
+        "class": "title_link _fade_link",
+        "id": "",
+        "textLength": 118,
+        "preview": "신월동 독점 성인피씨방 N\n1. 매물업종 : 성인PC방2. 매물위치 : 신월3동시장 먹자골목초입3. 실평수 : 40평4. 해당층 : 지하1층5. 보증금 : 1000만원6. 희망권리금 : 2000만원(조절가능..."
+      },
+      {
+        "tag": "SMALL",
+        "class": "body_font_color_50 text-block blocked",
+        "id": "",
+        "textLength": 103,
+        "preview": "1. 매물업종 : 성인PC방2. 매물위치 : 신월3동시장 먹자골목초입3. 실평수 : 40평4. 해당층 : 지하1층5. 보증금 : 1000만원6. 희망권리금 : 2000만원(조절가능..."
+      },
+      {
+        "tag": "UL",
+        "class": "list m-padding-on",
+        "id": "",
+        "textLength": 169,
+        "preview": "게시판 썸네일\n\t\n골든벨 먹튀 싸이트 입니다 참고 하세요 N\n1. 매물업종 : 성인PC방2. 매물위치 : 3. 실평수 : 4. 해당층 : 5. 보증금 : 6. 희망권리금 : 7. 월세 : 8. 시설집기 : 예)PC5대,에어컨1대,냉난방기1대...\n탈퇴한 회원\n2026-"
+      },
+      {
+        "tag": "SPAN",
+        "class": "post_link_wrap",
+        "id": "",
+        "textLength": 169,
+        "preview": "게시판 썸네일\n\t\n골든벨 먹튀 싸이트 입니다 참고 하세요 N\n1. 매물업종 : 성인PC방2. 매물위치 : 3. 실평수 : 4. 해당층 : 5. 보증금 : 6. 희망권리금 : 7. 월세 : 8. 시설집기 : 예)PC5대,에어컨1대,냉난방기1대...\n탈퇴한 회원\n2026-"
+      },
+      {
+        "tag": "DIV",
+        "class": "clearfix table-cell list-group list_text_title",
+        "id": "",
+        "textLength": 159,
+        "preview": "골든벨 먹튀 싸이트 입니다 참고 하세요 N\n1. 매물업종 : 성인PC방2. 매물위치 : 3. 실평수 : 4. 해당층 : 5. 보증금 : 6. 희망권리금 : 7. 월세 : 8. 시설집기 : 예)PC5대,에어컨1대,냉난방기1대...\n탈퇴한 회원\n2026-04-20\n조회수 "
+      },
+      {
+        "tag": "LI",
+        "class": "tit",
+        "id": "",
+        "textLength": 127,
+        "preview": "골든벨 먹튀 싸이트 입니다 참고 하세요 N\n1. 매물업종 : 성인PC방2. 매물위치 : 3. 실평수 : 4. 해당층 : 5. 보증금 : 6. 희망권리금 : 7. 월세 : 8. 시설집기 : 예)PC5대,에어컨1대,냉난방기1대..."
+      },
+      {
+        "tag": "A",
+        "class": "title_link _fade_link",
+        "id": "",
+        "textLength": 127,
+        "preview": "골든벨 먹튀 싸이트 입니다 참고 하세요 N\n1. 매물업종 : 성인PC방2. 매물위치 : 3. 실평수 : 4. 해당층 : 5. 보증금 : 6. 희망권리금 : 7. 월세 : 8. 시설집기 : 예)PC5대,에어컨1대,냉난방기1대..."
+      },
+      {
+        "tag": "SMALL",
+        "class": "body_font_color_50 text-block blocked",
+        "id": "",
+        "textLength": 103,
+        "preview": "1. 매물업종 : 성인PC방2. 매물위치 : 3. 실평수 : 4. 해당층 : 5. 보증금 : 6. 희망권리금 : 7. 월세 : 8. 시설집기 : 예)PC5대,에어컨1대,냉난방기1대..."
+      },
+      {
+        "tag": "UL",
+        "class": "list m-padding-on",
+        "id": "",
+        "textLength": 165,
+        "preview": "게시판 썸네일\n\t\n강서구 화곡동 피씨방 급매합니다,,\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동 3. 실평수 : 9평 4. 해당층 : 1층 5. 보증금 : 1000만원 6. 희망권리금 : 무권리 7. 월세 : 85만원 8. ...\n곽희****\n2026-04-1"
+      },
+      {
+        "tag": "SPAN",
+        "class": "post_link_wrap",
+        "id": "",
+        "textLength": 165,
+        "preview": "게시판 썸네일\n\t\n강서구 화곡동 피씨방 급매합니다,,\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동 3. 실평수 : 9평 4. 해당층 : 1층 5. 보증금 : 1000만원 6. 희망권리금 : 무권리 7. 월세 : 85만원 8. ...\n곽희****\n2026-04-1"
+      },
+      {
+        "tag": "DIV",
+        "class": "clearfix table-cell list-group list_text_title",
+        "id": "",
+        "textLength": 155,
+        "preview": "강서구 화곡동 피씨방 급매합니다,,\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동 3. 실평수 : 9평 4. 해당층 : 1층 5. 보증금 : 1000만원 6. 희망권리금 : 무권리 7. 월세 : 85만원 8. ...\n곽희****\n2026-04-14\n조회수 464\n"
+      },
+      {
+        "tag": "LI",
+        "class": "tit",
+        "id": "",
+        "textLength": 123,
+        "preview": "강서구 화곡동 피씨방 급매합니다,,\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동 3. 실평수 : 9평 4. 해당층 : 1층 5. 보증금 : 1000만원 6. 희망권리금 : 무권리 7. 월세 : 85만원 8. ..."
+      },
+      {
+        "tag": "A",
+        "class": "title_link _fade_link",
+        "id": "",
+        "textLength": 123,
+        "preview": "강서구 화곡동 피씨방 급매합니다,,\n1. 매물업종 : 성인PC방2. 매물위치 : 화곡동 3. 실평수 : 9평 4. 해당층 : 1층 5. 보증금 : 1000만원 6. 희망권리금 : 무권리 7. 월세 : 85만원 8. ..."
+      },
+      {
+        "tag": "SMALL",
+        "class": "body_font_color_50 text-block blocked",
+        "id": "",
+        "textLength": 103,
+        "preview": "1. 매물업종 : 성인PC방2. 매물위치 : 화곡동 3. 실평수 : 9평 4. 해당층 : 1층 5. 보증금 : 1000만원 6. 희망권리금 : 무권리 7. 월세 : 85만원 8. ..."
+      },
+      {
+        "tag": "UL",
+        "class": "list m-padding-on",
+        "id": "",
+        "textLength": 157,
+        "preview": "강북구 수유동 (사진은 추후 업뎃예정)\n1. 매물업종 : 성인PC방2. 매물위치 : 강북구 수유동 3. 실평수 : 8평4. 해당층 : 1층5. 보증금 : 10006. 희망권리금 : 500 7. 월세 : 60 8. 시설집...\n일반****\n2026-03-26\n조회수 47"
+      },
+      {
+        "tag": "SPAN",
+        "class": "post_link_wrap",
+        "id": "",
+        "textLength": 157,
+        "preview": "강북구 수유동 (사진은 추후 업뎃예정)\n1. 매물업종 : 성인PC방2. 매물위치 : 강북구 수유동 3. 실평수 : 8평4. 해당층 : 1층5. 보증금 : 10006. 희망권리금 : 500 7. 월세 : 60 8. 시설집...\n일반****\n2026-03-26\n조회수 47"
+      },
+      {
+        "tag": "DIV",
+        "class": "clearfix table-cell list-group list_text_title",
+        "id": "",
+        "textLength": 157,
+        "preview": "강북구 수유동 (사진은 추후 업뎃예정)\n1. 매물업종 : 성인PC방2. 매물위치 : 강북구 수유동 3. 실평수 : 8평4. 해당층 : 1층5. 보증금 : 10006. 희망권리금 : 500 7. 월세 : 60 8. 시설집...\n일반****\n2026-03-26\n조회수 47"
+      },
+      {
+        "tag": "LI",
+        "class": "tit",
+        "id": "",
+        "textLength": 125,
+        "preview": "강북구 수유동 (사진은 추후 업뎃예정)\n1. 매물업종 : 성인PC방2. 매물위치 : 강북구 수유동 3. 실평수 : 8평4. 해당층 : 1층5. 보증금 : 10006. 희망권리금 : 500 7. 월세 : 60 8. 시설집..."
+      },
+      {
+        "tag": "A",
+        "class": "title_link _fade_link",
+        "id": "",
+        "textLength": 125,
+        "preview": "강북구 수유동 (사진은 추후 업뎃예정)\n1. 매물업종 : 성인PC방2. 매물위치 : 강북구 수유동 3. 실평수 : 8평4. 해당층 : 1층5. 보증금 : 10006. 희망권리금 : 500 7. 월세 : 60 8. 시설집..."
+      },
+      {
+        "tag": "SMALL",
+        "class": "body_font_color_50 text-block blocked",
+        "id": "",
+        "textLength": 103,
+        "preview": "1. 매물업종 : 성인PC방2. 매물위치 : 강북구 수유동 3. 실평수 : 8평4. 해당층 : 1층5. 보증금 : 10006. 희망권리금 : 500 7. 월세 : 60 8. 시설집..."
+      }
+    ]
+  },
+  "postTitle": {
+    "title": "\n\t\t\t\t\n\t\t\t\t\tPC방 팝니다\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t성인PC방\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t일반PC방\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t기타업종\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t",
+    "tag": "DIV",
+    "class": "title_menu _item   clear-both"
+  },
+  "textMetrics": {
+    "bodyText": 1936,
+    "bodyHtml": 222320,
+    "includes": {
+      "매물업종": true,
+      "보증금": true,
+      "월세": true,
+      "이미지": false,
+      "사진": true,
+      "권리금": true
+    }
+  },
+  "hiddenElements": {
+    "count": 71,
+    "details": {
+      "displayNone": [
+        "\n\n\t\n\n\n\n\n\n\n피씨천국\n\n\n\n\n\n\n\n\n\n\n\n\n:root{--safe-bottom:env",
+        "피씨천국",
+        ":root{--safe-bottom:env(safe-area-inset-bottom)}",
+        "@import url(\"https://vendor-cdn.imweb.me/css/nanum",
+        "\n(function(){\n\tvar _d = JSON.parse(atob('eyJJU19JQ",
+        "\n    import {} from 'https://static.imweb.me/vendo",
+        "{\n    \"@context\": \"https://schema.org\",\n    \"@type",
+        " window.dataLayer = window.dataLayer || []; functi",
+        "\n\t\t\t\t\t\t._banner_S2019122064395b58816bc_108843 .ban",
+        "\n\tfunction popupClose(item){\n\t\tvar $item;\n\t\t$item ",
+        "\n\n\t\t\n\t\t\t\n\t\t\t\t\n\t\t\t\t\t알림\n\t\t\t\t\t\t\t\t\t\t\t설정\n\t\t\t\t\t\t\t\t\t\t뒤로\n\t",
+        "\n\t\t\t\t\t알림 설정\n\t\t\t\t\t뒤로\n\t\t\t\t",
+        "\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t더보기\t\t\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t",
+        "\n\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t",
+        "\n\t\n\t\tAlarm\n\t\t\n\t\t\t\n\t\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t정지훈\t\t\t\t\t\t\t\t\t\t\t\t\t",
+        "\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
+        "\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
+        "\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t서울\n\t\t",
+        "\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t서울\n\t\t",
+        "\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t성인PC방\n\t\t\t\t\t",
+        "\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t서울\n\t\t",
+        "\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t서울\n\t\t",
+        "\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t서울\n\t\t",
+        "\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t판매\n\t\t\t\t\t\t\t\t",
+        "\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t채용정보\n\t\t\t\t\t\t",
+        "\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t자유게시판\n\t\t\t\t\t",
+        "\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t공지사항\n\t\t\t\t\t\t",
+        "\n\t\t\t\t\t\t\t\t",
+        "닫기",
+        "\n\t\t.new_header_site .mobile_slide_menu_container.s",
+        "\n\t@import url(\"https://vendor-cdn.imweb.me/css/sui",
+        "\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\t\n\t\t\t\t\tPC방 팝니다\n\t\t\t\t\n\t\t\t\t\n\t\t\t\n\t\t\t\n\t",
+        "MENU",
+        "\n\t\n\t\t\n\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\t\n\t\t\t\t\tPC방 ",
+        "\t\n\t\n\t\t\n\t\tMENU\n\t\n\n\n\n\n\n\n\n\n\t\t\t\n\t\t\t피씨천국\n\t\t\n\t\t\n\n\t\n\t\t\t\t\t",
+        "MENU",
+        "\n\t\t\t\n\t\t\t\n\t\t\t\t서울\n\t\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\t경기도\n\t\t\t\t\n\t\t\t\n",
+        "\n\t\t\t\n\t\t\t\n\t\t\t\t서울\n\t\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\t경기도\n\t\t\t\t\n\t\t\t\n",
+        "\n\t\t\t\n\t\t\t\n\t\t\t\t서울\n\t\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t\t경기도\n\t\t\t\t\n\t\t\t\n",
+        "{\n    \"@context\": \"https://schema.org\",\n    \"@type",
+        "{\n    \"@context\": \"https://schema.org\",\n    \"@type",
+        "{\n    \"@context\": \"https://schema.org\",\n    \"@type",
+        "글쓰기",
+        "\n\t글번호\n\t제목\n\t글쓴이\n\t작성시간\n\t조회\n",
+        "글번호",
+        "공지",
+        "공지",
+        "공지",
+        "공지",
+        "공지",
+        "공지",
+        "공지",
+        "공지",
+        "공지",
+        "공지",
+        "\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t",
+        "\n\t\t\t\t\t\tCopyright ⓒ 2026 피씨천국 All rights reserved.\n",
+        "\n\t\t\t\t\t\t\t\t\t\t\t",
+        "\n\t\n\t\t\n\t\n",
+        "\n\t\n\t\t\n\t\n",
+        "\nLOCALIZE.타이틀_상품정보_적립 = function(){ return LOCALIZ",
+        "\nFunction IEBinary_getByteAt(strBinary, iOffset)\n\t",
+        "\n\n  // youtube fullpage video function\n  const han",
+        "$(\"#text_w20200106f0f0dae8393e5\").find(\"._table_re",
+        "ALARM_BADGE.addBadgeArea($('#slide-alarm_mobile'),",
+        "ALARM_BADGE.addBadgeArea($('#slide-alarm'),'<i ari",
+        "\n\t$(function(){\n\t\t//첫방문 flag\n\t\tvar first_visit_men",
+        "\n\tALARM_MENU.init();\n\t\tSITE_ANIMATION.init('N', 'Y",
+        "\n\t// TODO: mfe에서 처리 필요\n\t$.ajax({\n\t\ttype: 'POST',\n\t",
+        "\n    if (document.cookie.indexOf('clear_site_auth_"
+      ],
+      "visibility": [],
+      "opacity0": [
+        "닫기"
+      ],
+      "hidden": [],
+      "dataAttribute": []
+    }
+  },
+  "conclusion": "POST_DATA_IN_DOM"
+}

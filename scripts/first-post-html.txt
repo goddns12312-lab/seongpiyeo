@@ -1,0 +1,47 @@
+<ul class="list m-padding-on">
+					<span class="post_link_wrap" style="padding-top: 10px;padding-bottom: 10px;">
+																														<div class="table-cell board_thumb_wrap">
+										<a class="_fade_link" href="javascript:;" onclick="SITE_MEMBER.openLogin('LzQwLz9xPVlUb3hPbnR6T2pFeU9pSnJaWGwzYjNKa1gzUjVjR1VpTzNNNk16b2lZV3hzSWp0OSZwYWdlPTg%3D', 'null', null, 'N');" style="padding: 0">
+											<img src="https://cdn.imweb.me/thumbnail/20230501/59c94cde88ca6.jpeg" class="board_thumb" style="cursor:pointer" alt="">
+											<span class="sr-only">게시판 썸네일</span>
+										</a>
+									</div>
+																											<div class="clearfix table-cell list-group list_text_title">
+							<li class="tit" style="padding-right: 50px">
+																	<a class="title_link _fade_link" href="javascript:;" onclick="SITE_MEMBER.openLogin('LzQwLz9xPVlUb3hPbnR6T2pFeU9pSnJaWGwzYjNKa1gzUjVjR1VpTzNNNk16b2lZV3hzSWp0OSZwYWdlPTg%3D', 'null', null, 'N');">
+										<em class="sticker notice" style="display: none">공지</em>
+										<em style="cursor:pointer; padding-right:; color:; display: none"></em>
+										<span style="cursor:pointer;">
+											중곡동 위치한 피씨방 팝니다!!!										</span>
+									<!--									--><!--										<span class="icons"><i aria-hidden="true" class="icon-picture"></i></span>-->
+									<!--									--><!--									--><!--										<span class="icons"><i aria-hidden="true" class="icon-folder"></i></span>-->
+									<!--									--><!--									--><!--										<span class="icons"><i aria-hidden="true" class="icon-camrecorder"></i></span>-->
+									<!--									-->									<small class="body_font_color_50 text-block blocked" style="">1. 매물업종 : 성인PC방2. 매물위치 : 서울시 광진구 중곡동(장평교부근)3. 실평수 : 10평4. 해당층 : 1층5. 보증금 : 1000만6. 희망권리금 : 1000만7. 월...</small>								</a>
+								<i aria-hidden="true" class="icon-lock lock" style="display: none"></i>
+							</li>
+							<li class="author" style="display: ">
+								이상****																							</li>
+							<li class="time" title="2023-05-01 03:35" style="display: ">
+								2023-05-01							</li>
+															<li class="views" style="display: ">
+								<em class="txt">조회수</em>
+								1223							</li>
+								<li class="like" style="display: ">
+								<a class="like_btn " id="like_btn_p20230501948641a7bc92f">
+
+									<div class="_token_obj" data-type="post_img_list_like">
+										<input type="hidden" id="like_token_key_p20230501948641a7bc92f" class="_tk_key_obj">
+										<input type="hidden" id="like_token_p20230501948641a7bc92f" class="_tk_obj">
+									</div>
+
+
+									<i aria-hidden="true" class="btm bt-heart">&nbsp;</i>
+									<em id="like_count_p20230501948641a7bc92f">2</em>
+								</a>
+							</li>
+								<span class="comment-count only-mobile" style="display: ">
+								<span>0</span>
+							</span>
+																				</div>
+					</span>
+			</ul>

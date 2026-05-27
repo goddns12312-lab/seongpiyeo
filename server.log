@@ -1,0 +1,281 @@
+
+> pc-bang-community@0.1.0 dev
+> next dev -p 3002
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3002
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.3s
+ ○ Compiling /listings ...
+ ✓ Compiled /listings in 4.3s (1059 modules)
+ ✓ Compiled in 388ms (332 modules)
+[Listings Page Debug] {
+  search: undefined,
+  region: undefined,
+  page: 1,
+  totalCount: 52,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings 200 in 6718ms
+[Listings Page Debug] {
+  search: undefined,
+  region: undefined,
+  page: 1,
+  totalCount: 52,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings 200 in 618ms
+[Listings Page Debug] {
+  search: undefined,
+  region: undefined,
+  page: 1,
+  totalCount: 52,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings 200 in 984ms
+ ✓ Compiled /_not-found in 434ms (1048 modules)
+ GET /logo.png 404 in 610ms
+[Listings Page Debug] {
+  search: undefined,
+  region: '서울',
+  page: 1,
+  totalCount: 46,
+  offset: 0,
+  itemsPerPage: 20
+}
+[Listings Page Debug] {
+  search: undefined,
+  region: 'all',
+  page: 1,
+  totalCount: 52,
+  offset: 0,
+  itemsPerPage: 20
+}
+[Listings Page Debug] {
+  search: undefined,
+  region: 'all',
+  page: 1,
+  totalCount: 53,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=all 200 in 1245ms
+ GET /logo.png 404 in 39ms
+[Listings Page Debug] {
+  search: undefined,
+  region: 'all',
+  page: 1,
+  totalCount: 53,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=all 200 in 1351ms
+ GET /logo.png 404 in 54ms
+[Listings Page Debug] {
+  search: undefined,
+  region: '서울',
+  page: 1,
+  totalCount: 47,
+  offset: 0,
+  itemsPerPage: 20
+}
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 6,
+  offset: 0,
+  itemsPerPage: 20
+}
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 6,
+  offset: 0,
+  itemsPerPage: 20
+}
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 8,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=%EA%B0%95%EC%9B%90%EB%8F%84 200 in 1238ms
+ GET /logo.png 404 in 59ms
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 15,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=%EA%B0%95%EC%9B%90%EB%8F%84 200 in 1302ms
+ GET /logo.png 404 in 47ms
+[Listings Page Debug] {
+  search: undefined,
+  region: '서울',
+  page: 1,
+  totalCount: 47,
+  offset: 0,
+  itemsPerPage: 20
+}
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 13,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=%EA%B0%95%EC%9B%90%EB%8F%84 200 in 1124ms
+ GET /logo.png 404 in 56ms
+ ○ Compiling /listings/[id] ...
+ ✓ Compiled /listings/[id] in 1952ms (1532 modules)
+ GET /listings/032b315a-5019-4848-af0a-82d8c21f882b 404 in 797ms
+ GET /logo.png 404 in 61ms
+[Listings Page Debug] {
+  search: undefined,
+  region: undefined,
+  page: 1,
+  totalCount: 59,
+  offset: 0,
+  itemsPerPage: 20
+}
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=%EA%B0%95%EC%9B%90%EB%8F%84 200 in 1918ms
+ GET /logo.png 404 in 50ms
+ ✓ Compiled in 756ms (1529 modules)
+ ✓ Compiled in 265ms (339 modules)
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=%EA%B0%95%EC%9B%90%EB%8F%84 200 in 1224ms
+ ✓ Compiled /_not-found in 469ms (1518 modules)
+ GET /logo.png 404 in 595ms
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=%EA%B0%95%EC%9B%90%EB%8F%84 200 in 1037ms
+ GET /logo.png 404 in 46ms
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=%EA%B0%95%EC%9B%90%EB%8F%84 200 in 1421ms
+ GET /logo.png 404 in 69ms
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=%EA%B0%95%EC%9B%90%EB%8F%84 200 in 879ms
+ GET /logo.png 404 in 38ms
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=%EA%B0%95%EC%9B%90%EB%8F%84 200 in 1133ms
+ GET /logo.png 404 in 78ms
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+ GET /listings?region=%EA%B0%95%EC%9B%90%EB%8F%84 200 in 1096ms
+ GET /logo.png 404 in 56ms
+ ✓ Compiled in 674ms (1529 modules)
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+
+[Listings Query Result] 첫 5개:
+1. idx=undefined | title=성인pc방 팝니다 | created_at=2026-05-25T10:08:22.189+00:00
+2. idx=undefined | title=원주 성인PC 팝니다 | created_at=2026-05-25T10:08:14.65+00:00
+3. idx=undefined | title=원주시 단계동 | created_at=2026-05-25T10:08:06.064+00:00
+4. idx=undefined | title=강원도 진부면 독점 | created_at=2026-05-25T10:07:58.853+00:00
+5. idx=undefined | title=성인pc판매 | created_at=2026-05-25T10:07:51.92+00:00
+ ✓ Compiled in 505ms (1529 modules)
+[Listings Page Debug] {
+  search: undefined,
+  region: '강원도',
+  page: 1,
+  totalCount: 12,
+  offset: 0,
+  itemsPerPage: 20
+}
+
+[Listings Query Result] 첫 5개:
+1. idx=undefined | title=성인pc방 팝니다 | created_at=2026-05-25T10:08:22.189+00:00
+2. idx=undefined | title=원주 성인PC 팝니다 | created_at=2026-05-25T10:08:14.65+00:00
+3. idx=undefined | title=원주시 단계동 | created_at=2026-05-25T10:08:06.064+00:00
+4. idx=undefined | title=강원도 진부면 독점 | created_at=2026-05-25T10:07:58.853+00:00
+5. idx=undefined | title=성인pc판매 | created_at=2026-05-25T10:07:51.92+00:00

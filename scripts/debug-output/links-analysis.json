@@ -1,0 +1,176 @@
+[
+  {
+    "idx": 0,
+    "textContent": "\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t",
+    "href": "",
+    "className": "",
+    "id": ""
+  },
+  {
+    "idx": 1,
+    "textContent": "1일 동안 보지 않음",
+    "href": "javascript:;",
+    "onclick": "function onclick(event) {\npopupCookieMake('S2019122064395b58816bc_108843','banner',$(this))\n}",
+    "className": "",
+    "id": "",
+    "getAttribute_onclick": "popupCookieMake('S2019122064395b58816bc_108843','banner',$(this))"
+  },
+  {
+    "idx": 2,
+    "textContent": "뒤로",
+    "href": "javascript:;",
+    "onclick": "function onclick(event) {\nALARM_MENU.showAlarmSlide();\n}",
+    "className": "btn btn-flat goback ",
+    "id": "",
+    "getAttribute_onclick": "ALARM_MENU.showAlarmSlide();"
+  },
+  {
+    "idx": 3,
+    "textContent": "뒤로",
+    "href": "javascript:;",
+    "onclick": "function onclick(event) {\nALARM_MENU.toggleAlarmSetting();\n}",
+    "className": "btn btn-flat goback ",
+    "id": "",
+    "getAttribute_onclick": "ALARM_MENU.toggleAlarmSetting();"
+  },
+  {
+    "idx": 4,
+    "textContent": "\n\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t더보기\t\t\t\t\t\t\t\n\t\t\t\t\t\t",
+    "href": "javascript:;",
+    "onclick": "function onclick(event) {\nALARM_MENU.getHeaderAlarmList()\n}",
+    "className": "tile more",
+    "id": "",
+    "getAttribute_onclick": "ALARM_MENU.getHeaderAlarmList()"
+  },
+  {
+    "idx": 5,
+    "textContent": "게시물 알림",
+    "href": "javascript:;",
+    "className": "board-alaram tile",
+    "id": ""
+  },
+  {
+    "idx": 6,
+    "textContent": "\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t내 글 반응\t\t\t\t\t",
+    "href": "javascript:;",
+    "onclick": "function onclick(event) {\nALARM_MENU.changeAlarmSetting($(this),'','my_post')\n}",
+    "className": "tile",
+    "id": "",
+    "getAttribute_onclick": "ALARM_MENU.changeAlarmSetting($(this),'','my_post')"
+  },
+  {
+    "idx": 7,
+    "textContent": "\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t공지사항\t\t\t\t\t\t\t",
+    "href": "javascript:;",
+    "onclick": "function onclick(event) {\nALARM_MENU.changeAlarmSetting($(this),'','notice')\n}",
+    "className": "tile",
+    "id": "",
+    "getAttribute_onclick": "ALARM_MENU.changeAlarmSetting($(this),'','notice')"
+  },
+  {
+    "idx": 8,
+    "textContent": "Alarm",
+    "href": "javascript:;",
+    "onclick": "function onclick(event) {\nALARM_MENU.showAlarmSlide();\n}",
+    "className": "nav-btn-icon profile alarm-toggle _show_alarm",
+    "id": "slide-alarm",
+    "getAttribute_onclick": "ALARM_MENU.showAlarmSlide();"
+  },
+  {
+    "idx": 9,
+    "textContent": "마이페이지",
+    "href": "javascript:;",
+    "onclick": "function onclick(event) {\nSITE_MEMBER.openLogin('L3Nob3BfbXlwYWdl','mypage');\n}",
+    "className": "btn btn-flat",
+    "id": "",
+    "getAttribute_onclick": "SITE_MEMBER.openLogin('L3Nob3BfbXlwYWdl','mypage');"
+  },
+  {
+    "idx": 10,
+    "textContent": "로그아웃",
+    "href": "https://www.xn--3e0b036btifksj.com/logout.cm",
+    "className": "btn btn-flat right",
+    "id": ""
+  },
+  {
+    "idx": 11,
+    "textContent": "\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t로그인이 필요합니다.\n\t\t\t\t\t\t\t\t\t로그인\n\t\t\t\t\t\t",
+    "href": "javascript:;",
+    "onclick": "function onclick(event) {\nSITE_MEMBER.openLogin('LzQwLz9xPVlUb3hPbnR6T2pFeU9pSnJaWGwzYjNKa1gzUjVjR1V",
+    "className": "btn nav-btn-icon profile no-padding btn-flat full-width",
+    "id": "",
+    "getAttribute_onclick": "SITE_MEMBER.openLogin('LzQwLz9xPVlUb3hPbnR6T2pFeU9pSnJaWGwzYjNKa1gzUjVjR1VpTzNNNk16b2lZV3hzSWp0OSZwY"
+  },
+  {
+    "idx": 12,
+    "textContent": "\n\t\t\t\t\t\t\t\tPC방 팝니다\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t",
+    "href": "https://www.xn--3e0b036btifksj.com/17",
+    "onclick": "function onclick() { [native code] }",
+    "className": "active   open has_child",
+    "id": "",
+    "getAttribute_onclick": ""
+  },
+  {
+    "idx": 13,
+    "textContent": "\n\t\t\t\t\t\t\t\t\t\t성인PC방\n\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t",
+    "href": "https://www.xn--3e0b036btifksj.com/75",
+    "onclick": "function onclick() { [native code] }",
+    "className": "active   open has_child",
+    "id": "",
+    "getAttribute_onclick": ""
+  },
+  {
+    "idx": 14,
+    "textContent": "\n\t\t\t\t\t\t\t\t\t\t\t서울\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t",
+    "href": "https://www.xn--3e0b036btifksj.com/40",
+    "onclick": "function onclick() { [native code] }",
+    "className": " active   active-real ",
+    "id": "",
+    "getAttribute_onclick": ""
+  },
+  {
+    "idx": 15,
+    "textContent": "\n\t\t\t\t\t\t\t\t\t\t\t경기도\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t",
+    "href": "https://www.xn--3e0b036btifksj.com/93",
+    "onclick": "function onclick() { [native code] }",
+    "className": " ",
+    "id": "",
+    "getAttribute_onclick": ""
+  },
+  {
+    "idx": 16,
+    "textContent": "\n\t\t\t\t\t\t\t\t\t\t\t강원도\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t",
+    "href": "https://www.xn--3e0b036btifksj.com/92",
+    "onclick": "function onclick() { [native code] }",
+    "className": " ",
+    "id": "",
+    "getAttribute_onclick": ""
+  },
+  {
+    "idx": 17,
+    "textContent": "\n\t\t\t\t\t\t\t\t\t\t\t인천광역시\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t",
+    "href": "https://www.xn--3e0b036btifksj.com/91",
+    "onclick": "function onclick() { [native code] }",
+    "className": " ",
+    "id": "",
+    "getAttribute_onclick": ""
+  },
+  {
+    "idx": 18,
+    "textContent": "\n\t\t\t\t\t\t\t\t\t\t\t충청북도\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t",
+    "href": "https://www.xn--3e0b036btifksj.com/90",
+    "onclick": "function onclick() { [native code] }",
+    "className": " ",
+    "id": "",
+    "getAttribute_onclick": ""
+  },
+  {
+    "idx": 19,
+    "textContent": "\n\t\t\t\t\t\t\t\t\t\t\t충청남도\n\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t",
+    "href": "https://www.xn--3e0b036btifksj.com/89",
+    "onclick": "function onclick() { [native code] }",
+    "className": " ",
+    "id": "",
+    "getAttribute_onclick": ""
+  }
+]

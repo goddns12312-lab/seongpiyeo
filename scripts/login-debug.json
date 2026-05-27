@@ -1,0 +1,234 @@
+{
+  "formData": {
+    "formId": "inline_s_form_w201912278819e8ff6b1bb",
+    "formName": "",
+    "formAction": "https://www.xn--3e0b036btifksj.com/search",
+    "formMethod": "get",
+    "inputs": [
+      {
+        "type": "text",
+        "name": "keyword",
+        "id": "",
+        "value": "",
+        "placeholder": "Search",
+        "required": false,
+        "className": "search_btn_form"
+      }
+    ],
+    "buttons": []
+  },
+  "networkData": [
+    {
+      "type": "request",
+      "url": "https://www.xn--3e0b036btifksj.com/login",
+      "method": "GET",
+      "postData": null,
+      "headers": {}
+    },
+    {
+      "type": "response",
+      "url": "https://www.xn--3e0b036btifksj.com/login",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "type": "request",
+      "url": "https://www.xn--3e0b036btifksj.com/js/site_member.js?1778578456",
+      "method": "GET",
+      "postData": null,
+      "headers": {
+        "referer": "https://www.xn--3e0b036btifksj.com/login"
+      }
+    },
+    {
+      "type": "response",
+      "url": "https://www.xn--3e0b036btifksj.com/js/site_member.js?1778578456",
+      "status": 200,
+      "contentType": "application/javascript; charset=utf-8"
+    },
+    {
+      "type": "request",
+      "url": "https://www.xn--3e0b036btifksj.com/ajax/oms/OMS_auth.cm",
+      "method": "GET",
+      "postData": null,
+      "headers": {
+        "referer": "https://www.xn--3e0b036btifksj.com/login"
+      }
+    },
+    {
+      "type": "request",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-532WQN4NG6&gtm=45je65d0v874201254za200zd874201254&_p=1779045752967&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1629714592.1779045754&frm=0&pscdl=noapi&rcb=18&sr=1280x720&uaa=x86&uab=64&uafvl=Chromium%3B148.0.7778.96%7CHeadlessChrome%3B148.0.7778.96%7CNot%252FA)Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=ko&_s=1&tag_exp=0~115938466~115938468&sid=1779045753&sct=1&seg=0&dl=https%3A%2F%2Fwww.xn--3e0b036btifksj.com%2Flogin&dt=%ED%94%BC%EC%94%A8%EC%B2%9C%EA%B5%AD&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=4813",
+      "method": "POST",
+      "postData": null,
+      "headers": {
+        "referer": "https://www.xn--3e0b036btifksj.com/"
+      }
+    },
+    {
+      "type": "response",
+      "url": "https://www.xn--3e0b036btifksj.com/ajax/oms/OMS_auth.cm",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8"
+    },
+    {
+      "type": "response",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-532WQN4NG6&gtm=45je65d0v874201254za200zd874201254&_p=1779045752967&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1629714592.1779045754&frm=0&pscdl=noapi&rcb=18&sr=1280x720&uaa=x86&uab=64&uafvl=Chromium%3B148.0.7778.96%7CHeadlessChrome%3B148.0.7778.96%7CNot%252FA)Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=ko&_s=1&tag_exp=0~115938466~115938468&sid=1779045753&sct=1&seg=0&dl=https%3A%2F%2Fwww.xn--3e0b036btifksj.com%2Flogin&dt=%ED%94%BC%EC%94%A8%EC%B2%9C%EA%B5%AD&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=4813",
+      "status": 204,
+      "contentType": "text/plain"
+    }
+  ],
+  "loginRequests": [
+    {
+      "type": "request",
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-532WQN4NG6&gtm=45je65d0v874201254za200zd874201254&_p=1779045752967&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=1629714592.1779045754&frm=0&pscdl=noapi&rcb=18&sr=1280x720&uaa=x86&uab=64&uafvl=Chromium%3B148.0.7778.96%7CHeadlessChrome%3B148.0.7778.96%7CNot%252FA)Brand%3B99.0.0.0&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=ko&_s=1&tag_exp=0~115938466~115938468&sid=1779045753&sct=1&seg=0&dl=https%3A%2F%2Fwww.xn--3e0b036btifksj.com%2Flogin&dt=%ED%94%BC%EC%94%A8%EC%B2%9C%EA%B5%AD&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=4813",
+      "method": "POST",
+      "postData": null,
+      "headers": {
+        "referer": "https://www.xn--3e0b036btifksj.com/"
+      }
+    }
+  ],
+  "pageContent": {
+    "url": "https://www.xn--3e0b036btifksj.com/login",
+    "title": "피씨천국",
+    "hasLogoutButton": true,
+    "hasErrorMessage": true,
+    "errorText": []
+  },
+  "cookies": [
+    {
+      "name": "IMWEBVSSID",
+      "value": "q4l33hvtfvpe68lb2lgidbka4prv6vvp3eld7vtb42sjorrm89jvqqv4hlvosmjcghs0lc7a37jmog3gv0dffgca8t0oe9qh2f35k61",
+      "domain": ".xn--3e0b036btifksj.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "al",
+      "value": "KR",
+      "domain": ".xn--3e0b036btifksj.com",
+      "path": "/",
+      "expires": 1804965753.715861,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_fwb",
+      "value": "370dzfgxrLmkyVWFa6WCzN.1779045753493",
+      "domain": ".xn--3e0b036btifksj.com",
+      "path": "/",
+      "expires": 1813605753.494095,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.1629714592.1779045754",
+      "domain": ".xn--3e0b036btifksj.com",
+      "path": "/",
+      "expires": 1813605753.722399,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_532WQN4NG6",
+      "value": "GS2.1.s1779045753$o1$g0$t1779045753$j60$l0$h0",
+      "domain": ".xn--3e0b036btifksj.com",
+      "path": "/",
+      "expires": 1813605753.75582,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__bs_imweb",
+      "value": "%7B%22deviceId%22%3A%22019e3763e4317040a0518eb8b75f4841%22%2C%22deviceIdCreatedAt%22%3A%222025-02-15T18%3A30%3A00%22%2C%22siteCode%22%3A%22S2019122064395b58816bc%22%2C%22unitCode%22%3A%22u201912205dfc5f6066614%22%2C%22platform%22%3A%22BOT%22%2C%22browserSessionId%22%3A%22019e3763e43073b682a588700c575210%22%2C%22sdkJwt%22%3A%22eyJhbGciOiJFUzI1NiIsImtpZCI6bnVsbH0.eyJzdWIiOm51bGwsInNpdGVDb2RlIjoiUzIwMTkxMjIwNjQzOTViNTg4MTZiYyIsInVuaXRDb2RlIjoidTIwMTkxMjIwNWRmYzVmNjA2NjYxNCIsImNoZWNrT2ZmaWNlIjpmYWxzZSwiaWF0IjoxNzc5MDQ1NzUyLCJleHAiOjE3NzkwNDYzNTJ9.cLD0DDMhgElXMaATK3CiL-ukTRMCgVBfOssmO6bFYLQ%22%2C%22referrer%22%3A%22%40direct%22%2C%22initialReferrer%22%3A%22%40direct%22%2C%22initialReferrerDomain%22%3A%22%40direct%22%2C%22utmSource%22%3Anull%2C%22utmMedium%22%3Anull%2C%22utmCampaign%22%3Anull%2C%22utmTerm%22%3Anull%2C%22utmContent%22%3Anull%2C%22utmLandingUrl%22%3Anull%2C%22utmUpdatedTime%22%3Anull%2C%22updatedAt%22%3A%222026-05-17T19%3A22%3A33.905Z%22%2C%22commonSessionId%22%3A%22sc_019e3763e43571f1aed9c5b425195e3f%22%2C%22commonSessionUpdatedAt%22%3A%222026-05-17T19%3A22%3A33.909Z%22%2C%22customSessionId%22%3A%22cs_019e3763e43770ef87e5920436a42d44%22%2C%22customSessionUpdatedAt%22%3A%222026-05-17T19%3A22%3A33.910Z%22%2C%22browser_session_id%22%3A%22019e3763e43073b682a588700c575210%22%2C%22sdk_jwt%22%3A%22eyJhbGciOiJFUzI1NiIsImtpZCI6bnVsbH0.eyJzdWIiOm51bGwsInNpdGVDb2RlIjoiUzIwMTkxMjIwNjQzOTViNTg4MTZiYyIsInVuaXRDb2RlIjoidTIwMTkxMjIwNWRmYzVmNjA2NjYxNCIsImNoZWNrT2ZmaWNlIjpmYWxzZSwiaWF0IjoxNzc5MDQ1NzUyLCJleHAiOjE3NzkwNDYzNTJ9.cLD0DDMhgElXMaATK3CiL-ukTRMCgVBfOssmO6bFYLQ%22%2C%22initial_referrer%22%3A%22%40direct%22%2C%22initial_referrer_domain%22%3A%22%40direct%22%2C%22utm_source%22%3Anull%2C%22utm_medium%22%3Anull%2C%22utm_campaign%22%3Anull%2C%22utm_term%22%3Anull%2C%22utm_content%22%3Anull%2C%22utm_landing_url%22%3Anull%2C%22utm_updated_time%22%3Anull%2C%22updated_at%22%3A%222026-05-17T19%3A22%3A33.905Z%22%2C%22common_session_id%22%3Anull%2C%22common_session_updated_at%22%3Anull%2C%22custom_session_id%22%3Anull%2C%22custom_session_updated_at%22%3Anull%7D",
+      "domain": "www.xn--3e0b036btifksj.com",
+      "path": "/",
+      "expires": 1810581753,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "NAC",
+      "value": "E94bBERdR8e6B",
+      "domain": ".naver.com",
+      "path": "/",
+      "expires": 1813605753.915642,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "SITE_STAT_SID",
+      "value": "202605186a0a1579de9f41.01077907",
+      "domain": ".xn--3e0b036btifksj.com",
+      "path": "/",
+      "expires": 1779116401.01791,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__Secure-YNID",
+      "value": "18.YT=FwjjylH6nlq9cX88486ztbI8GaRcV2Vs70cuVDA2hztrAODPvwFAk_kyHt8KkfWaR2W2_8QDxHgnzWFfQPTQaZqVEUmcOjf-IfAFTElj0qqGKetmHPrdvFO_UdxhUovKWLEjqIWEqeHc0Z38xrwQppEzrZwEPMISoJeoWhnTRjk9xknODf2dvgP3HyT164wnYLSPxh_QzX5Zw_R2_b1tp2NeAWrE9DdZ3Ebm9cX4OhvBqHbM_1Y5-6Y91sxsa6OpbmKYW7Z9SIC4d-Mccckrne8_XsRPb8X6iEDciOLm1HFdKRUISb5C3oIzpzneKGoiFvEON5dDD5bttg6awE1VPg",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": 1794597754.083434,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://xn--3e0b036btifksj.com",
+      "_crHasCrossSiteAncestor": true
+    },
+    {
+      "name": "YSC",
+      "value": "9Da1RoO2Q-U",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "VISITOR_INFO1_LIVE",
+      "value": "F0Kx8d-logc",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": 1794597754.097556,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "VISITOR_PRIVACY_METADATA",
+      "value": "CgJWThIEGgAgEg%3D%3D",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": 1794597754.097595,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__Secure-ROLLOUT_TOKEN",
+      "value": "CL2q6oLd14nvqQEQgpDS8YXBlAMYgpDS8YXBlAM%3D",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": 1794597754.097638,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://xn--3e0b036btifksj.com",
+      "_crHasCrossSiteAncestor": true
+    }
+  ]
+}

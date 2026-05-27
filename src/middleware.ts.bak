@@ -1,0 +1,40 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { REGIONS } from '@/types';
+
+export function middleware(request: NextRequest) {
+  const { pathname, searchParams } = request.nextUrl;
+
+  // /listings 페이지에서만 처리
+  if (pathname === '/listings') {
+    const region = searchParams.get('region');
+
+    // region 파라미터가 있는 경우만 처리
+    if (region) {
+      // 'all' 또는 빈 문자열이면 /listings 유지
+      if (region === 'all' || region === '' || region === 'undefined') {
+        // searchParams 제거하고 /listings로 리다이렉트
+        return NextResponse.redirect(new URL('/listings', request.url), 301);
+      }
+
+      // 유효한 지역인지 확인
+      const isValidRegion = REGIONS.includes(decodeURIComponent(region));
+
+      if (isValidRegion) {
+        // 유효한 지역이면 새 SEO URL로 301 리다이렉트
+        return NextResponse.redirect(
+          new URL(`/listings/region/${encodeURIComponent(decodeURIComponent(region))}`, request.url),
+          301
+        );
+      } else {
+        // 유효하지 않은 region은 /listings로 처리
+        return NextResponse.redirect(new URL('/listings', request.url), 301);
+      }
+    }
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/listings/:path*'],
+};

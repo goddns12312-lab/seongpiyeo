@@ -1,0 +1,48 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node scripts/save-backup-listings.js)",
+      "Bash(node -e ' *)",
+      "Bash(node scripts/simple-save.js)",
+      "Bash(node scripts/fix-regions.js)",
+      "Bash(node scripts/save-current.js)",
+      "Bash(killall node *)",
+      "Bash(npm run *)",
+      "Bash(node scripts/scrape-all-pages.js)",
+      "Bash(node scripts/diagnose-selectors.js)",
+      "Bash(node scripts/diagnose-detailed.js)",
+      "Bash(node scripts/diagnose-scroll.js)",
+      "Bash(tee scrape-output.log)",
+      "Bash(node scripts/check-regions.js)",
+      "Bash(node scripts/diagnose-gyeonggi.js)",
+      "Bash(tee scrape-output-v2.log)",
+      "Bash(node scripts/save-listings-improved.js)",
+      "Bash(pkill -f \"node.*next\")",
+      "Bash(node scripts/check-db.js)",
+      "Bash(node scripts/save-listings-final.js)",
+      "Bash(pkill -9 node 2>/dev/null; sleep 2; npm run dev > /tmp/next-dev.log 2>&1 & *)",
+      "Bash(node scripts/fix-prices.js)",
+      "Bash(node scripts/diagnose-detail-page.js)",
+      "Bash(node scripts/find-detail-link.js)",
+      "Bash(node scripts/scrape-detail-pages.js)",
+      "Bash(node scripts\\\\scrape-with-details.js)",
+      "PowerShell(cd C:\\\\Users\\\\B\\\\Desktop\\\\aass; Remove-Item -Path scripts/output/detailed-listings.json -ErrorAction SilentlyContinue; $start = Get-Date; node scripts/scrape-with-details.js; $end = Get-Date; Write-Host \"완료: $\\(\\($end - $start\\).TotalSeconds\\)초\" -ForegroundColor Green)",
+      "PowerShell(cd C:\\\\Users\\\\B\\\\Desktop\\\\aass; Remove-Item -Path scripts/output/detailed-listings.json -ErrorAction SilentlyContinue; $start = Get-Date; node scripts/scrape-with-details.js 2>&1 | Tee-Object -FilePath scripts/scraper-output.log; $end = Get-Date; Write-Host \"`n완료: $\\(\\($end - $start\\).TotalMinutes\\) 분\" -ForegroundColor Green)",
+      "PowerShell(cd C:\\\\Users\\\\B\\\\Desktop\\\\aass; Remove-Item -Path scripts/output/detailed-listings.json -ErrorAction SilentlyContinue; $start = Get-Date; node scripts/scrape-with-details.js 2>&1 | Tee-Object -FilePath scripts/scraper-full.log; $end = Get-Date; Write-Host \"`n✅ 완료: $\\(\\($end - $start\\).TotalMinutes\\) 분\" -ForegroundColor Green)",
+      "PowerShell(cd C:\\\\Users\\\\B\\\\Desktop\\\\aass; $start = Get-Date; node scripts/import-details.js; $end = Get-Date; Write-Host \"`n⏱️  소요시간: $\\(\\($end - $start\\).TotalMinutes\\) 분\" -ForegroundColor Cyan)",
+      "Bash(node scripts/import-details.js)",
+      "Bash(powershell -Command ' *)",
+      "PowerShell(taskkill /F /IM node.exe 2>$null)",
+      "PowerShell(\"��Ʈ 3001 ���μ��� �����\")",
+      "Bash(node scripts/download-images.js)",
+      "Bash(curl -s -I \"https://lduahvskmxsrvamgieek.supabase.co/storage/v1/object/public/listings/images/cd14fff9-d2fc-4ae5-ab62-986a7c411bc6/listing-cd14fff9-d2fc-4ae5-ab62-986a7c411bc6-0.jpg\")",
+      "Bash(timeout 300 node scripts/scrape-real-images.js)",
+      "Bash(tee real-images-scrape.log)",
+      "Bash(node scripts/update-listings-with-real-images.js)",
+      "Bash(pkill -f \"next.*start\")"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
+    ]
+  }
+}

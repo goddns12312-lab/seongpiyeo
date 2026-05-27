@@ -1,0 +1,26 @@
+[
+  {
+    "rowIdx": 0,
+    "title": "경기도",
+    "onclick": "none",
+    "idx": null
+  },
+  {
+    "rowIdx": 1,
+    "title": "충청북도",
+    "onclick": "none",
+    "idx": null
+  },
+  {
+    "rowIdx": 2,
+    "title": "경상남도",
+    "onclick": "none",
+    "idx": null
+  },
+  {
+    "rowIdx": 3,
+    "title": "제주도",
+    "onclick": "none",
+    "idx": null
+  }
+]

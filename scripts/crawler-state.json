@@ -1,0 +1,68 @@
+{
+  "서울": {
+    "latestIdx": 171482075,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-26T23:05:02.707Z",
+    "totalCount": 98
+  },
+  "경기도": {
+    "latestIdx": 171485565,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-26T23:07:36.213Z",
+    "totalCount": 144
+  },
+  "강원도": {
+    "latestIdx": 171446342,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-25T20:05:27.764Z",
+    "totalCount": 12
+  },
+  "인천": {
+    "latestIdx": 171482020,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-26T23:08:25.281Z",
+    "totalCount": 1
+  },
+  "충청북도": {
+    "latestIdx": 171483591,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-26T23:08:59.987Z",
+    "totalCount": 10
+  },
+  "충청남도": {
+    "latestIdx": 171487379,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-26T23:09:28.457Z",
+    "totalCount": 2
+  },
+  "경상북도": {
+    "latestIdx": 171487809,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-26T23:10:26.792Z",
+    "totalCount": 5
+  },
+  "경상남도": {
+    "latestIdx": 171484561,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-26T23:10:47.206Z",
+    "totalCount": 2
+  },
+  "전라북도": {
+    "latestIdx": 171261437,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-26T23:12:00.804Z",
+    "totalCount": 4
+  },
+  "전라남도": {
+    "latestIdx": 171196477,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-26T23:16:02.999Z",
+    "totalCount": 18
+  },
+  "제주도": {
+    "latestIdx": 167085118,
+    "latestTitle": null,
+    "lastCrawledAt": "2026-05-25T20:12:02.026Z",
+    "totalCount": 1
+  }
+}

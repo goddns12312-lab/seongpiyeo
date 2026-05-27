@@ -1,0 +1,335 @@
+{
+  "postId": "p20230501948641a7bc92f",
+  "url": "https://www.xn--3e0b036btifksj.com/40/?mode=view&id=p20230501948641a7bc92f",
+  "htmlAnalysis": {
+    "totalImages": 17,
+    "imageDetails": [
+      {
+        "idx": 0,
+        "src": "https://cdn.imweb.me/upload/S2019122064395b58816bc/fb789c363335a.png",
+        "dataSrc": null,
+        "alt": "",
+        "className": "banner_img _banner_img",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": ""
+      },
+      {
+        "idx": 1,
+        "src": "https://www.xn--3e0b036btifksj.com/common/img/default_profile.png",
+        "dataSrc": null,
+        "alt": "프로필 정보수정",
+        "className": "img-circle dropdown-avatar-big _profile_img",
+        "id": "",
+        "parentTag": "DIV",
+        "parentClass": ""
+      },
+      {
+        "idx": 2,
+        "src": "https://www.xn--3e0b036btifksj.com/common/img/default_profile.png",
+        "dataSrc": null,
+        "alt": "",
+        "className": "",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": "btn profile no-padding btn-flat"
+      },
+      {
+        "idx": 3,
+        "src": "https://www.xn--3e0b036btifksj.com/common/img/default_profile.png",
+        "dataSrc": null,
+        "alt": "프로필 이미지",
+        "className": "",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": "info_img holder"
+      },
+      {
+        "idx": 4,
+        "src": "https://cdn.imweb.me/thumbnail/20200203/42c9e4b47f18d.png",
+        "dataSrc": null,
+        "alt": "피씨천국",
+        "className": "normal_logo _front_img",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": ""
+      },
+      {
+        "idx": 5,
+        "src": "https://cdn.imweb.me/thumbnail/20200203/42c9e4b47f18d.png",
+        "dataSrc": null,
+        "alt": "피씨천국",
+        "className": "scroll_logo fixed_transform",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": ""
+      },
+      {
+        "idx": 6,
+        "src": "https://cdn.imweb.me/thumbnail/20220312/87d1994a2c00d.png",
+        "dataSrc": null,
+        "alt": "",
+        "className": " org_image",
+        "id": "img_w202203123e188690ff7b3",
+        "parentTag": "DIV",
+        "parentClass": "_img_box img_wrap "
+      },
+      {
+        "idx": 7,
+        "src": "https://cdn.imweb.me/thumbnail/20241104/bbf57b51fe67d.gif",
+        "dataSrc": null,
+        "alt": "",
+        "className": " org_image",
+        "id": "img_w202407305ee872c3ea6a0",
+        "parentTag": "DIV",
+        "parentClass": "_img_box img_wrap "
+      },
+      {
+        "idx": 8,
+        "src": "https://cdn.imweb.me/thumbnail/20240229/59dacfa2188e9.jpg",
+        "dataSrc": null,
+        "alt": "",
+        "className": " org_image",
+        "id": "img_w202303066bd1c28f80d38",
+        "parentTag": "DIV",
+        "parentClass": "_img_box img_wrap "
+      },
+      {
+        "idx": 9,
+        "src": "https://cdn.imweb.me/thumbnail/20260517/08eb68a294c32.jpg",
+        "dataSrc": null,
+        "alt": "",
+        "className": "board_thumb",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": "_fade_link"
+      },
+      {
+        "idx": 10,
+        "src": "https://cdn.imweb.me/thumbnail/20260516/cf838af415635.jpg",
+        "dataSrc": null,
+        "alt": "",
+        "className": "board_thumb",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": "_fade_link"
+      },
+      {
+        "idx": 11,
+        "src": "https://cdn.imweb.me/thumbnail/20260516/cca0b3d8c8610.jpeg",
+        "dataSrc": null,
+        "alt": "",
+        "className": "board_thumb",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": "_fade_link"
+      },
+      {
+        "idx": 12,
+        "src": "https://cdn.imweb.me/thumbnail/20260513/3cfac879ccf4f.jpg",
+        "dataSrc": null,
+        "alt": "",
+        "className": "board_thumb",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": "_fade_link"
+      },
+      {
+        "idx": 13,
+        "src": "https://cdn.imweb.me/thumbnail/20260513/6487662a029d6.png",
+        "dataSrc": null,
+        "alt": "",
+        "className": "board_thumb",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": "_fade_link"
+      },
+      {
+        "idx": 14,
+        "src": "https://cdn.imweb.me/thumbnail/20260508/76807f2495db0.jpg",
+        "dataSrc": null,
+        "alt": "",
+        "className": "board_thumb",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": "_fade_link"
+      },
+      {
+        "idx": 15,
+        "src": "https://cdn.imweb.me/thumbnail/20260420/0548c5d7f5127.png",
+        "dataSrc": null,
+        "alt": "",
+        "className": "board_thumb",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": "_fade_link"
+      },
+      {
+        "idx": 16,
+        "src": "https://cdn.imweb.me/thumbnail/20260414/359af377424a6.jpg",
+        "dataSrc": null,
+        "alt": "",
+        "className": "board_thumb",
+        "id": "",
+        "parentTag": "A",
+        "parentClass": "_fade_link"
+      }
+    ],
+    "title": {
+      "text": "피씨천국",
+      "tagName": "DIV",
+      "className": "pc_slide_menu_title"
+    },
+    "contentDivs": [
+      {
+        "idx": 0,
+        "className": "tse-content tab-content _is_tse_content",
+        "id": "",
+        "childrenCount": 4,
+        "hasImages": 0,
+        "textLength": 771
+      },
+      {
+        "idx": 1,
+        "className": "notify-body",
+        "id": "site_alarm_tab",
+        "childrenCount": 0,
+        "hasImages": 0,
+        "textLength": 0
+      },
+      {
+        "idx": 2,
+        "className": "notify-body",
+        "id": "site_alarm_more_btn",
+        "childrenCount": 1,
+        "hasImages": 0,
+        "textLength": 47
+      },
+      {
+        "idx": 3,
+        "className": "tile-content",
+        "id": "",
+        "childrenCount": 0,
+        "hasImages": 0,
+        "textLength": 19
+      },
+      {
+        "idx": 4,
+        "className": "tab-content",
+        "id": "",
+        "childrenCount": 1,
+        "hasImages": 0,
+        "textLength": 569
+      }
+    ],
+    "divsWithImages": [
+      {
+        "idx": 151,
+        "className": "section_wrap  pc_section    section_first _section_first   mobile_section_first    side_basic     ",
+        "imageCount": 11,
+        "divIndex": 151
+      },
+      {
+        "idx": 154,
+        "className": "inside",
+        "imageCount": 11,
+        "divIndex": 154
+      },
+      {
+        "idx": 167,
+        "className": "doz_row",
+        "imageCount": 11,
+        "divIndex": 167
+      },
+      {
+        "idx": 182,
+        "className": "col-dz col-dz-10",
+        "imageCount": 11,
+        "divIndex": 182
+      },
+      {
+        "idx": 201,
+        "className": "doz_row",
+        "imageCount": 8,
+        "divIndex": 201
+      }
+    ],
+    "lazyImages": [],
+    "bgImages": [
+      {
+        "style": "background: #ffffff; z-index: 10; max-height:2000px",
+        "tag": "DIV",
+        "className": "banner-container holder tabled full-width _banner_S2019122064395b58816bc_108843 _banner_wrap"
+      },
+      {
+        "style": "background-color:#f9f9f9;  position: absolute;left: 0;top: 0;right: 0; bottom: 0;",
+        "tag": "DIV",
+        "className": "section_bg_color _section_bg_color fixed_transform"
+      },
+      {
+        "style": "background-color:#fff;  position: absolute;left: 0;top: 0;right: 0; bottom: 0;",
+        "tag": "DIV",
+        "className": "section_bg_color _section_bg_color fixed_transform"
+      },
+      {
+        "style": "background-color:#ffffff;  position: absolute;left: 0;top: 0;right: 0; bottom: 0;",
+        "tag": "DIV",
+        "className": "section_bg_color _section_bg_color fixed_transform"
+      },
+      {
+        "style": "   background-size:cover; background-repeat: no-repeat; position: absolute;left: 0;top: 0;right: 0; bottom: 0;",
+        "tag": "DIV",
+        "className": "section_bg _section_bg _interactive_bg  "
+      }
+    ],
+    "scriptJSON": [
+      {
+        "type": "application/ld+json",
+        "hasImage": false,
+        "imageCount": 0
+      },
+      {
+        "type": "application/ld+json",
+        "hasImage": false,
+        "imageCount": 0
+      },
+      {
+        "type": "application/ld+json",
+        "hasImage": false,
+        "imageCount": 0
+      },
+      {
+        "type": "application/ld+json",
+        "hasImage": false,
+        "imageCount": 0
+      }
+    ],
+    "pageTitle": "피씨천국",
+    "bodyHtmlLength": 219209
+  },
+  "dataAnalysis": {
+    "totalLines": 153,
+    "dataLinesCount": 10,
+    "dataLines": [
+      "1. 매물업종 : 성인PC방2. 매물위치 : 화곡동3. 실평수 : 184. 해당층 : 15. 보증금 : 20006. 희망권리금 : 20007. 월세 : 120 관리78. 시설집기 ...",
+      "1. 매물업종 : 성인PC방2. 매물위치 : 강서구 화곡동(곰달래길)3. 실평수 : 12평4. 해당층 : 1층5. 보증금 : 2천만원6. 희망권리금 : 2천만원(신규시설 8월이내...",
+      "1. 매물업종 : 성인PC방2. 매물위치 : 답십리3. 실평수 : 84. 해당층 : 1층5. 보증금 : 5006. 희망권리금 : 15007. 월세 : 858. 시설집기 ...",
+      "1. 매물업종 : 성인PC방2. 매물위치 : 서울 노원구 상계동(수락산역 인근)3. 실평수 : 17평4. 해당층 : 2층5. 보증금 : 2,000만원 또는 1,300만원6. 희망권...",
+      "1. 매물업종 : 성인PC방2. 매물위치 : 남구로역 5번출구앞3. 실평수 : 134. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 8507. 월세 : 1208. 시설...",
+      "1. 매물업종 : 성인PC방2. 매물위치 : 화곡동358-53. 실평수 : 50평4. 해당층 : 1층5. 보증금 : 20006. 희망권리금 : 3000화곡7. 월세 : 2308. ...",
+      "1. 매물업종 : 성인PC방2. 매물위치 : 신월3동시장 먹자골목초입3. 실평수 : 40평4. 해당층 : 지하1층5. 보증금 : 1000만원6. 희망권리금 : 2000만원(조절가능...",
+      "1. 매물업종 : 성인PC방2. 매물위치 : 3. 실평수 : 4. 해당층 : 5. 보증금 : 6. 희망권리금 : 7. 월세 : 8. 시설집기 : 예)PC5대,에어컨1대,냉난방기1대...",
+      "1. 매물업종 : 성인PC방2. 매물위치 : 화곡동 3. 실평수 : 9평 4. 해당층 : 1층 5. 보증금 : 1000만원 6. 희망권리금 : 무권리 7. 월세 : 85만원 8. ...",
+      "1. 매물업종 : 성인PC방2. 매물위치 : 강북구 수유동 3. 실평수 : 8평4. 해당층 : 1층5. 보증금 : 10006. 희망권리금 : 500 7. 월세 : 60 8. 시설집..."
+    ]
+  },
+  "htmlSample": {
+    "maxImageDiv": {
+      "className": "section_wrap  pc_section    section_first _section_first   mobile_section_first    side_basic     ",
+      "id": "s2019122809f968c59d897",
+      "imageCount": 11,
+      "html": "<div class=\"section_bg _section_bg _interactive_bg  \" style=\"   background-size:cover; background-repeat: no-repeat; position: absolute;left: 0;top: 0;right: 0; bottom: 0;\"></div><div class=\"section_bg_color _section_bg_color\" style=\"  position: absolute;left: 0;top: 0;right: 0; bottom: 0;\"></div>\n\t\t\n\t\n\t\t\t\n\t\t<main> \t\t \t \t\t\t \t\t \t\t \t \t\t\t \t\t \t\t \t \t\t\t \t\t \t\t \t \t\t\t \t\t \t\t \t \t\t\t \t\t \t\t\t \t\t\t \t\t\t \t\t \t\t\t \t\t\t \t\t\t \t\t \t\t\t \t\t\t \t\t\t \t\t \t\t\t \t\t\t \t\t\t \t\t \t\t\t \t\t\t \t\t\t \t\t \t\t\t \t\t\t \t\t\t \t\t<div doz_type=\"inside\" class=\"inside\"><div doz_type=\"row\" doz_grid=\"12\" class=\"doz_row\"><div doz_type=\"grid\" doz_grid=\"12\" class=\"col-dz col-dz-12\"><div doz_type=\"widget\" id=\"w20191228252024488b0e4\"><div class=\"_widget_data _ds_animated_except\" data-widget-name=\"여백\" data-widget-type=\"padding\" data-widget-parent-is-mobile=\"N\"><div class=\"widget padding\" data-height=\"30\" style=\"margin-top:px; margin-bottom:px;\">\n\t<div id=\"padding_w20191228252024488b0e4\" style=\"width:100%; min-height:1px; height:30px; \"></div>\n</div>\n</div></div></div></div><div doz_type=\"row\" doz_grid=\"12\" class=\"doz_row\"><div doz_type=\"grid\" doz_grid=\"12\" class=\"col-dz col-dz-12\"><div doz_type=\"widget\" id=\"w202001038d0cda107fc50\"><div class=\"_widget_data \" data-widget-name=\"메뉴/카테고리\" data-widget-type=\"sub_menu\" data-widget-anim=\"none\" data-widget-anim-duration=\"0.7\" data-widget-anim-delay=\"0\" data-widget-parent-is-mobile=\"N\"><div class=\"widget\">\n\t<div class=\"nav sub-menu sub_menu_hide  h-menu-type3 menu-horizontal row-cnt-3 row-cnt-mobile-3\">\n\t\t<ul class=\"\">\n\t\n\t<li style=\"\" class=\"depth-01  active    \" data-code=\"m202001029fdcd5dfa6a2e\">\n\t\t<a href=\"/75\" data-url=\"75\" data-has_child=\"Y\" data-is_folder_menu=\"N\" class=\" _fade_link   active  \">\n\t\t\t<span class=\"plain_name\" data-hover=\"\">성인PC방</span>\n\t\t</a>\n\t\t\n\t\t<ul class=\" \">\n\t\t\t\n\t\t\t<li style=\"\" class=\" active   active-real   \" data-code=\"m2019122695c21805e40ff\">\n\t\t\t\t<a tabindex=\"-1\" data-url=\"40\" data-has_child=\"N\" data-is_folder_menu=\"N\" href=\"/40\" class=\" _fade_link   active   active-real \"><span"
+    },
+    "pageHtml": "<html lang=\"ko\" class=\" js cssanimations\"><head><script async=\"\" src=\"https://www.youtube.com/iframe_api\"></script>\n\n\t<meta charset=\"utf-8\">\n<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n<meta name=\"theme-color\" content=\"#363636\">\n<meta name=\"msapplication-navbutton-color\" content=\"#363636\">\n<meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\">\n\n<meta property=\"og:url\" content=\"http://www.피씨천국.com/40/?mode=view&amp;id=p20230501948641a7bc92f\">\n<title>피씨천국</title>\n<meta name=\"application-name\" content=\"피씨천국\">\n<meta name=\"msapplication-tooltip\" content=\"피씨천국\">\n<meta id=\"meta_og_title\" property=\"og:title\" content=\"피씨천국\">\n<meta name=\"description\" content=\"성인PC방,일반PC방 사고파는 거래싸이트\">\n<meta property=\"og:description\" content=\"성인PC방,일반PC방 사고파는 거래싸이트\">\n<meta id=\"meta_og_image\" property=\"og:image\" content=\"https://cdn.imweb.me/upload/S2019122064395b58816bc/afa6a1457c619.png\">\n<meta property=\"og:image:width\" content=\"1200\">\n<meta property=\"og:image:height\" content=\"627\">\n<meta name=\"keywords\" content=\"피씨천국,피시천국,PC천국,성인pc,성인PC,성인피시,성인피씨,성인pc방,성인PC방,성인피시방,성인피씨방,성인pc매매,성인PC매매,성인피시매매,성인피씨매매,성인pc판매,성인PC판매,성인피시판매,성,피씨천국\">\n<link rel=\"canonical\" href=\"http://www.피씨천국.com/40/?mode=view&amp;id=p20230501948641a7bc92f\">\n<meta property=\"og:type\" content=\"website\">\n<meta name=\"viewport\" content=\"width=device-width,viewport-fit=cover,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no\">\n<style>:root{--safe-bottom:env(safe-area-inset-bottom)}</style><meta name=\"naver-site-verification\" content=\"a3df28426b52c02dd18ee9cac460fcf4cf7c2b64\">\n<meta name=\"google-site-verification\" content=\"kQC3B3AAmK3gzNfHg6eiUtBbCqi8yACvkH9CVX_goiU\"><link rel=\"stylesheet\" type=\"text/css\" href=\"https://vendor-cdn.imweb.me/minify_css/vendor_blue_10.css?1653367465\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://vendor-cdn.imweb.me/minify_css/vendor_red_10.css?1653367465\">\n<!--[if lte IE 9]>\n<link rel='stylesheet' type='text/css' href='https://vendor-cdn.imweb.me/css/site/bootstrap.css?1590627710'/>\n<![endif]-->\n<!--[if lte IE 9]>\n<link rel='stylesheet' type='text/css' href='https://vendor-cdn.imweb.me/css/owl.carousel1.css?1577682282'/>\n<![endif]-->\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://vendor-cdn.imweb.me/css/im_component.css?1698001225\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://vendor-cdn.imweb.me/css/site/alarm_menu.css?1678083003\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://vendor-cdn.imweb.me/css/function.css?1666824024\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://vendor-cdn.imweb.me/css/site/site.css?1776236874\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://vendor-cdn.imweb.me/css/site/site2.css?1776761777\">\n<!--[if lte IE 9]>\n<link rel='stylesheet' type='text/css' href='https://vendor-cdn.imweb.me/css/site/iefix.css?1590627710'/>\n<![endif]-->\n<link rel=\"stylesheet\" type=\"text/css\" href=\"https://vendor-cdn.imweb.me/css/site/iefix2.css?1590627710\">\n<link rel=\"stylesheet\" type=\"text/cs"
+  }
+}

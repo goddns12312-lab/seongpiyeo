@@ -1,0 +1,392 @@
+
+> pc-bang-community@0.1.0 dev
+> next dev -p 3002
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3002
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1234ms
+ ○ Compiling /jobs/[slug] ...
+ ✓ Compiled /jobs/[slug] in 2.1s (705 modules)
+ ✓ Compiled in 76ms (329 modules)
+[Job Detail] 상세페이지 요청: {
+  slug: 'test-job-1779825910601',
+  slugType: 'string',
+  slugLength: 22,
+  slugBytes: '746573742d6a6f622d31373739383235393130363031'
+}
+[Job Detail] 조회 결과: {
+  found: true,
+  error: undefined,
+  slug: 'test-job-1779825910601',
+  title: 'PC방 직원 모집 (테스트)'
+}
+[Job Detail] 조회수 증가: 775a6618-77b2-4084-a364-97bd28d5090f
+ GET /jobs/test-job-1779825910601 200 in 3331ms
+[Job Detail] 상세페이지 요청: {
+  slug: 'test-job-1779825910601',
+  slugType: 'string',
+  slugLength: 22,
+  slugBytes: '746573742d6a6f622d31373739383235393130363031'
+}
+[Job Detail] 조회 결과: {
+  found: true,
+  error: undefined,
+  slug: 'test-job-1779825910601',
+  title: 'PC방 직원 모집 (테스트)'
+}
+[Job Detail] 조회수 증가: 775a6618-77b2-4084-a364-97bd28d5090f
+ GET /jobs/test-job-1779825910601 200 in 114ms
+ ✓ Compiled /_not-found in 171ms (616 modules)
+ GET /api/health 404 in 301ms
+ ✓ Compiled /jobs in 294ms (653 modules)
+ GET /jobs 200 in 409ms
+ ✓ Compiled /jobs/[slug] in 68ms (376 modules)
+ ⨯ Error: Cannot find module './8948.js'
+Require stack:
+- C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js
+- C:\Users\B\Desktop\aass\.next\server\app\jobs\[slug]\page.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\require.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\load-components.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\build\utils.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\dev\hot-middleware.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\dev\hot-reloader-webpack.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\lib\router-utils\setup-dev-bundler.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\lib\router-server.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\lib\start-server.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1456:15)
+    at C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1556:12)
+    at mod.require (C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16)
+    at __webpack_require__.f.require (C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js:198:28)
+    at C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js:111:40
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js:162:22)
+    at C:\Users\B\Desktop\aass\.next\server\app\jobs\[slug]\page.js:1:19064
+    at Object.<anonymous> (C:\Users\B\Desktop\aass\.next\server\app\jobs\[slug]\page.js:1:19127)
+    at Module._compile (node:internal/modules/cjs/loader:1812:14)
+    at Object..js (node:internal/modules/cjs/loader:1943:10)
+    at Module.load (node:internal/modules/cjs/loader:1533:32)
+    at Module._load (node:internal/modules/cjs/loader:1335:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1556:12)
+    at mod.require (C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16)
+    at requirePage (C:\Users\B\Desktop\aass\node_modules\next\dist\server\require.js:109:84)
+    at C:\Users\B\Desktop\aass\node_modules\next\dist\server\load-components.js:103:84
+    at async loadComponentsImpl (C:\Users\B\Desktop\aass\node_modules\next\dist\server\load-components.js:103:26)
+    at async DevServer.findPageComponentsImpl (C:\Users\B\Desktop\aass\node_modules\next\dist\server\next-server.js:714:36)
+    at async DevServer.findPageComponents (C:\Users\B\Desktop\aass\node_modules\next\dist\server\dev\next-dev-server.js:577:20)
+    at async DevServer.renderPageComponent (C:\Users\B\Desktop\aass\node_modules\next\dist\server\base-server.js:1910:24)
+    at async DevServer.renderToResponseImpl (C:\Users\B\Desktop\aass\node_modules\next\dist\server\base-server.js:1962:32)
+    at async DevServer.pipeImpl (C:\Users\B\Desktop\aass\node_modules\next\dist\server\base-server.js:922:25)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\B\Desktop\aass\node_modules\next\dist\server\next-server.js:272:17)
+    at async DevServer.handleRequestImpl (C:\Users\B\Desktop\aass\node_modules\next\dist\server\base-server.js:818:17)
+    at async C:\Users\B\Desktop\aass\node_modules\next\dist\server\dev\next-dev-server.js:339:20
+    at async Span.traceAsyncFn (C:\Users\B\Desktop\aass\node_modules\next\dist\trace\trace.js:154:20)
+    at async DevServer.handleRequest (C:\Users\B\Desktop\aass\node_modules\next\dist\server\dev\next-dev-server.js:336:24)
+    at async invokeRender (C:\Users\B\Desktop\aass\node_modules\next\dist\server\lib\router-server.js:179:21)
+    at async handleRequest (C:\Users\B\Desktop\aass\node_modules\next\dist\server\lib\router-server.js:359:24)
+    at async requestHandlerImpl (C:\Users\B\Desktop\aass\node_modules\next\dist\server\lib\router-server.js:383:13)
+    at async Server.requestListener (C:\Users\B\Desktop\aass\node_modules\next\dist\server\lib\start-server.js:141:13) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\app\\jobs\\[slug]\\page.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\dev\\hot-middleware.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\dev\\hot-reloader-webpack.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\lib\\router-utils\\setup-dev-bundler.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\lib\\router-server.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\lib\\start-server.js'
+  ],
+  page: '/jobs/test-job-1779825910601'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 722ms (929 modules)
+ GET /jobs/test-job-1779825910601 500 in 909ms
+[Job Detail] 상세페이지 요청: {
+  slug: 'test-job-1779825910601',
+  slugType: 'string',
+  slugLength: 22,
+  slugBytes: '746573742d6a6f622d31373739383235393130363031'
+}
+[Job Detail] 조회 결과: {
+  found: true,
+  error: undefined,
+  slug: 'test-job-1779825910601',
+  title: 'PC방 직원 모집 (테스트)'
+}
+ ⨯ Failed to generate static paths for /jobs/[slug]:
+Error: Cannot find module './vendor-chunks/bcryptjs.js'
+Require stack:
+- C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js
+- C:\Users\B\Desktop\aass\.next\server\app\jobs\[slug]\page.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\require.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\load-components.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\build\utils.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1456:15)
+    at C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1556:12)
+    at mod.require (C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16)
+    at __webpack_require__.f.require (C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js:198:28) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\app\\jobs\\[slug]\\page.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ]
+}
+[Job Detail] 조회수 증가: 775a6618-77b2-4084-a364-97bd28d5090f
+ GET /jobs/test-job-1779825910601 200 in 1289ms
+ ✓ Compiled /listings in 418ms (1310 modules)
+[Listings Page Debug] {
+  search: undefined,
+  region: undefined,
+  page: 1,
+  totalCount: 639,
+  offset: 0,
+  itemsPerPage: 20
+}
+
+[Listings Query Result] 첫 5개:
+1. idx=undefined | title=청주봉명동매장정리 최대한맞춰드릴게요 | created_at=2026-05-25T20:44:01.984+00:00
+2. idx=undefined | title=음성군 두성면 | created_at=2026-05-25T20:44:00.984+00:00
+3. idx=undefined | title=개신동 피시방 팝니다 | created_at=2026-05-25T20:43:59.984+00:00
+4. idx=undefined | title=청주시 강서동 | created_at=2026-05-25T20:43:58.984+00:00
+5. idx=undefined | title=봉명동 잘보이는 성인 pc 매매 | created_at=2026-05-25T20:43:57.984+00:00
+ GET /listings 200 in 1914ms
+ ✓ Compiled /_not-found in 99ms (1313 modules)
+ GET /_next/static/css/app/layout.css?v=1779833321814 404 in 188ms
+ GET /_next/static/chunks/main-app.js?v=1779833321814 404 in 191ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 191ms
+ GET /_next/static/chunks/app/layout.js 404 in 191ms
+ ○ Compiling /listings/[id] ...
+ ✓ Compiled /listings/[id] in 625ms (1778 modules)
+ ⨯ Error: Cannot find module './vendor-chunks/bcryptjs.js'
+Require stack:
+- C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js
+- C:\Users\B\Desktop\aass\.next\server\app\listings\[id]\page.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\require.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\load-components.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\build\utils.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1456:15)
+    at C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1556:12)
+    at mod.require (C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16)
+    at __webpack_require__.f.require (C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js:198:28) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\app\\listings\\[id]\\page.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ],
+  page: '/listings/9a975940-fca0-4b71-8304-55f0e1b04f8e'
+}
+ GET /listings/9a975940-fca0-4b71-8304-55f0e1b04f8e 500 in 871ms
+ ✓ Compiled /listings/region/[region] in 151ms (1782 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /listings/region/%EC%84%9C%EC%9A%B8 200 in 182ms
+ ✓ Compiled /jobs in 129ms (1264 modules)
+ ⨯ Error: Cannot find module './vendor-chunks/bcryptjs.js'
+Require stack:
+- C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js
+- C:\Users\B\Desktop\aass\.next\server\app\listings\region\[region]\page.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\require.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\load-components.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\build\utils.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1456:15)
+    at C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1556:12)
+    at mod.require (C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16)
+    at __webpack_require__.f.require (C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js:198:28) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\app\\listings\\region\\[region]\\page.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ],
+  page: '/listings/region/%EC%84%9C%EC%9A%B8'
+}
+ GET /jobs 200 in 227ms
+ GET /_next/static/css/app/layout.css?v=1779833328375 404 in 20ms
+ GET /_next/static/chunks/main-app.js?v=1779833328375 404 in 34ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 31ms
+ GET /_next/static/chunks/app/jobs/page.js 404 in 30ms
+ GET /_next/static/chunks/app/layout.js 404 in 29ms
+ ✓ Compiled /jobs/new in 189ms (1796 modules)
+ GET /jobs/new 200 in 274ms
+ GET /_next/static/css/app/layout.css?v=1779833329198 404 in 19ms
+ GET /_next/static/chunks/main-app.js?v=1779833329198 404 in 28ms
+ GET /_next/static/chunks/app/layout.js 404 in 25ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 26ms
+ ⨯ Error: Cannot find module './vendor-chunks/bcryptjs.js'
+Require stack:
+- C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js
+- C:\Users\B\Desktop\aass\.next\server\app\jobs\[slug]\page.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\require.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\load-components.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\build\utils.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1456:15)
+    at C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1556:12)
+    at mod.require (C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16)
+    at __webpack_require__.f.require (C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js:198:28) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\app\\jobs\\[slug]\\page.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ],
+  page: '/jobs/test-job-1779825910601'
+}
+ GET /jobs/test-job-1779825910601 500 in 186ms
+ ✓ Compiled /api/upload-job-image in 221ms (1389 modules)
+[API] 📋 요청 쿠키 목록: { '개수': 0, '이름들': [] }
+[API] 🔎 pc_bang_session 쿠키 확인: { '존재': false, '길이': 0 }
+[API] ⚠️  pc_bang_session 쿠키 없음
+[API] ⚠️  Supabase auth 세션 없음
+[API] ❌ 401: 로그인 정보를 찾을 수 없음
+[API] 📊 상세 정보: {
+  'pc_bang_session_쿠키': false,
+  '쿠키_개수': 0,
+  '쿠키_이름들': '',
+  '요청헤더쿠키': '(없음)'
+}
+ POST /api/upload-job-image 401 in 296ms
+ ✓ Compiled /login in 174ms (1924 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /login 200 in 223ms
+ ⨯ Error: Cannot find module './vendor-chunks/bcryptjs.js'
+Require stack:
+- C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js
+- C:\Users\B\Desktop\aass\.next\server\app\jobs\[slug]\page.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\require.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\load-components.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\build\utils.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\B\Desktop\aass\node_modules\next\dist\compiled\jest-worker\processChild.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1456:15)
+    at C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:55:36
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1556:12)
+    at mod.require (C:\Users\B\Desktop\aass\node_modules\next\dist\server\require-hook.js:65:28)
+    at require (node:internal/modules/helpers:152:16)
+    at __webpack_require__.f.require (C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js:203:28) {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\webpack-runtime.js',
+    'C:\\Users\\B\\Desktop\\aass\\.next\\server\\app\\jobs\\[slug]\\page.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\require.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\load-components.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\build\\utils.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\server\\dev\\static-paths-worker.js',
+    'C:\\Users\\B\\Desktop\\aass\\node_modules\\next\\dist\\compiled\\jest-worker\\processChild.js'
+  ],
+  page: '/jobs/test-job-1779825910601'
+}
+ GET /jobs/test-job-1779825910601 500 in 195ms
+ ○ Compiling /sitemap.xml ...
+ ✓ Compiled /sitemap.xml in 510ms (1832 modules)
+ GET /sitemap.xml 200 in 1029ms
+ ✓ Compiled /robots.txt in 147ms (1835 modules)
+ GET /robots.txt 200 in 174ms
+[Listings Page Debug] {
+  search: undefined,
+  region: undefined,
+  page: 1,
+  totalCount: 639,
+  offset: 0,
+  itemsPerPage: 20
+}
+
+[Listings Query Result] 첫 5개:
+1. idx=undefined | title=청주봉명동매장정리 최대한맞춰드릴게요 | created_at=2026-05-25T20:44:01.984+00:00
+2. idx=undefined | title=음성군 두성면 | created_at=2026-05-25T20:44:00.984+00:00
+3. idx=undefined | title=개신동 피시방 팝니다 | created_at=2026-05-25T20:43:59.984+00:00
+4. idx=undefined | title=청주시 강서동 | created_at=2026-05-25T20:43:58.984+00:00
+5. idx=undefined | title=봉명동 잘보이는 성인 pc 매매 | created_at=2026-05-25T20:43:57.984+00:00
+ GET /listings 200 in 906ms
+ GET /_next/static/css/app/layout.css?v=1779833332711 404 in 19ms
+ GET /_next/static/chunks/main-app.js?v=1779833332711 404 in 38ms
+ GET /_next/static/chunks/app/layout.js 404 in 40ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 42ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat 'C:\Users\B\Desktop\aass\.next\server\vendor-chunks\bcryptjs.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/bcryptjs' in C:\Users\B\Desktop\aass\.next\server for build dependencies doesn't lead to expected result 'C:\Users\B\Desktop\aass\.next\server\vendor-chunks\bcryptjs.js', but to 'Error: Can't resolve './vendor-chunks/bcryptjs' in 'C:\Users\B\Desktop\aass\.next\server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/bcryptjs (expected C:\Users\B\Desktop\aass\.next\server\vendor-chunks\bcryptjs.js)
+<w>  at file dependencies C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js
+<w>  at file C:\Users\B\Desktop\aass\.next\server\webpack-runtime.js
+<w>  at file dependencies C:\Users\B\Desktop\aass\.next\server\app\listings\page.js
+<w>  at file C:\Users\B\Desktop\aass\.next\server\app\listings\page.js
+<w>  at file dependencies C:\Users\B\Desktop\aass\node_modules\next\dist\server\require.js
+<w>  at file C:\Users\B\Desktop\aass\node_modules\next\dist\server\require.js
+<w>  at file dependencies C:\Users\B\Desktop\aass\node_modules\next\dist\server\load-components.js
+<w>  at file C:\Users\B\Desktop\aass\node_modules\next\dist\server\load-components.js
+<w>  at file dependencies C:\Users\B\Desktop\aass\node_modules\next\dist\build\utils.js
+<w>  at file C:\Users\B\Desktop\aass\node_modules\next\dist\build\utils.js
+<w>  at file dependencies C:\Users\B\Desktop\aass\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at file C:\Users\B\Desktop\aass\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js
+<w>  at resolve commonjs C:\Users\B\Desktop\aass\node_modules\next\dist\build\webpack\loaders\next-route-loader\index.js

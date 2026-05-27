@@ -1,0 +1,28 @@
+{
+  "hasSiteMember": true,
+  "openLoginType": "function",
+  "openLoginSource": "function(back_url, type, callback, used_login_btn, page_type){\n\t\t\topenLogin(back_url, type, callback, used_login_btn, page_type);\n\t\t}",
+  "userInfo": null,
+  "sessionInfo": null,
+  "tokenInfo": {},
+  "cookies": [
+    "_fwb=75vtn6AmYrwpAldAFAOgWp.1779044267179",
+    "_ga=GA1.1.1800611875.1779044267",
+    "_ga_532WQN4NG6=GS2.1.s1779044267$o1$g1$t1779044267$j60$l0$h0",
+    "__bs_imweb=%7B%22deviceId%22%3A%22019e374d3642768085d7c3542c267f27%22%2C%22deviceIdCreatedAt%22%3A%222025-02-15T18%3A30%3A00%22%2C%22siteCode%22%3A%22S2019122064395b58816bc%22%2C%22unitCode%22%3A%22u201912205dfc5f6066614%22%2C%22platform%22%3A%22BOT%22%2C%22browserSessionId%22%3A%22019e374d3641741e81b04931e5352cd0%22%2C%22sdkJwt%22%3A%22eyJhbGciOiJFUzI1NiIsImtpZCI6bnVsbH0.eyJzdWIiOm51bGwsInNpdGVDb2RlIjoiUzIwMTkxMjIwNjQzOTViNTg4MTZiYyIsInVuaXRDb2RlIjoidTIwMTkxMjIwNWRmYzVmNjA2NjYxNCIsImNoZWNrT2ZmaWNlIjpmYWxzZSwiaWF0IjoxNzc5MDQ0MjY1LCJleHAiOjE3NzkwNDQ4NjV9.ZRg4nin6KSfmdwP1bzKDUyvbBlMKXuJLywyW3X1bL64%22%2C%22referrer%22%3A%22%40direct%22%2C%22initialReferrer%22%3A%22%40direct%22%2C%22initialReferrerDomain%22%3A%22%40direct%22%2C%22utmSource%22%3Anull%2C%22utmMedium%22%3Anull%2C%22utmCampaign%22%3Anull%2C%22utmTerm%22%3Anull%2C%22utmContent%22%3Anull%2C%22utmLandingUrl%22%3Anull%2C%22utmUpdatedTime%22%3Anull%2C%22updatedAt%22%3A%222026-05-17T18%3A57%3A47.834Z%22%2C%22commonSessionId%22%3A%22sc_019e374d36467312a5ff36545a2e3c2f%22%2C%22commonSessionUpdatedAt%22%3A%222026-05-17T18%3A57%3A47.836Z%22%2C%22customSessionId%22%3A%22cs_019e374d364874dd87133575f051e51d%22%2C%22customSessionUpdatedAt%22%3A%222026-05-17T18%3A57%3A47.837Z%22%2C%22browser_session_id%22%3A%22019e374d3641741e81b04931e5352cd0%22%2C%22sdk_jwt%22%3A%22eyJhbGciOiJFUzI1NiIsImtpZCI6bnVsbH0.eyJzdWIiOm51bGwsInNpdGVDb2RlIjoiUzIwMTkxMjIwNjQzOTViNTg4MTZiYyIsInVuaXRDb2RlIjoidTIwMTkxMjIwNWRmYzVmNjA2NjYxNCIsImNoZWNrT2ZmaWNlIjpmYWxzZSwiaWF0IjoxNzc5MDQ0MjY1LCJleHAiOjE3NzkwNDQ4NjV9.ZRg4nin6KSfmdwP1bzKDUyvbBlMKXuJLywyW3X1bL64%22%2C%22initial_referrer%22%3A%22%40direct%22%2C%22initial_referrer_domain%22%3A%22%40direct%22%2C%22utm_source%22%3Anull%2C%22utm_medium%22%3Anull%2C%22utm_campaign%22%3Anull%2C%22utm_term%22%3Anull%2C%22utm_content%22%3Anull%2C%22utm_landing_url%22%3Anull%2C%22utm_updated_time%22%3Anull%2C%22updated_at%22%3A%222026-05-17T18%3A57%3A47.834Z%22%2C%22common_session_id%22%3A%22sc_019e374d36467312a5ff36545a2e3c2f%22%2C%22common_session_updated_at%22%3A%222026-05-17T18%3A57%3A47.590Z%22%2C%22custom_session_id%22%3A%22cs_019e374d364874dd87133575f051e51d%22%2C%22custom_session_updated_at%22%3A%222026-05-17T18%3A57%3A47.592Z%22%7D"
+  ],
+  "localStorageKeys": [
+    "visited_menu_codes",
+    "NACT",
+    "NAC",
+    "__bs_imweb",
+    "NA_NACC"
+  ],
+  "localStorageData": {
+    "visited_menu_codes": "[\"m2019122695c21805e40ff\"]",
+    "NACT": "1779044267607",
+    "NAC": "SI7KBEBd7LUP",
+    "__bs_imweb": "{\"deviceId\":\"019e374d3642768085d7c3542c267f27\",\"deviceIdCreatedAt\":\"2025-02-15T18:30:00\",\"siteCode\":\"S2019122064395b58816bc\",\"unitCode\":\"u201912205dfc5f6066614\",\"commonSessionId\":\"sc_019e374d36467312a5ff36545a2e3c2f\",\"commonSessionUpdatedAt\":\"2026-05-17T18:57:47.836Z\",\"customSessionId\":\"cs_019e374d364874dd87133575f051e51d\",\"customSessionUpdatedAt\":\"2026-05-17T18:57:47.837Z\",\"landingUrl\":\"https://www.xn--3e0b036btifksj.com/40/?q=YToxOntzOjEyOiJrZXl3b3JkX3R5cGUiO3M6MzoiYWxsIjt9&page=8\"}",
+    "NA_NACC": ""
+  }
+}

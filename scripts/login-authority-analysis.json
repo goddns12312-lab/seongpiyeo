@@ -1,0 +1,112 @@
+{
+  "timestamp": "2026-05-17T20:20:28.405Z",
+  "loginStatus": {
+    "pageTitle": "피씨천국",
+    "hasLogoutButton": true,
+    "hasMyPageMenu": false,
+    "hasAdminMenu": false,
+    "nicknameElement": {
+      "text": "\n\t\n\t\tAlarm\n\t\t\n\t\t\t\n\t\t\t\t\n\t\t\t\n\t\t\t\n\t\t\t정지훈\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t일반회원\t\t\n\t\n\t\n\t\t마이페이지\n\t\t\t\t로그아웃\n\t\n",
+      "class": "dropdown-menu animation-dock member_profile"
+    },
+    "loginIndicators": {
+      "logoutText": true,
+      "mypageText": false,
+      "profileText": false,
+      "memberText": false
+    }
+  },
+  "cookies": [],
+  "localStorage": [],
+  "postContent": {
+    "contentLength": 1893,
+    "lineCount": 118,
+    "hasRealContent": true,
+    "uniqueImageCount": 13,
+    "dataAttributeCount": 1016,
+    "firstLines": [
+      "1일 동안 보지 않음",
+      "피씨천국",
+      "PC방 팝니다",
+      "PC방 삽니다",
+      "중고장터",
+      "구인구직",
+      "커뮤니티",
+      "공지사항",
+      "고객센터",
+      "시작페이지",
+      "정보 수정",
+      "정보 수정",
+      "푸시 알람",
+      "정지훈",
+      "알림",
+      "로그아웃",
+      "피씨천국",
+      "성인PC방",
+      "일반PC방",
+      "기타업종"
+    ],
+    "dataAttributes": [
+      {
+        "element": "DIV",
+        "attr": "data-height",
+        "value": "2000"
+      },
+      {
+        "element": "BUTTON",
+        "attr": "data-toggle",
+        "value": "dropdown"
+      },
+      {
+        "element": "LI",
+        "attr": "data-code",
+        "value": "m20191220997cd5ec94f7a"
+      },
+      {
+        "element": "A",
+        "attr": "data-url",
+        "value": "17"
+      },
+      {
+        "element": "A",
+        "attr": "data-has_child",
+        "value": "Y"
+      },
+      {
+        "element": "A",
+        "attr": "data-is_folder_menu",
+        "value": "N"
+      },
+      {
+        "element": "SPAN",
+        "attr": "data-hover",
+        "value": ""
+      },
+      {
+        "element": "UL",
+        "attr": "data-index",
+        "value": "3"
+      },
+      {
+        "element": "LI",
+        "attr": "data-code",
+        "value": "m202001029fdcd5dfa6a2e"
+      },
+      {
+        "element": "A",
+        "attr": "data-url",
+        "value": "75"
+      }
+    ]
+  },
+  "authLevel": {
+    "isLoggedIn": true,
+    "hasUserMenu": false,
+    "hasAdminAccess": false,
+    "hasAuthCookie": false,
+    "hasStorageData": false,
+    "hasPostContent": true,
+    "imageCount": 13
+  },
+  "conclusion": "FULL_ACCESS"
+}

@@ -1,0 +1,17 @@
+{
+  "totalApiEndpoints": 6,
+  "apiEndpoints": [
+    "/ajax/add_deploy_strategy_logs.cm",
+    "/ajax/get_alarm_count.cm",
+    "/ajax/make_tokens.cm",
+    "/ajax/oms/OMS_auth.cm",
+    "/api/v1/event",
+    "/api/v1/event/internal"
+  ],
+  "gamePostApiRequests": 40,
+  "postIdRelatedRequests": 2,
+  "post1Requests": 3,
+  "post2Requests": 1,
+  "conclusion": "No game-post-specific API found in network traffic",
+  "analysisDate": "2026-05-17T20:13:44.743Z"
+}
