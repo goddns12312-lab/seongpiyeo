@@ -58,11 +58,19 @@
       "Bash(curl -s \"http://localhost:3002/secondhand\")",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\B\\\\Desktop\\\\aass\" -Recurse -Filter \"site.ts\" -ErrorAction SilentlyContinue)",
       "Bash(Select-Object -First 5)",
-      "WebFetch(domain:xn--oj4bo2hu1o.com)"
+      "WebFetch(domain:xn--oj4bo2hu1o.com)",
+      "Bash(Get-ChildItem -Path src -Recurse -Filter \"*.tsx\" -o Name)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\B\\\\Desktop\\\\aass\" -Recurse -Directory)",
+      "Bash(Select-Object -First 20)",
+      "Bash(Format-Table FullName)",
+      "Bash(npx playwright *)",
+      "Bash(grep -E \"\\\\.tsx$\")"
     ],
     "additionalDirectories": [
       "\\tmp",
-      "C:\\Users\\B\\Desktop\\aass\\src\\app\\api\\jobs\\[id]"
+      "C:\\Users\\B\\Desktop\\aass\\src\\app\\api\\jobs\\[id]",
+      "C:\\Users\\B\\.claude\\plans",
+      "C:\\Users\\B\\Desktop\\aass"
     ]
   }
 }

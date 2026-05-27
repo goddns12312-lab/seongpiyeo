@@ -11,6 +11,7 @@ import { ImageGallery } from '@/components/listings/ImageGallery';
 import { ListingActions } from '@/components/listings/ListingActions';
 import { LikeButton } from '@/components/listings/LikeButton';
 import ListingCommentSection from '@/components/listings/ListingCommentSection';
+import { buildListingProductSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -20,11 +21,11 @@ interface Props {
 function buildSeoTitle(listing: any): string {
   const location = [listing.region, listing.district].filter(Boolean).join(' ');
   const priceType = listing.monthly_rent ? '임대' : '매매';
-  return `${location} 성인PC방 ${priceType} - ${listing.title}`;
+  return `${location} 성인피씨 ${priceType} - ${listing.title}`;
 }
 
 function buildSeoDescription(listing: any, location: string, priceDesc: string, specs: string): string {
-  const base = `${location} 성인PC방 ${listing.monthly_rent ? '임대' : '매매'} 매물`;
+  const base = `${location} 성인피씨 ${listing.monthly_rent ? '임대' : '매매'} 매물`;
   const priceInfo = priceDesc ? ` | ${priceDesc}` : '';
   const specInfo = specs ? ` | ${specs}` : '';
   const extra = listing.description
@@ -50,15 +51,19 @@ function buildSpecDescription(listing: any): string {
 
 function buildKeywords(listing: any, location: string): string {
   const base = [
-    `${location} 성인PC`,
+    '성인피씨',
+    '성인피시',
+    '성인피씨창업',
+    '성인pc',
     `${location} 성인피씨`,
-    `${location} 성인PC방`,
+    `${location} 성인PC`,
+    `${location} PC방`,
     `${listing.region} PC방 매물`,
     '성인PC 매매',
     '성인피씨 창업',
     '성인피시방 매물',
     'PC방 양도양수',
-    '성피요',
+    'PC방 매매',
   ];
   if (listing.district) base.push(`${listing.district} PC방`, `${listing.district} 성인PC`);
   return base.join(', ');
@@ -225,85 +230,29 @@ export default async function ListingDetailPage({ params }: Props) {
     .update({ view_count: listing.view_count + 1 })
     .eq('id', id);
 
-  // JSON-LD Product Schema (강화된 버전)
-  const productImages = displayImages && displayImages.length > 0
-    ? displayImages.map(img => img.url)
-    : [];
-
-  const productSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: listing.title,
-    description: listing.description
-      ? listing.description.replace(/<[^>]*>/g, '').slice(0, 200)
-      : `${listing.region} 지역의 성인PC 매물`,
-    image: productImages.length > 0 ? productImages : undefined,
-    sku: listing.id,
-    brand: { '@type': 'Organization', name: SITE_CONFIG.businessName },
-    offers: {
-      '@type': 'Offer',
-      price: listing.price?.toString() || '0',
-      priceCurrency: 'KRW',
-      availability: listing.status === 'active'
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/SoldOut',
-      url: `${SITE_CONFIG.url}/listings/${id}`,
-      seller: { '@type': 'Organization', name: SITE_CONFIG.businessName },
-    },
-    additionalProperty: [
-      listing.area_sqm && { '@type': 'PropertyValue', name: '면적', value: `${listing.area_sqm}평` },
-      listing.pc_count && { '@type': 'PropertyValue', name: 'PC 대수', value: `${listing.pc_count}대` },
-      listing.deposit && { '@type': 'PropertyValue', name: '보증금', value: `${listing.deposit}만원` },
-      listing.premium_price && { '@type': 'PropertyValue', name: '권리금', value: `${listing.premium_price}만원` },
-      listing.monthly_rent && { '@type': 'PropertyValue', name: '월세', value: `${listing.monthly_rent}만원` },
-      { '@type': 'PropertyValue', name: '지역', value: listing.region },
-      listing.district && { '@type': 'PropertyValue', name: '구/군', value: listing.district },
-    ].filter(Boolean),
-  };
+  // JSON-LD Product Schema (SEO 스키마 빌더 사용)
+  const productSchema = buildListingProductSchema(listing);
 
   // Breadcrumb Schema (district 포함)
   const breadcrumbItems = [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: '홈',
-      item: SITE_CONFIG.url,
-    },
-    {
-      '@type': 'ListItem',
-      position: 2,
-      name: '매물 목록',
-      item: `${SITE_CONFIG.url}/listings`,
-    },
-    {
-      '@type': 'ListItem',
-      position: 3,
-      name: listing.region,
-      item: `${SITE_CONFIG.url}/listings?region=${encodeURIComponent(listing.region)}`,
-    },
+    { name: '홈', url: SITE_CONFIG.url },
+    { name: '매물 목록', url: `${SITE_CONFIG.url}/listings` },
+    { name: listing.region, url: `${SITE_CONFIG.url}/listings?region=${encodeURIComponent(listing.region)}` },
   ];
 
   if (listing.district) {
     breadcrumbItems.push({
-      '@type': 'ListItem',
-      position: 4,
       name: listing.district,
-      item: `${SITE_CONFIG.url}/listings?region=${encodeURIComponent(listing.region)}`,
+      url: `${SITE_CONFIG.url}/listings?region=${encodeURIComponent(listing.region)}&district=${encodeURIComponent(listing.district)}`,
     });
   }
 
   breadcrumbItems.push({
-    '@type': 'ListItem',
-    position: listing.district ? 5 : 4,
     name: listing.title,
-    item: `${SITE_CONFIG.url}/listings/${id}`,
+    url: `${SITE_CONFIG.url}/listings/${id}`,
   });
 
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: breadcrumbItems,
-  };
+  const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
 
   return (
     <div className="bg-bg-primary min-h-screen py-12">

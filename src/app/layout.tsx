@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { SITE_CONFIG } from '@/lib/site';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { buildWebsiteSchema, buildOrganizationSchema } from '@/lib/seo-schema';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -169,70 +170,37 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="canonical" href={SITE_CONFIG.url} />
         <link rel="alternate" hrefLang="ko" href={SITE_CONFIG.url} />
+        {/* Preconnect for performance optimization */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://supabase.co" />
+        <link rel="preconnect" href="https://cdn.imweb.me" />
 
-        {/* JSON-LD 구조화 데이터 */}
+        {/* DNS prefetch for third-party domains */}
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+
+        {/* Preload OG images for faster sharing */}
+        <link rel="preload" href={`${SITE_CONFIG.url}/og-image.png`} as="image" type="image/png" />
+        <link rel="preload" href={`${SITE_CONFIG.url}/og-listings.png`} as="image" type="image/png" />
+
+        {/* JSON-LD Structured Data - Organization Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(schemaOrganization),
+            __html: JSON.stringify(buildOrganizationSchema()),
           }}
         />
+
+        {/* JSON-LD Structured Data - Website Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'LocalBusiness',
-              '@id': SITE_CONFIG.url,
-              name: SITE_CONFIG.businessName,
-              description: '성인PC 성인피씨 매매 및 창업 정보 플랫폼',
-              url: SITE_CONFIG.url,
-              telephone: SITE_CONFIG.phone,
-              email: SITE_CONFIG.email,
-              image: `${SITE_CONFIG.url}/og-image.png`,
-              address: {
-                '@type': 'PostalAddress',
-                addressRegion: SITE_CONFIG.region,
-                addressCountry: 'KR',
-              },
-              geo: {
-                '@type': 'GeoShape',
-                box: '33.1 124.5 43.0 131.9',
-              },
-              priceRange: '₩0',
-              openingHoursSpecification: [
-                {
-                  '@type': 'OpeningHoursSpecification',
-                  dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-                  opens: '00:00',
-                  closes: '23:59',
-                },
-              ],
-            }),
+            __html: JSON.stringify(buildWebsiteSchema()),
           }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebSite',
-              name: SITE_CONFIG.businessName,
-              url: SITE_CONFIG.url,
-              potentialAction: {
-                '@type': 'SearchAction',
-                target: {
-                  '@type': 'EntryPoint',
-                  urlTemplate: `${SITE_CONFIG.url}/listings?region={search_term_string}`,
-                },
-                'query-input': 'required name=search_term_string',
-              },
-            }),
-          }}
-        />
+
+        {/* JSON-LD Structured Data - Breadcrumb Navigation */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/Button';
 import { REGIONS } from '@/types';
 import { RegionFilter } from '@/components/listings/RegionFilter';
 import { SITE_CONFIG } from '@/lib/site';
+import { buildListingsMetadata, addRobotsToMetadata } from '@/lib/seo-metadata';
+import { buildCollectionPageSchema } from '@/lib/seo-schema';
 
 // 매물 목록 캐시 비활성화 (항상 최신 데이터)
 export const revalidate = 0;
@@ -17,45 +19,43 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { region } = await searchParams;
 
-  const regionTitle = region && region !== 'all' && region !== 'undefined'
-    ? `${region} PC방 매물 | `
-    : '';
+  // SEO 메타데이터 빌더 함수 사용
+  const baseMeta = buildListingsMetadata(region);
+
+  // robots 태그 추가
+  const metaWithRobots = addRobotsToMetadata(baseMeta, {
+    googlebot: 'index, follow, max-snippet:-1, max-image-preview:large',
+  });
 
   return {
-    title: `${regionTitle}성인PC 성인피씨 성인피시 매물 | 창업 정보 | 성피요`,
-    description: `${regionTitle ? `${region} 지역의 ` : '전국'}성인PC 성인피씨 성인피시 매물 거래 정보 | PC방 창업, 매매, 임대 정보 한눈에 | 성피요 매물 검색`,
-    keywords: [`성인PC${regionTitle ? `${region}` : '매물'}`, '성인피씨', '성인피시', 'PC방창업정보', '성인피시방', '피시창업', 'PC방매매', '성인PC거래', '매물거래'],
-    authors: [{ name: '성피요' }],
-    robots: {
-      index: true,
-      follow: true,
-      nocache: false,
-    },
-    alternates: {
-      canonical: `${SITE_CONFIG.url}/listings${region && region !== 'all' && region !== 'undefined' ? `/region/${encodeURIComponent(region)}` : ''}`,
-    },
+    title: metaWithRobots.title,
+    description: metaWithRobots.description,
+    keywords: metaWithRobots.keywords,
+    authors: [{ name: SITE_CONFIG.managerName }],
+    robots: metaWithRobots.robots,
+    alternates: metaWithRobots.alternates,
     openGraph: {
-      title: `${regionTitle}성인PC 성인피씨 성인피시 매물 | 성피요`,
-      description: `${regionTitle ? `${region} 지역의 ` : '전국'}성인PC 성인피씨 성인피시 매물 거래 정보 - 매매/임대/창업정보`,
+      title: metaWithRobots.ogTitle,
+      description: metaWithRobots.ogDescription,
       type: 'website',
-      url: `${SITE_CONFIG.url}/listings${region && region !== 'all' && region !== 'undefined' ? `?region=${encodeURIComponent(region)}` : ''}`,
+      url: `${SITE_CONFIG.url}/listings`,
       locale: 'ko_KR',
-      siteName: '성피요',
+      siteName: SITE_CONFIG.businessName,
       images: [
         {
-          url: `${SITE_CONFIG.url}/og-listings.png`,
+          url: metaWithRobots.ogImage || `${SITE_CONFIG.url}/og-listings.png`,
           width: 1200,
           height: 630,
-          alt: `${regionTitle}성피요 매물 목록`,
+          alt: `${SITE_CONFIG.businessName} - PC방 매물 목록`,
           type: 'image/png',
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${regionTitle}성인PC 성인피씨 성인피시 매물 | 성피요`,
-      description: `${regionTitle ? `${region} 지역의 ` : '전국'}성인PC 성인피씨 성인피시 매물 거래 정보`,
-      images: [`${SITE_CONFIG.url}/twitter-listings.png`],
+      title: metaWithRobots.ogTitle,
+      description: metaWithRobots.ogDescription,
+      images: [`${SITE_CONFIG.url}/og-listings.png`],
     },
   };
 }
@@ -182,24 +182,18 @@ export default async function ListingsPage({ searchParams }: Props) {
   const filteredListings = listingsWithMeta || [];
   const totalPages = Math.ceil((totalCount || 0) / ITEMS_PER_PAGE);
 
-  const collectionSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    '@id': `${SITE_CONFIG.url}/listings`,
-    name: 'PC방 매물 | 성인PC 성인피씨 매물 거래',
-    description: '전국 성인PC 성인피씨 성인피시 매물 거래 정보. PC방 창업, 매매, 임대 정보.',
-    url: `${SITE_CONFIG.url}/listings`,
-    mainEntity: {
-      '@type': 'ItemList',
-      itemListElement: filteredListings.slice(0, 10).map((listing, idx) => ({
-        '@type': 'ListItem',
-        position: idx + 1,
-        url: `${SITE_CONFIG.url}/listings/${listing.id}`,
-        name: listing.title,
-        description: `${listing.region} ${listing.district || ''} - ${listing.price}만원`,
-      })),
-    },
-  };
+  // CollectionPage 스키마 생성
+  const collectionItems = filteredListings.slice(0, 10).map((listing) => ({
+    name: listing.title,
+    url: `${SITE_CONFIG.url}/listings/${listing.id}`,
+    description: `${listing.region} ${listing.district || ''} - ${listing.price?.toLocaleString() || '상담'}만원`,
+  }));
+
+  const collectionSchema = buildCollectionPageSchema(
+    '성인PC 성인피씨 매물 거래',
+    collectionItems,
+    `${SITE_CONFIG.url}/listings`
+  );
 
   return (
     <div className="bg-bg-primary min-h-screen">

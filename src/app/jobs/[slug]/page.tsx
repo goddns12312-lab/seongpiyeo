@@ -1,10 +1,14 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import Script from 'next/script';
 import { Metadata } from 'next';
 import { EMPLOYMENT_TYPE_LABELS } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
+import { buildJobPostingSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
+import { buildJobMetadata, addRobotsToMetadata } from '@/lib/seo-metadata';
+import { createClient } from '@/lib/supabase/server';
 
 interface Props {
   params: {
@@ -36,32 +40,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     const job = await res.json();
 
-    const jobTitle = `${job.title} | ${job.location || '전국'} 구인 | 성피요`;
-    const jobDescription = job.description?.substring(0, 155) || '성인PC방 구인구직 정보';
+    // SEO 메타데이터 빌더 활용
+    const jobMeta = buildJobMetadata(job);
+    const metaWithRobots = addRobotsToMetadata(jobMeta);
 
     return {
-      title: jobTitle,
-      description: jobDescription,
-      keywords: [job.title, job.location || '전국', '구인', '구직', '성인PC', 'PC방'],
-      robots: {
-        index: true,
-        follow: true,
-      },
-      alternates: {
-        canonical: `${SITE_CONFIG.url}/jobs/${encodeURIComponent(job.slug)}`,
-      },
+      title: metaWithRobots.title,
+      description: metaWithRobots.description,
+      keywords: metaWithRobots.keywords,
+      robots: metaWithRobots.robots,
+      alternates: metaWithRobots.alternates,
       openGraph: {
-        title: jobTitle,
-        description: jobDescription,
+        title: metaWithRobots.ogTitle,
+        description: metaWithRobots.ogDescription,
         type: 'website',
         url: `${SITE_CONFIG.url}/jobs/${encodeURIComponent(job.slug)}`,
-        siteName: '성피요',
+        siteName: SITE_CONFIG.businessName,
         locale: 'ko_KR',
+        images: [
+          {
+            url: `${SITE_CONFIG.url}/og-jobs.png`,
+            width: 1200,
+            height: 630,
+            alt: `${job.title} - ${job.region || '전국'} PC방 구인`,
+            type: 'image/png',
+          },
+        ],
       },
       twitter: {
-        card: 'summary',
-        title: jobTitle,
-        description: jobDescription,
+        card: 'summary_large_image',
+        title: metaWithRobots.ogTitle,
+        description: metaWithRobots.ogDescription,
+        images: [`${SITE_CONFIG.url}/og-jobs.png`],
       },
     };
   } catch (err) {
@@ -132,8 +142,35 @@ export default async function JobDetailPage({ params }: Props) {
 
   const PLACEHOLDER = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600"%3E%3Crect width="800" height="600" fill="%23222222"/%3E%3Ctext x="50%25" y="50%25" font-size="24" fill="%23888888" text-anchor="middle" dominant-baseline="middle"%3E공고 이미지%3C/text%3E%3C/svg%3E';
 
+  // JobPosting Schema
+  const jobPostingSchema = buildJobPostingSchema({
+    title: job.title,
+    location: job.region || '전국',
+    employmentType: job.employment_type,
+    salary: job.salary,
+    description: job.description,
+    company: job.company_name || '성피요',
+    datePosted: job.created_at,
+    url: `${SITE_CONFIG.url}/jobs/${encodeURIComponent(job.slug)}`,
+  });
+
+  // Breadcrumb Schema
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: '홈', url: SITE_CONFIG.url },
+    { name: '채용공고', url: `${SITE_CONFIG.url}/jobs` },
+    { name: job.title, url: `${SITE_CONFIG.url}/jobs/${encodeURIComponent(job.slug)}` },
+  ]);
+
   return (
     <div className="bg-bg-primary min-h-screen py-8 lg:py-12">
+      <Script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingSchema) }}
+      />
+      <Script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <div className="max-w-6xl mx-auto px-4 lg:px-8">
         {/* 상단 네비게이션 */}
         <Link href="/jobs" className="inline-flex items-center gap-2 text-gold hover:text-gold/80 text-sm font-medium mb-8 transition-colors">

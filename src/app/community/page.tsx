@@ -8,9 +8,9 @@ import { CATEGORY_LABELS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'PC방 창업 커뮤니티 | 성인PC 사업정보 공유 | 성피요',
-  description: '성인PC방 창업자들이 모여 경험과 정보를 공유하는 커뮤니티. 창업팁, 인테리어, 장비정보, 자유로운 질문과 답변을 나누는 공간입니다.',
-  keywords: ['PC방커뮤니티', 'PC방창업정보', '성인PC사업', '피씨방운영팁', 'PC방인테리어', 'PC방장비', '사업정보공유'],
+  title: 'PC방 창업 커뮤니티 | 성인피씨 사업정보 공유 | 성피요',
+  description: '성인피시 창업자들이 모여 경험과 정보를 공유하는 커뮤니티. 창업팁, 인테리어, 장비정보, 자유로운 질문과 답변을 나누는 공간입니다.',
+  keywords: ['성인피씨', '성인피시', '성인피씨창업', '성인pc', 'PC방커뮤니티', 'PC방창업정보', '피씨방운영팁', 'PC방인테리어', 'PC방장비', '사업정보공유'],
   robots: {
     index: true,
     follow: true,
@@ -23,10 +23,11 @@ export const metadata: Metadata = {
     description: '성인PC방 창업자들을 위한 경험 공유 및 정보 커뮤니티',
     type: 'website',
     url: `${SITE_CONFIG.url}/community`,
+    siteName: SITE_CONFIG.businessName,
     locale: 'ko_KR',
     images: [
       {
-        url: `${SITE_CONFIG.url}/423432.png`,
+        url: `${SITE_CONFIG.url}/og-community.png`,
         width: 1200,
         height: 630,
         alt: '성피요 PC방 커뮤니티',
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PC방 창업 커뮤니티',
     description: '성인PC방 창업 정보 커뮤니티',
-    images: [`${SITE_CONFIG.url}/423432.png`],
+    images: [`${SITE_CONFIG.url}/og-community.png`],
   },
 };
 

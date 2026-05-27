@@ -7,6 +7,8 @@ import { CommentSection } from '@/components/community/CommentSection';
 import { formatDateTime } from '@/lib/utils';
 import { CATEGORY_LABELS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
+import { buildPostMetadata, addRobotsToMetadata } from '@/lib/seo-metadata';
+import { buildBreadcrumbSchema, buildNewsArticleSchema } from '@/lib/seo-schema';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -24,34 +26,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!post) {
     return {
-      title: '게시글을 찾을 수 없습니다.',
+      title: 'PC방 커뮤니티 게시글 | 성피요',
+      robots: { index: false },
     };
   }
 
   const categoryLabel = CATEGORY_LABELS[post.category as keyof typeof CATEGORY_LABELS] || '커뮤니티';
-  const title = `${post.title} - ${categoryLabel}`;
-  const rawDescription = post.content.replace(/[^\w\s가-힣]/g, ' ').replace(/\s+/g, ' ').trim();
-  const description = rawDescription.substring(0, 160);
+
+  // SEO 메타데이터 빌더 활용
+  const postMeta = buildPostMetadata({ ...post, category: post.category, status: 'active' });
+  const metaWithRobots = addRobotsToMetadata(postMeta);
+
   const author = (post as any).profiles?.nickname || '익명의 사용자';
 
   return {
-    title,
-    description,
+    title: `${post.title} | PC방 ${categoryLabel} | 성인PC 정보`,
+    description: postMeta.description,
+    keywords: [post.title, categoryLabel, 'PC방', '성인PC', '커뮤니티'],
     authors: [{ name: author }],
-    robots: {
-      index: true,
-      follow: true,
-    },
+    robots: metaWithRobots.robots,
     alternates: {
       canonical: `${SITE_CONFIG.url}/community/${id}`,
     },
     openGraph: {
-      title: `${title} | ${SITE_CONFIG.businessName}`,
-      description,
+      title: `${post.title} | ${categoryLabel}`,
+      description: postMeta.description,
       type: 'article',
       url: `${SITE_CONFIG.url}/community/${id}`,
       siteName: SITE_CONFIG.businessName,
       authors: [author],
+      publishedTime: post.created_at,
       images: [
         {
           url: `${SITE_CONFIG.url}/og-community.png`,
@@ -64,8 +68,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${title} | ${SITE_CONFIG.businessName}`,
-      description,
+      title: `${post.title} | ${categoryLabel}`,
+      description: postMeta.description,
       images: [`${SITE_CONFIG.url}/og-community.png`],
     },
   };
