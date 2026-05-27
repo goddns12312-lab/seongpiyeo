@@ -106,7 +106,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
       title,
       description,
       type: 'website',
-      url: `${SITE_CONFIG.url}/listings/region/${region}`,
+      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
       siteName: SITE_CONFIG.businessName,
       images: [
         {
@@ -257,7 +257,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
         '@type': 'ListItem',
         position: 3,
         name: `${decodedRegion} PC방 매물`,
-        item: `${SITE_CONFIG.url}/listings/region/${region}`,
+        item: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
       },
     ],
   };
@@ -268,7 +268,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
     '@type': 'LocalBusiness',
     name: `${decodedRegion} PC방 매물 - ${SITE_CONFIG.businessName}`,
     description: `${decodedRegion} 지역의 성인 PC방 매물 ${listingCount}개`,
-    url: `${SITE_CONFIG.url}/listings/region/${region}`,
+    url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
     telephone: SITE_CONFIG.phone,
     image: `${SITE_CONFIG.url}/423432.png`,
     areaServed: decodedRegion,

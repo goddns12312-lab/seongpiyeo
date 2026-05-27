@@ -55,7 +55,9 @@
       "Bash(findstr :3002)",
       "Bash(taskkill /PID 23724 /F)",
       "PowerShell(Stop-Process -Id 23724 -Force 2>$null)",
-      "Bash(curl -s \"http://localhost:3002/secondhand\")"
+      "Bash(curl -s \"http://localhost:3002/secondhand\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\B\\\\Desktop\\\\aass\" -Recurse -Filter \"site.ts\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -First 5)"
     ],
     "additionalDirectories": [
       "\\tmp",

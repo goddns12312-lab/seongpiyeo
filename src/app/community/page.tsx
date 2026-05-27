@@ -16,17 +16,17 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/community`,
+    canonical: `${SITE_CONFIG.url}/community`,
   },
   openGraph: {
     title: 'PC방 창업 커뮤니티 | 성피요',
     description: '성인PC방 창업자들을 위한 경험 공유 및 정보 커뮤니티',
     type: 'website',
-    url: `${process.env.NEXT_PUBLIC_BASE_URL}/community`,
+    url: `${SITE_CONFIG.url}/community`,
     locale: 'ko_KR',
     images: [
       {
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/423432.png`,
+        url: `${SITE_CONFIG.url}/423432.png`,
         width: 1200,
         height: 630,
         alt: '성피요 PC방 커뮤니티',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PC방 창업 커뮤니티',
     description: '성인PC방 창업 정보 커뮤니티',
-    images: [`${process.env.NEXT_PUBLIC_BASE_URL}/423432.png`],
+    images: [`${SITE_CONFIG.url}/423432.png`],
   },
 };
 

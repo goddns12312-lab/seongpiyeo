@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // 메타데이터 기본 URL (canonical, og:url 자동 생성)
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL?.startsWith('http')
+      ? process.env.NEXT_PUBLIC_BASE_URL
+      : `https://${process.env.NEXT_PUBLIC_BASE_URL || 'xn--oj4bo2hu1o.com'}`
+  ),
+
   // 이미지 최적화
   images: {
     remotePatterns: [
