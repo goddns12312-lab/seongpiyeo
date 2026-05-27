@@ -73,20 +73,19 @@ export default async function CommunityPage({ searchParams }: Props) {
     postsByCategory[post.category].push(post);
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    '@id': `${baseUrl}/community`,
+    '@id': `${SITE_CONFIG.url}/community`,
     name: 'PC방 창업 커뮤니티 | 성인PC 정보공유',
     description: '성인PC방 창업자들이 모여 경험과 정보를 공유하는 커뮤니티',
-    url: `${baseUrl}/community`,
+    url: `${SITE_CONFIG.url}/community`,
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: (posts?.slice(0, 10) || []).map((post, idx) => ({
         '@type': 'ListItem',
         position: idx + 1,
-        url: `${baseUrl}/community/${post.id}`,
+        url: `${SITE_CONFIG.url}/community/${post.id}`,
         name: post.title,
         description: `${CATEGORY_LABELS[post.category as keyof typeof CATEGORY_LABELS] || post.category}`,
       })),

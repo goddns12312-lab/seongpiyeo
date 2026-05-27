@@ -2,9 +2,20 @@
 const nextConfig = {
   // 메타데이터 기본 URL (canonical, og:url 자동 생성)
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL?.startsWith('http')
-      ? process.env.NEXT_PUBLIC_BASE_URL
-      : `https://${process.env.NEXT_PUBLIC_BASE_URL || 'xn--oj4bo2hu1o.com'}`
+    (() => {
+      let url = process.env.NEXT_PUBLIC_BASE_URL || 'https://xn--oj4bo2hu1o.com';
+
+      // localhost는 개발 환경에서만 허용 (배포 환경에서는 기본값 사용)
+      if (url.includes('localhost') || url.includes('127.0.0.1')) {
+        url = process.env.NODE_ENV === 'development' ? url : 'https://xn--oj4bo2hu1o.com';
+      }
+
+      // 프로토콜 확인
+      if (url.startsWith('http')) {
+        return url;
+      }
+      return `https://${url}`;
+    })()
   ),
 
   // 이미지 최적화

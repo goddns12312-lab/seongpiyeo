@@ -38,11 +38,16 @@ export function convertKoreanDomainToPunycode(domain: string): string {
  * @returns 정규화된 URL
  */
 export function getNormalizedSiteUrl(includeProtocol = true): string {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://xn--oj4bo2hu1o.com';
+  let baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://xn--oj4bo2hu1o.com';
 
-  // localhost는 그대로 반환
+  // localhost는 개발 환경에서만 허용 (배포 환경에서는 기본값 사용)
   if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1')) {
-    return baseUrl;
+    // 개발 환경: localhost 유지
+    if (typeof window === 'undefined' && process.env.NODE_ENV === 'development') {
+      return baseUrl;
+    }
+    // 배포 환경: localhost 무시, 기본값 사용
+    baseUrl = 'https://xn--oj4bo2hu1o.com';
   }
 
   // 프로토콜이 없으면 https 추가

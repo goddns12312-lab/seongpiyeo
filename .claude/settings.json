@@ -57,7 +57,8 @@
       "PowerShell(Stop-Process -Id 23724 -Force 2>$null)",
       "Bash(curl -s \"http://localhost:3002/secondhand\")",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\B\\\\Desktop\\\\aass\" -Recurse -Filter \"site.ts\" -ErrorAction SilentlyContinue)",
-      "Bash(Select-Object -First 5)"
+      "Bash(Select-Object -First 5)",
+      "WebFetch(domain:xn--oj4bo2hu1o.com)"
     ],
     "additionalDirectories": [
       "\\tmp",

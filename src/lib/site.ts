@@ -10,19 +10,28 @@ export const SITE_CONFIG = {
   tagline: '성인PC, 성인피씨 안전한 거래 플랫폼',
   keywords: '성인PC, 성인피씨, 성인피시, 성인피씨창업, PC방창업, 성인피씨방매물, 피씨방임대',
   url: (() => {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://xn--oj4bo2hu1o.com';
-    // localhost는 그대로 반환
+    let baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://xn--oj4bo2hu1o.com';
+
+    // localhost는 개발 환경에서만 허용 (배포 환경에서는 기본값 사용)
     if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1')) {
-      return baseUrl;
+      // 개발 환경: localhost 유지
+      if (typeof window === 'undefined' && process.env.NODE_ENV === 'development') {
+        return baseUrl;
+      }
+      // 배포 환경: localhost 무시, 기본값 사용
+      baseUrl = 'https://xn--oj4bo2hu1o.com';
     }
+
     // 프로토콜 확인
     if (!baseUrl.startsWith('http')) {
       return `https://${baseUrl}`;
     }
+
     // 한글 도메인을 punycode로 변환
     if (baseUrl.includes('성피요')) {
       return baseUrl.replace('성피요', 'xn--oj4bo2hu1o');
     }
+
     return baseUrl;
   })(),
   logoSvg: true,

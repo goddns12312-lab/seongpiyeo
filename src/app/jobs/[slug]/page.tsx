@@ -109,7 +109,7 @@ export default async function JobDetailPage({ params }: Props) {
   // 사용자 정보 조회 (anon key로 공개 프로필만 조회)
   let user: any = null;
   try {
-    const supabase = createClient(SITE_CONFIG.url || 'http://localhost:3002', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+    const supabase = createClient();
     const { data } = await supabase
       .from('profiles')
       .select('nickname, phone')
