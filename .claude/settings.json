@@ -92,7 +92,9 @@
       "Bash(curl -s http://localhost:3002 -I)",
       "Bash(curl -s http://localhost:3002/favicon.png -I)",
       "Bash(curl -s http://localhost:3002/apple-touch-icon.png -I)",
-      "Bash(curl -s http://localhost:3002/logo.png -I)"
+      "Bash(curl -s http://localhost:3002/logo.png -I)",
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)"
     ],
     "additionalDirectories": [
       "\\tmp",

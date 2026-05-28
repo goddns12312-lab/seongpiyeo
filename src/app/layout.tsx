@@ -93,11 +93,6 @@ export const metadata: Metadata = {
       }
     ],
   },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'black-translucent',
-    title: SITE_CONFIG.businessName,
-  },
 };
 
 export const schemaOrganization = {
@@ -194,10 +189,6 @@ export default function RootLayout({
         {/* DNS prefetch for third-party domains */}
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-
-        {/* Preload OG images for faster sharing */}
-        <link rel="preload" href={`${SITE_CONFIG.url}/og-image.png`} as="image" type="image/png" />
-        <link rel="preload" href={`${SITE_CONFIG.url}/og-listings.png`} as="image" type="image/png" />
 
         {/* JSON-LD Structured Data - Organization Schema */}
         <script
