@@ -80,7 +80,8 @@
       "Bash(findstr \":3000\")",
       "Bash(awk '{print $NF}')",
       "Bash(xargs taskkill /PID /F)",
-      "Bash(curl -s http://localhost:3000/listings/new)"
+      "Bash(curl -s http://localhost:3000/listings/new)",
+      "Bash(pkill -f \"npm start\")"
     ],
     "additionalDirectories": [
       "\\tmp",

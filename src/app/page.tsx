@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { formatPrice, formatDate } from '@/lib/utils';
-import { Listing, Banner } from '@/types';
+import { Listing, Banner, REGIONS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
 
 export const metadata: Metadata = {
@@ -63,34 +63,52 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const supabase = await createClient();
 
-  // Get active banners
-  const { data: topBanners } = await supabase
-    .from('banners')
-    .select('*')
-    .eq('is_active', true)
-    .eq('position', 'top')
-    .order('order_num', { ascending: true });
+  // 병렬 데이터 조회
+  const [
+    { data: topBanners },
+    { data: bottomBanners },
+    { count: listingCount },
+    { data: latestListings },
+    { data: latestJobs },
+  ] = await Promise.all([
+    supabase
+      .from('banners')
+      .select('*')
+      .eq('is_active', true)
+      .eq('position', 'top')
+      .order('order_num', { ascending: true }),
+    supabase
+      .from('banners')
+      .select('*')
+      .eq('is_active', true)
+      .eq('position', 'bottom')
+      .order('order_num', { ascending: true }),
+    supabase
+      .from('listings')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'active')
+      .not('main_image_url', 'is', null),
+    supabase
+      .from('listings')
+      .select('id, title, price, region, thumbnail_url, main_image_url, price_type')
+      .eq('status', 'active')
+      .not('main_image_url', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(6),
+    supabase
+      .from('jobs')
+      .select('id, title, region, category')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(6),
+  ]);
 
-  const { data: bottomBanners } = await supabase
-    .from('banners')
-    .select('*')
-    .eq('is_active', true)
-    .eq('position', 'bottom')
-    .order('order_num', { ascending: true });
-
-  // Get stats
-  const { count: listingCount } = await supabase
-    .from('listings')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'active')
-    .not('main_image_url', 'is', null);
-
-  // 테스트용: 회원 수 동적 증가
+  // 회원 수 동적 증가
   const baseUsers = 2859;
   const startDate = new Date('2026-01-01');
   const now = new Date();
   const daysPassed = Math.floor((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-  const userCount = baseUsers + Math.floor(daysPassed * 59); // 하루 59명씩 증가
+  const userCount = baseUsers + Math.floor(daysPassed * 59);
 
   // FAQ Schema
   const faqSchema = {
@@ -133,31 +151,93 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      {/* Top Banner */}
-      {topBanners && topBanners.length > 0 && (
-        <section className="bg-gradient-to-b from-bg-secondary via-bg-secondary to-bg-primary border-b border-gold/30">
-          <div className="max-w-full mx-auto px-4 lg:px-8 py-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {topBanners.slice(0, 2).map((banner: Banner, idx: number) => (
+      {/* Compact Hero Section */}
+      <section className="max-w-full mx-auto px-4 lg:px-8 py-8 md:py-12 relative overflow-hidden border-b border-gold/20">
+        <div className="text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-3 leading-tight">
+            성인PC · 성인피씨 매매/구인 플랫폼
+          </h1>
+          <p className="text-text-secondary text-sm md:text-base mb-6 max-w-2xl mx-auto">
+            전국 성인PC 매물 · 구인구직 · 창업정보를 한곳에서
+          </p>
+
+          {/* Compact Stats */}
+          <div className="grid grid-cols-3 gap-3 md:gap-4 py-4 px-4 md:px-6 bg-bg-secondary border border-gold/30 rounded-lg max-w-2xl mx-auto mb-6">
+            <div className="text-center">
+              <p className="text-2xl md:text-3xl font-bold text-gold">{listingCount || 0}</p>
+              <p className="text-text-secondary text-xs md:text-sm font-medium">매물</p>
+            </div>
+            <div className="text-center border-l border-r border-gold/30">
+              <p className="text-2xl md:text-3xl font-bold text-gold">{userCount || 0}</p>
+              <p className="text-text-secondary text-xs md:text-sm font-medium">회원</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl md:text-3xl font-bold text-gold">24/7</p>
+              <p className="text-text-secondary text-xs md:text-sm font-medium">운영</p>
+            </div>
+          </div>
+
+          {/* CTA Buttons - 3개 */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
+            <Link href="/listings">
+              <Button variant="primary" size="lg" className="font-semibold text-sm md:text-base">
+                📋 매물 보기
+              </Button>
+            </Link>
+            <Link href="/listings/new">
+              <Button variant="secondary" size="lg" className="font-semibold text-sm md:text-base">
+                ✚ 매물 등록
+              </Button>
+            </Link>
+            <Link href="/jobs/new">
+              <Button variant="secondary" size="lg" className="font-semibold text-sm md:text-base">
+                💼 구인 등록
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+
+      {/* Latest Listings Section */}
+      {latestListings && latestListings.length > 0 && (
+        <section className="max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-gold/20">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 매물</h2>
+              <Link href="/listings" className="text-gold text-sm font-medium hover:text-gold/80 transition-colors">
+                전체 보기 →
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+              {latestListings.map((listing: any) => (
                 <Link
-                  key={banner.id}
-                  href={banner.link_url || '#'}
-                  className="group relative rounded-2xl overflow-hidden shadow-lg block transition-shadow duration-300 hover:shadow-xl"
+                  key={listing.id}
+                  href={`/listings/${listing.id}`}
+                  className="group relative rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="relative w-full aspect-video bg-bg-tertiary">
-                    <Image
-                      src={banner.image_url}
-                      alt={`${banner.title} - 성인PC 성피요 광고`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover brightness-100"
-                      priority={false}
-                      quality={80}
-                      placeholder="blur"
-                      blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'%3E%3Crect fill='%23222222' width='1200' height='630'/%3E%3C/svg%3E"
-                    />
+                  <div className="relative w-full aspect-video bg-bg-secondary">
+                    {listing.main_image_url || listing.thumbnail_url ? (
+                      <Image
+                        src={listing.main_image_url || listing.thumbnail_url}
+                        alt={listing.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                        quality={75}
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-bg-tertiary flex items-center justify-center text-text-secondary">
+                        📷
+                      </div>
+                    )}
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute bottom-0 left-0 right-0 p-2 text-white">
+                    <p className="text-xs font-semibold truncate">{listing.title}</p>
+                    <p className="text-xs text-white/80">{formatPrice(listing.price)}만원</p>
+                  </div>
                 </Link>
               ))}
             </div>
@@ -165,126 +245,107 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Hero Section */}
-      <section className="max-w-full mx-auto px-4 lg:px-8 py-14 md:py-20 relative overflow-hidden">
+      {/* Latest Jobs Section */}
+      {latestJobs && latestJobs.length > 0 && (
+        <section className="max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-gold/20">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 구인공고</h2>
+              <Link href="/jobs" className="text-gold text-sm font-medium hover:text-gold/80 transition-colors">
+                전체 보기 →
+              </Link>
+            </div>
 
-        <div className="text-center mb-14">
-          <h1 className="text-5xl md:text-6xl font-bold text-text-primary mb-6 leading-tight" style={{
-            background: 'linear-gradient(135deg, rgb(243, 244, 246) 0%, rgb(200, 169, 107) 100%)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          }}>
-            성인PC 성인피씨 성인피시 창업 | {SITE_CONFIG.businessName}
-          </h1>
-          <p className="text-text-secondary text-lg md:text-xl font-light mb-10 max-w-3xl mx-auto leading-relaxed">
-            {SITE_CONFIG.tagline}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/listings">
-              <Button variant="primary" size="lg" className="text-lg font-semibold shadow-xl hover:shadow-gold/50">
-                ▶ 매물 보기
-              </Button>
-            </Link>
-            <Link href="/listings/new">
-              <Button variant="secondary" size="lg" className="text-lg font-semibold shadow-xl hover:shadow-gold/50">
-                ✚ 매물 등록
-              </Button>
-            </Link>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {latestJobs.map((job: any) => (
+                <Link
+                  key={job.id}
+                  href={`/jobs/${job.id}`}
+                  className="p-4 bg-bg-secondary border border-gold/20 rounded-lg hover:border-gold/50 transition-all duration-300 hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <p className="text-text-primary font-semibold text-sm line-clamp-2">{job.title}</p>
+                      <p className="text-text-secondary text-xs mt-1">{job.region}</p>
+                    </div>
+                    <Badge className="ml-2" variant="outline">
+                      {job.category === 'recruitment' ? '채용' : '구직'}
+                    </Badge>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-5 py-12 px-6 md:px-10 bg-gradient-to-r from-gold/10 via-gold/5 to-gold/10 border-2 border-gold/40 rounded-3xl max-w-3xl mx-auto glass backdrop-blur-sm shadow-xl shadow-gold/20">
-          <div className="text-center">
-            <p className="text-5xl font-black text-gold mb-3 drop-shadow-lg">{listingCount || 0}</p>
-            <p className="text-text-secondary text-sm font-semibold uppercase tracking-wider">활성 매물</p>
-          </div>
-          <div className="text-center border-l border-r border-gold/30">
-            <p className="text-5xl font-black text-gold mb-3 drop-shadow-lg">{userCount || 0}</p>
-            <p className="text-text-secondary text-sm font-semibold uppercase tracking-wider">회원 수</p>
-          </div>
-          <div className="text-center">
-            <p className="text-5xl font-black text-gold mb-3 drop-shadow-lg">24/7</p>
-            <p className="text-text-secondary text-sm font-semibold uppercase tracking-wider">운영</p>
-          </div>
-        </div>
-      </section>
-
+        </section>
+      )}
 
       {/* Features Section */}
-      <section className="max-w-full mx-auto px-4 lg:px-8 py-16 border-t border-gold/20 relative">
+      <section className="max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-gold/20 relative">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-text-primary mb-2">
+            왜 <span className="text-gold">{SITE_CONFIG.businessName}</span>를 선택할까요?
+          </h2>
+          <p className="text-center text-text-secondary text-sm md:text-base mb-8 max-w-2xl mx-auto">
+            안전하고 투명한 성인PC 거래 플랫폼
+          </p>
 
-        <h2 className="text-4xl md:text-5xl font-bold text-center text-text-primary mb-4">
-          왜 <span className="text-gold">{SITE_CONFIG.businessName}</span>로 성인PC 창업을 하나요?
-        </h2>
-        <p className="text-center text-text-secondary font-semibold mb-14 max-w-2xl mx-auto text-base">
-          🏆 성인피씨, 성인피시 안전한 거래 환경
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-7 max-w-5xl mx-auto">
-          {[
-            {
-              icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
-              title: '안전한 거래',
-              desc: '회원 인증 및 신뢰도 시스템으로 안전한 거래 환경을 제공합니다.'
-            },
-            {
-              icon: 'M13 10V3L4 14h7v7l9-11h-7z',
-              title: '빠른 매칭',
-              desc: '지역별 검색으로 원하는 매물을 빠르게 찾을 수 있습니다.'
-            },
-            {
-              icon: 'M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zM5 20a6 6 0 0110-12v12a6 6 0 01-10 0z',
-              title: '활발한 커뮤니티',
-              desc: '경험자들의 조언과 정보를 나눌 수 있는 커뮤니티입니다.'
-            }
-          ].map((feature, idx) => (
-            <div
-              key={idx}
-              className="group relative p-8 rounded-3xl bg-gradient-to-br from-bg-secondary to-bg-tertiary border-2 border-gold/40 hover:border-gold/80 transition-all duration-300 hover:shadow-lg glass overflow-hidden cursor-pointer"
-            >
-              <div className="bg-gradient-to-br from-gold/50 to-gold/30 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 shadow-lg">
-                <svg className="w-8 h-8 text-white font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={feature.icon} />
-                </svg>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              {
+                icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+                title: '안전한 거래',
+                desc: '회원 인증 및 신뢰도 시스템'
+              },
+              {
+                icon: 'M13 10V3L4 14h7v7l9-11h-7z',
+                title: '빠른 매칭',
+                desc: '지역별 검색으로 즉시 발견'
+              },
+              {
+                icon: 'M17 20h5v-2a3 3 0 00-5.856-1.487M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zM5 20a6 6 0 0110-12v12a6 6 0 01-10 0z',
+                title: '활발한 커뮤니티',
+                desc: '전문가 조언과 정보 공유'
+              }
+            ].map((feature, idx) => (
+              <div
+                key={idx}
+                className="p-4 md:p-5 rounded-lg bg-bg-secondary border border-gold/30 hover:border-gold/60 transition-all duration-300 text-center"
+              >
+                <div className="bg-gold/20 w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={feature.icon} />
+                  </svg>
+                </div>
+                <h3 className="text-text-primary font-semibold text-sm md:text-base mb-1">{feature.title}</h3>
+                <p className="text-text-secondary text-xs md:text-sm">{feature.desc}</p>
               </div>
-
-              <h3 className="text-text-primary font-black mb-3 text-xl">{feature.title}</h3>
-              <p className="text-text-secondary text-sm font-medium leading-relaxed">
-                {feature.desc}
-              </p>
-
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Bottom Banners */}
       {bottomBanners && bottomBanners.length > 0 && (
-        <section className="bg-gradient-to-t from-gold/10 via-bg-secondary to-bg-primary border-t-2 border-gold/30 relative py-10">
-
-          <div className="max-w-full mx-auto px-4 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {bottomBanners.map((banner: Banner, idx: number) => (
+        <section className="border-t border-gold/20 relative py-6 md:py-8">
+          <div className="max-w-6xl mx-auto px-4 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+              {bottomBanners.slice(0, 3).map((banner: Banner) => (
                 <Link
                   key={banner.id}
                   href={banner.link_url || '#'}
-                  className="group relative rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl border-2 border-gold/30 hover:border-gold/60"
+                  className="group relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="relative w-full aspect-video bg-bg-tertiary">
+                  <div className="relative w-full aspect-video bg-bg-secondary">
                     <Image
                       src={banner.image_url}
-                      alt={`${banner.title} - 성인PC 성피요 광고`}
+                      alt={banner.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover transition-all duration-300 brightness-100"
-                      quality={80}
-                      placeholder="blur"
-                      blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'%3E%3Crect fill='%23222222' width='1200' height='630'/%3E%3C/svg%3E"
+                      className="object-cover group-hover:brightness-110 transition-all duration-300"
+                      quality={75}
+                      loading="lazy"
                     />
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                 </Link>
               ))}
             </div>
