@@ -81,7 +81,8 @@
       "Bash(awk '{print $NF}')",
       "Bash(xargs taskkill /PID /F)",
       "Bash(curl -s http://localhost:3000/listings/new)",
-      "Bash(pkill -f \"npm start\")"
+      "Bash(pkill -f \"npm start\")",
+      "Bash(Select-Object Id, ProcessName, Handles)"
     ],
     "additionalDirectories": [
       "\\tmp",
