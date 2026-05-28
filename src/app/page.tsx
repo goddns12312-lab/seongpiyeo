@@ -151,6 +151,35 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
+      {/* Top Banners */}
+      {topBanners && topBanners.length > 0 && (
+        <section className="border-b border-gold/20 relative py-3 md:py-4">
+          <div className="max-w-full mx-auto px-4 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+              {topBanners.slice(0, 3).map((banner: Banner) => (
+                <Link
+                  key={banner.id}
+                  href={banner.link_url || '#'}
+                  className="group relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  <div className="relative w-full aspect-[2/1] bg-bg-secondary">
+                    <Image
+                      src={banner.image_url}
+                      alt={banner.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover group-hover:brightness-110 transition-all duration-300"
+                      quality={75}
+                      priority
+                    />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Compact Hero Section */}
       <section className="max-w-full mx-auto px-4 lg:px-8 py-8 md:py-12 relative overflow-hidden border-b border-gold/20">
         <div className="text-center">
@@ -217,7 +246,7 @@ export default async function HomePage() {
                   href={`/listings/${listing.id}`}
                   className="group relative rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="relative w-full aspect-[3/2] bg-bg-secondary">
+                  <div className="relative w-full aspect-[4/3] bg-bg-secondary">
                     {listing.main_image_url || listing.thumbnail_url ? (
                       <Image
                         src={listing.main_image_url || listing.thumbnail_url}
@@ -335,7 +364,7 @@ export default async function HomePage() {
                   href={banner.link_url || '#'}
                   className="group relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="relative w-full aspect-[3/1] bg-bg-secondary">
+                  <div className="relative w-full aspect-[2/1] bg-bg-secondary">
                     <Image
                       src={banner.image_url}
                       alt={banner.title}
