@@ -153,21 +153,21 @@ export default async function HomePage() {
 
       {/* Top Banners */}
       {topBanners && topBanners.length > 0 && (
-        <section className="border-b border-border-light relative py-4 md:py-6">
-          <div className="max-w-6xl mx-auto px-4 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
-              {topBanners.slice(0, 3).map((banner: Banner) => (
+        <section className="border-b border-border-light relative py-5 md:py-6">
+          <div className="w-full px-6 lg:px-8 max-w-[1650px] mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+              {topBanners.slice(0, 2).map((banner: Banner) => (
                 <Link
                   key={banner.id}
                   href={banner.link_url || '#'}
                   className="relative rounded-lg overflow-hidden"
                 >
-                  <div className="relative w-full aspect-[3/1] bg-bg-tertiary">
+                  <div className="relative w-full aspect-[7/2] bg-bg-tertiary">
                     <Image
                       src={banner.image_url}
                       alt={banner.title}
                       fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover object-center"
                       quality={75}
                       priority
@@ -181,7 +181,7 @@ export default async function HomePage() {
       )}
 
       {/* Compact Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 lg:px-8 py-8 md:py-10 relative overflow-hidden border-b border-border-light">
+      <section className="w-full px-6 lg:px-8 max-w-[1650px] mx-auto py-6 md:py-8 relative overflow-hidden border-b border-border-light">
         <div className="text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-3 leading-tight">
             성인PC · 성인피씨 매매/구인 플랫폼
@@ -355,21 +355,21 @@ export default async function HomePage() {
 
       {/* Bottom Banners */}
       {bottomBanners && bottomBanners.length > 0 && (
-        <section className="border-t border-border-light relative py-4 md:py-6">
-          <div className="max-w-6xl mx-auto px-4 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
-              {bottomBanners.slice(0, 3).map((banner: Banner) => (
+        <section className="border-t border-border-light relative py-5 md:py-6">
+          <div className="w-full px-6 lg:px-8 max-w-[1650px] mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+              {bottomBanners.slice(0, 2).map((banner: Banner) => (
                 <Link
                   key={banner.id}
                   href={banner.link_url || '#'}
                   className="relative rounded-lg overflow-hidden"
                 >
-                  <div className="relative w-full aspect-[3/1] bg-bg-tertiary">
+                  <div className="relative w-full aspect-[7/2] bg-bg-tertiary">
                     <Image
                       src={banner.image_url}
                       alt={banner.title}
                       fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover object-center"
                       quality={75}
                       loading="lazy"
