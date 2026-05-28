@@ -1693,3 +1693,33 @@ Call log:
 ║                                                            ║
 ║ <3 Playwright Team                                         ║
 ╚════════════════════════════════════════════════════════════╝
+[2026. 5. 29. AM 1:05:02] [INFO] Playwright 브라우저 시작 중...
+[2026. 5. 29. AM 1:05:02] [ERROR] ✗ 치명적 오류: browserType.launch: Executable doesn't exist at C:\WINDOWS\system32\config\systemprofile\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     npx playwright install                                 ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+[2026. 5. 29. AM 2:05:02] [INFO] Playwright 브라우저 시작 중...
+[2026. 5. 29. AM 2:05:02] [ERROR] ✗ 치명적 오류: browserType.launch: Executable doesn't exist at C:\WINDOWS\system32\config\systemprofile\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     npx playwright install                                 ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+[2026. 5. 29. AM 3:17:24] [INFO] Playwright 브라우저 시작 중...
+[2026. 5. 29. AM 3:17:24] [ERROR] ✗ 치명적 오류: browserType.launch: Executable doesn't exist at C:\WINDOWS\system32\config\systemprofile\AppData\Local\ms-playwright\chromium_headless_shell-1223\chrome-headless-shell-win64\chrome-headless-shell.exe
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     npx playwright install                                 ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝

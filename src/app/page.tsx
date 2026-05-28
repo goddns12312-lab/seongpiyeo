@@ -154,8 +154,8 @@ export default async function HomePage() {
       {/* Top Banners */}
       {topBanners && topBanners.length > 0 && (
         <section className="border-b border-gold/20 relative py-3 md:py-4">
-          <div className="max-w-full mx-auto px-4 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+          <div className="max-w-6xl mx-auto px-4 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 justify-center">
               {topBanners.slice(0, 3).map((banner: Banner) => (
                 <Link
                   key={banner.id}
