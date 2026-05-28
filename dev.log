@@ -1,6 +1,6 @@
 
 > seongpiyeo@0.1.0 dev
-> next dev -p 3002
+> next dev -p 3002 -p 3002
 
  ⨯ Failed to start server
 Error: listen EADDRINUSE: address already in use :::3002

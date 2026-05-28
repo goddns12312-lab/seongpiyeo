@@ -1,21 +1,27 @@
-import type { Metadata } from 'next';
-import Script from 'next/script';
+import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
+import { createCanonicalUrl } from '@/lib/url-utils';
 
 export const metadata: Metadata = {
-  title: '공지사항 | PC방 거래 플랫폼 소식 | 성피요',
-  description: '성피요 플랫폼 공지사항, 업데이트 소식, 중요 알림을 확인하세요. 성인pc 거래 관련 최신 정보를 제공합니다.',
-  keywords: ['성인피씨', '성인피시', '성인피씨창업', '성인pc', '공지사항', 'PC방', '거래플랫폼', '업데이트'],
+  title: '공지사항 | 성인PC 뉴스 | 성피요',
+  description: '성피요의 최신 소식과 공지사항. 서비스 업데이트, 이벤트, PC방 관련 뉴스를 확인하세요.',
+  keywords: ['공지', '공지사항', '뉴스', '소식', '이벤트', '업데이트'],
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
+    },
   },
   alternates: {
-    canonical: `${SITE_CONFIG.url}/notice`,
+    canonical: createCanonicalUrl('/notice'),
   },
   openGraph: {
-    title: '공지사항 | PC방 거래 플랫폼 소식',
-    description: '성피요 플랫폼 공지사항, 업데이트 소식, 중요 알림을 확인하세요.',
+    title: '공지사항 | 성피요',
+    description: '성피요 뉴스와 공지사항',
     type: 'website',
     url: `${SITE_CONFIG.url}/notice`,
     siteName: SITE_CONFIG.businessName,
@@ -32,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '공지사항 | 성피요',
-    description: '플랫폼 공지사항, 업데이트 소식, 중요 알림',
+    title: '공지사항',
+    description: '성피요 뉴스와 공지사항',
     images: [`${SITE_CONFIG.url}/og-notice.png`],
   },
 };
@@ -43,33 +49,5 @@ export default function NoticeLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: '홈',
-        item: SITE_CONFIG.url,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: '공지사항',
-        item: `${SITE_CONFIG.url}/notice`,
-      },
-    ],
-  };
-
-  return (
-    <>
-      <Script
-        id="notice-breadcrumb-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      {children}
-    </>
-  );
+  return children;
 }

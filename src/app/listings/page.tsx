@@ -9,6 +9,7 @@ import { RegionFilter } from '@/components/listings/RegionFilter';
 import { SITE_CONFIG } from '@/lib/site';
 import { buildListingsMetadata, addRobotsToMetadata } from '@/lib/seo-metadata';
 import { buildCollectionPageSchema } from '@/lib/seo-schema';
+import { createCanonicalUrl } from '@/lib/url-utils';
 
 // 매물 목록 캐시 비활성화 (항상 최신 데이터)
 export const revalidate = 0;
@@ -33,7 +34,9 @@ export async function generateMetadata(
     keywords: metaWithRobots.keywords,
     authors: [{ name: SITE_CONFIG.managerName }],
     robots: metaWithRobots.robots,
-    alternates: metaWithRobots.alternates,
+    alternates: {
+      canonical: createCanonicalUrl('/listings'),
+    },
     openGraph: {
       title: metaWithRobots.ogTitle,
       description: metaWithRobots.ogDescription,

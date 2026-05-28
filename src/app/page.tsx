@@ -34,10 +34,6 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_CONFIG.url,
-    languages: {
-      'ko': SITE_CONFIG.url,
-      'x-default': SITE_CONFIG.url,
-    },
   },
   openGraph: {
     title: '성인PC 성인피씨 성인피시 창업 정보 | 성피요',

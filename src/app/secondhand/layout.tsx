@@ -1,21 +1,27 @@
-import type { Metadata } from 'next';
-import Script from 'next/script';
+import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
+import { createCanonicalUrl } from '@/lib/url-utils';
 
 export const metadata: Metadata = {
-  title: '중고장터 | PC방 기자재 거래 | 성인피씨 중고물품',
-  description: 'PC방 기자재 및 중고 물품 거래 플랫폼. PC, 의자, 모니터 등 중고 기기를 사고팔 수 있습니다. 성피요 중고장터에서 안전한 거래를 시작하세요.',
-  keywords: ['성인피씨', '성인피시', '성인피씨창업', '성인pc', '중고PC', 'PC방기자재', '중고의자', '중고모니터', 'PC방용품', '중고장터'],
+  title: 'PC방 중고장터 | 성인피씨 중고물품 거래 | 성피요',
+  description: 'PC방 관련 중고 물품을 안전하게 거래하는 공간. 성인PC 장비, PC방 물품 구매, 판매, 렌탈 정보를 한곳에서 찾으세요.',
+  keywords: ['중고', '중고장터', '성인피씨', '성인피시', 'PC방', '물품', '장비', '거래'],
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
+    },
   },
   alternates: {
-    canonical: `${SITE_CONFIG.url}/secondhand`,
+    canonical: createCanonicalUrl('/secondhand'),
   },
   openGraph: {
-    title: '중고장터 | PC방 기자재 거래',
-    description: 'PC방 기자재 및 중고 물품 거래 플랫폼. PC, 의자, 모니터 등 중고 기기를 사고팔 수 있습니다.',
+    title: 'PC방 중고장터 | 성피요',
+    description: 'PC방 관련 중고물품 거래',
     type: 'website',
     url: `${SITE_CONFIG.url}/secondhand`,
     siteName: SITE_CONFIG.businessName,
@@ -25,15 +31,15 @@ export const metadata: Metadata = {
         url: `${SITE_CONFIG.url}/og-secondhand.png`,
         width: 1200,
         height: 630,
-        alt: 'PC방 중고장터',
+        alt: '성피요 PC방 중고장터',
         type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '중고장터 | PC방 기자재 거래',
-    description: 'PC방 기자재 및 중고 물품 거래 플랫폼',
+    title: 'PC방 중고장터',
+    description: 'PC방 관련 중고물품 거래',
     images: [`${SITE_CONFIG.url}/og-secondhand.png`],
   },
 };
@@ -43,51 +49,5 @@ export default function SecondhandLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const secondhandCollectionSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    '@id': `${SITE_CONFIG.url}/secondhand`,
-    name: 'PC방 중고장터',
-    description: 'PC방 기자재 및 중고 물품 거래 플랫폼',
-    url: `${SITE_CONFIG.url}/secondhand`,
-    mainEntity: {
-      '@type': 'ItemList',
-      itemListElement: [],
-    },
-  };
-
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: '홈',
-        item: SITE_CONFIG.url,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: '중고장터',
-        item: `${SITE_CONFIG.url}/secondhand`,
-      },
-    ],
-  };
-
-  return (
-    <>
-      <Script
-        id="secondhand-collection-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(secondhandCollectionSchema) }}
-      />
-      <Script
-        id="secondhand-breadcrumb-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      {children}
-    </>
-  );
+  return children;
 }

@@ -65,7 +65,18 @@
       "Bash(Format-Table FullName)",
       "Bash(npx playwright *)",
       "Bash(grep -E \"\\\\.tsx$\")",
-      "PowerShell(netstat -ano | Select-String \":3002\" | ForEach-Object { $parts = $_ -split '\\\\s+'; $pid = $parts[-1]; \"PID: $pid\"; Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue })"
+      "PowerShell(netstat -ano | Select-String \":3002\" | ForEach-Object { $parts = $_ -split '\\\\s+'; $pid = $parts[-1]; \"PID: $pid\"; Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue })",
+      "Bash(curl -s http://localhost:3002/community)",
+      "Bash(findstr \":3002\")",
+      "Bash(taskkill /F /PID 12872)",
+      "Bash(npm start *)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl -s http://localhost:3000/listings)",
+      "Bash(curl -s http://localhost:3000/community)",
+      "Bash(curl -s http://localhost:3000/jobs)",
+      "Bash(curl -s http://localhost:3000/secondhand)",
+      "Bash(curl -s http://localhost:3000/guide)",
+      "Bash(curl -s http://localhost:3000/faq)"
     ],
     "additionalDirectories": [
       "\\tmp",

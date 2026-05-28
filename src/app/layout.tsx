@@ -64,7 +64,6 @@ export const metadata: Metadata = {
     images: [`${SITE_CONFIG.url}/twitter-image.png`],
   },
   alternates: {
-    canonical: SITE_CONFIG.url,
     languages: {
       'ko': `${SITE_CONFIG.url}`,
       'en': `${SITE_CONFIG.url}/en`,
@@ -168,7 +167,6 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="canonical" href={SITE_CONFIG.url} />
         <link rel="alternate" hrefLang="ko" href={SITE_CONFIG.url} />
         {/* Preconnect for performance optimization */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

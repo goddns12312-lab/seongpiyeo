@@ -646,18 +646,48 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
       {/* 상세설명 */}
       <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
         <label className="block text-text-primary text-sm font-medium mb-2">상세설명 (선택)</label>
-        <p className="text-text-secondary text-xs mb-2">매물에 대한 상세 설명을 입력하세요</p>
+        <p className="text-text-secondary text-xs mb-3">매물에 대한 상세 설명을 입력하세요. 아래 양식을 참고하세요.</p>
         <textarea
           name="description"
           value={formData.description}
           onChange={handleInputChange}
-          placeholder="상세 설명을 입력하세요"
-          rows={5}
+          placeholder={`1. 매물업종: 성인PC방
+2. 매물위치:
+3. 실평수:
+4. 해당층:
+5. 보증금:
+6. 희망권리금:
+7. 월세:
+8. 시설집기: 예) PC6대, 에어컨1대, 냉난방기1대
+9. 입주가능일:
+10. 사업자&영업허가증 여부:
+11. 행정처분여부:
+12. 연락처: `}
+          rows={8}
           maxLength={1000}
-          className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary rounded focus:outline-none focus:border-gold resize-none"
+          className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary text-sm rounded focus:outline-none focus:border-gold resize-none"
         />
         <div className="text-text-secondary text-xs mt-2 text-right">
           {formData.description.length}/1000
+        </div>
+
+        {/* 양식 안내 */}
+        <div className="mt-4 p-4 bg-bg-tertiary rounded border border-border-light">
+          <p className="text-text-secondary text-xs font-semibold mb-2">📋 기본 양식 (텍스트를 복사해서 수정하세요)</p>
+          <div className="text-text-secondary text-xs space-y-1 font-mono text-xs bg-bg-primary p-2 rounded overflow-auto max-h-40">
+            <div>1. 매물업종: 성인PC방</div>
+            <div>2. 매물위치:</div>
+            <div>3. 실평수:</div>
+            <div>4. 해당층:</div>
+            <div>5. 보증금:</div>
+            <div>6. 희망권리금:</div>
+            <div>7. 월세:</div>
+            <div>8. 시설집기: 예) PC6대, 에어컨1대, 냉난방기1대, 공기청정기2대, 냉장고2대, 정수기</div>
+            <div>9. 입주가능일:</div>
+            <div>10. 사업자&영업허가증 여부:</div>
+            <div>11. 행정처분여부: (거짓 정보시 무기한 이용불가)</div>
+            <div>12. 연락처:</div>
+          </div>
         </div>
       </div>
 
