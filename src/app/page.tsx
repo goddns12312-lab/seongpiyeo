@@ -217,7 +217,7 @@ export default async function HomePage() {
                   href={`/listings/${listing.id}`}
                   className="group relative rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="relative w-full aspect-video bg-bg-secondary">
+                  <div className="relative w-full aspect-[3/2] bg-bg-secondary">
                     {listing.main_image_url || listing.thumbnail_url ? (
                       <Image
                         src={listing.main_image_url || listing.thumbnail_url}
@@ -335,7 +335,7 @@ export default async function HomePage() {
                   href={banner.link_url || '#'}
                   className="group relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="relative w-full aspect-video bg-bg-secondary">
+                  <div className="relative w-full aspect-[3/1] bg-bg-secondary">
                     <Image
                       src={banner.image_url}
                       alt={banner.title}
