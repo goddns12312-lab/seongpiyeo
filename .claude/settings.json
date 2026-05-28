@@ -64,7 +64,8 @@
       "Bash(Select-Object -First 20)",
       "Bash(Format-Table FullName)",
       "Bash(npx playwright *)",
-      "Bash(grep -E \"\\\\.tsx$\")"
+      "Bash(grep -E \"\\\\.tsx$\")",
+      "PowerShell(netstat -ano | Select-String \":3002\" | ForEach-Object { $parts = $_ -split '\\\\s+'; $pid = $parts[-1]; \"PID: $pid\"; Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue })"
     ],
     "additionalDirectories": [
       "\\tmp",

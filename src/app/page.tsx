@@ -146,17 +146,22 @@ export default async function HomePage() {
                 <Link
                   key={banner.id}
                   href={banner.link_url || '#'}
-                  className="group relative rounded-2xl overflow-hidden shadow-2xl block transition-all duration-500 hover:shadow-2xl hover:-translate-y-3"
-                  style={{ animationDelay: `${idx * 0.1}s` }}
+                  className="group relative rounded-2xl overflow-hidden shadow-lg block transition-shadow duration-300 hover:shadow-xl"
                 >
-                  <img
-                    src={banner.image_url}
-                    alt={`${banner.title} - 성인PC 성피요 광고`}
-                    className="w-full h-auto object-cover transition-transform duration-700 block brightness-100 group-hover:brightness-125"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold/50 via-gold/20 to-transparent" />
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-radial from-white/10 via-transparent to-transparent" />
+                  <div className="relative w-full aspect-video bg-bg-tertiary">
+                    <Image
+                      src={banner.image_url}
+                      alt={`${banner.title} - 성인PC 성피요 광고`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover brightness-100"
+                      priority={false}
+                      quality={80}
+                      placeholder="blur"
+                      blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'%3E%3Crect fill='%23222222' width='1200' height='630'/%3E%3C/svg%3E"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                 </Link>
               ))}
             </div>
@@ -166,14 +171,9 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="max-w-full mx-auto px-4 lg:px-8 py-14 md:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-gold/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gold/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 left-0 w-80 h-80 bg-gold/10 rounded-full blur-3xl" />
-        </div>
 
         <div className="text-center mb-14">
-          <h1 className="text-5xl md:text-6xl font-bold text-text-primary mb-6 animate-fadeInUp leading-tight" style={{
+          <h1 className="text-5xl md:text-6xl font-bold text-text-primary mb-6 leading-tight" style={{
             background: 'linear-gradient(135deg, rgb(243, 244, 246) 0%, rgb(200, 169, 107) 100%)',
             backgroundClip: 'text',
             WebkitBackgroundClip: 'text',
@@ -181,17 +181,17 @@ export default async function HomePage() {
           }}>
             성인PC 성인피씨 성인피시 창업 | {SITE_CONFIG.businessName}
           </h1>
-          <p className="text-text-secondary text-lg md:text-xl font-light mb-10 max-w-3xl mx-auto leading-relaxed animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+          <p className="text-text-secondary text-lg md:text-xl font-light mb-10 max-w-3xl mx-auto leading-relaxed">
             {SITE_CONFIG.tagline}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/listings">
-              <Button variant="primary" size="lg" className="hover-lift text-lg font-semibold shadow-2xl hover:shadow-gold/50 hover:shadow-2xl">
+              <Button variant="primary" size="lg" className="text-lg font-semibold shadow-xl hover:shadow-gold/50">
                 ▶ 매물 보기
               </Button>
             </Link>
             <Link href="/listings/new">
-              <Button variant="secondary" size="lg" className="hover-lift text-lg font-semibold shadow-2xl hover:shadow-gold/50 hover:shadow-2xl">
+              <Button variant="secondary" size="lg" className="text-lg font-semibold shadow-xl hover:shadow-gold/50">
                 ✚ 매물 등록
               </Button>
             </Link>
@@ -199,17 +199,17 @@ export default async function HomePage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-5 py-12 px-6 md:px-10 bg-gradient-to-r from-gold/10 via-gold/5 to-gold/10 border-2 border-gold/40 rounded-3xl max-w-3xl mx-auto glass backdrop-blur-xl shadow-2xl shadow-gold/30">
-          <div className="text-center group cursor-pointer">
-            <p className="text-5xl font-black text-gold mb-3 group-hover:scale-110 group-hover:text-gold-light transition-all duration-300 drop-shadow-lg">{listingCount || 0}</p>
+        <div className="grid grid-cols-3 gap-5 py-12 px-6 md:px-10 bg-gradient-to-r from-gold/10 via-gold/5 to-gold/10 border-2 border-gold/40 rounded-3xl max-w-3xl mx-auto glass backdrop-blur-sm shadow-xl shadow-gold/20">
+          <div className="text-center">
+            <p className="text-5xl font-black text-gold mb-3 drop-shadow-lg">{listingCount || 0}</p>
             <p className="text-text-secondary text-sm font-semibold uppercase tracking-wider">활성 매물</p>
           </div>
-          <div className="text-center border-l border-r border-gold/30 group cursor-pointer">
-            <p className="text-5xl font-black text-gold mb-3 group-hover:scale-110 group-hover:text-gold-light transition-all duration-300 drop-shadow-lg">{userCount || 0}</p>
+          <div className="text-center border-l border-r border-gold/30">
+            <p className="text-5xl font-black text-gold mb-3 drop-shadow-lg">{userCount || 0}</p>
             <p className="text-text-secondary text-sm font-semibold uppercase tracking-wider">회원 수</p>
           </div>
-          <div className="text-center group cursor-pointer">
-            <p className="text-5xl font-black text-gold mb-3 group-hover:scale-110 group-hover:text-gold-light transition-all duration-300 drop-shadow-lg">24/7</p>
+          <div className="text-center">
+            <p className="text-5xl font-black text-gold mb-3 drop-shadow-lg">24/7</p>
             <p className="text-text-secondary text-sm font-semibold uppercase tracking-wider">운영</p>
           </div>
         </div>
@@ -218,15 +218,11 @@ export default async function HomePage() {
 
       {/* Features Section */}
       <section className="max-w-full mx-auto px-4 lg:px-8 py-16 border-t border-gold/20 relative">
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-1/2 right-0 w-96 h-96 bg-gold/30 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-gold/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        </div>
 
-        <h2 className="text-4xl md:text-5xl font-bold text-center text-text-primary mb-4 animate-fadeInUp">
+        <h2 className="text-4xl md:text-5xl font-bold text-center text-text-primary mb-4">
           왜 <span className="text-gold">{SITE_CONFIG.businessName}</span>로 성인PC 창업을 하나요?
         </h2>
-        <p className="text-center text-text-secondary font-semibold mb-14 max-w-2xl mx-auto text-base animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+        <p className="text-center text-text-secondary font-semibold mb-14 max-w-2xl mx-auto text-base">
           🏆 성인피씨, 성인피시 안전한 거래 환경
         </p>
 
@@ -250,12 +246,9 @@ export default async function HomePage() {
           ].map((feature, idx) => (
             <div
               key={idx}
-              className="group relative p-8 rounded-3xl bg-gradient-to-br from-bg-secondary to-bg-tertiary border-2 border-gold/40 hover:border-gold/80 transition-all duration-500 hover:shadow-2xl hover:shadow-gold/40 hover:-translate-y-4 glass overflow-hidden cursor-pointer"
-              style={{ animationDelay: `${0.2 + idx * 0.1}s` }}
+              className="group relative p-8 rounded-3xl bg-gradient-to-br from-bg-secondary to-bg-tertiary border-2 border-gold/40 hover:border-gold/80 transition-all duration-300 hover:shadow-lg glass overflow-hidden cursor-pointer"
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-gold/20 via-gold/10 to-transparent -z-10" />
-
-              <div className="bg-gradient-to-br from-gold/50 to-gold/30 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-gold/50 shadow-xl">
+              <div className="bg-gradient-to-br from-gold/50 to-gold/30 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 shadow-lg">
                 <svg className="w-8 h-8 text-white font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d={feature.icon} />
                 </svg>
@@ -266,7 +259,6 @@ export default async function HomePage() {
                 {feature.desc}
               </p>
 
-              <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-gold/20 rounded-full blur-3xl group-hover:bottom-0 group-hover:right-0 transition-all duration-700" />
             </div>
           ))}
         </div>
@@ -275,10 +267,6 @@ export default async function HomePage() {
       {/* Bottom Banners */}
       {bottomBanners && bottomBanners.length > 0 && (
         <section className="bg-gradient-to-t from-gold/10 via-bg-secondary to-bg-primary border-t-2 border-gold/30 relative py-10">
-          <div className="absolute inset-0 -z-10">
-            <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-gold/30 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute top-0 right-1/4 w-80 h-80 bg-gold/20 rounded-full blur-3xl" />
-          </div>
 
           <div className="max-w-full mx-auto px-4 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -286,17 +274,21 @@ export default async function HomePage() {
                 <Link
                   key={banner.id}
                   href={banner.link_url || '#'}
-                  className="group relative rounded-2xl overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-2xl hover:shadow-gold/60 hover:-translate-y-4 border-2 border-gold/30 hover:border-gold/70"
-                  style={{ animationDelay: `${idx * 0.1}s` }}
+                  className="group relative rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl border-2 border-gold/30 hover:border-gold/60"
                 >
-                  <img
-                    src={banner.image_url}
-                    alt={`${banner.title} - 성인PC 성피요 광고`}
-                    className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700 block brightness-95 group-hover:brightness-120"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold/70 via-gold/30 to-transparent" />
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-50 transition-opacity duration-300 bg-radial from-white/20 via-transparent to-transparent" />
+                  <div className="relative w-full aspect-video bg-bg-tertiary">
+                    <Image
+                      src={banner.image_url}
+                      alt={`${banner.title} - 성인PC 성피요 광고`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-all duration-300 brightness-100"
+                      quality={80}
+                      placeholder="blur"
+                      blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'%3E%3Crect fill='%23222222' width='1200' height='630'/%3E%3C/svg%3E"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                 </Link>
               ))}
             </div>
