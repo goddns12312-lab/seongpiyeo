@@ -15,13 +15,34 @@ export async function GET(
     // Anon key만 사용 (RLS 정책 준수)
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const { data: job, error } = await supabase
+    // ID 기반으로 우선 조회, 실패 시 slug 기반 조회 (하위호환)
+    let job = null;
+    let error = null;
+
+    // 먼저 ID로 조회 시도
+    const { data: jobById, error: errorById } = await supabase
       .from('jobs')
       .select('*')
-      .eq('slug', decodedSlug)
+      .eq('id', decodedSlug)
       .eq('status', 'active')
       .is('deleted_at', null)
       .single();
+
+    if (jobById) {
+      job = jobById;
+    } else {
+      // ID가 없으면 slug로 조회 (하위호환성)
+      const { data: jobBySlug, error: errorBySlug } = await supabase
+        .from('jobs')
+        .select('*')
+        .eq('slug', decodedSlug)
+        .eq('status', 'active')
+        .is('deleted_at', null)
+        .single();
+
+      job = jobBySlug;
+      error = errorBySlug;
+    }
 
     if (error || !job) {
       return NextResponse.json(

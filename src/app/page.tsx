@@ -265,7 +265,7 @@ export default async function HomePage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="absolute bottom-0 left-0 right-0 p-2 text-white">
                     <p className="text-xs font-semibold truncate">{listing.title}</p>
-                    <p className="text-xs text-white/80">{formatPrice(listing.price)}만원</p>
+                    <p className="text-xs text-white/80">{formatPrice(listing.price)}</p>
                   </div>
                 </Link>
               ))}

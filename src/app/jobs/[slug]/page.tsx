@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // API Route를 통한 공개 데이터 조회 (SERVICE_ROLE_KEY 미사용)
     const res = await fetch(
       `${SITE_CONFIG.url}/api/jobs/${encodeURIComponent(decodedSlug)}`,
-      { cache: 'revalidate' }
+      { next: { revalidate: 60 } }
     );
 
     if (!res.ok) {
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: metaWithRobots.ogTitle,
         description: metaWithRobots.ogDescription,
         type: 'website',
-        url: `${SITE_CONFIG.url}/jobs/${encodeURIComponent(job.slug)}`,
+        url: `${SITE_CONFIG.url}/jobs/${job.id}`,
         siteName: SITE_CONFIG.businessName,
         locale: 'ko_KR',
         images: [
@@ -151,7 +151,7 @@ export default async function JobDetailPage({ params }: Props) {
     description: job.description,
     company: job.company_name || '성피요',
     datePosted: job.created_at,
-    url: `${SITE_CONFIG.url}/jobs/${encodeURIComponent(job.slug)}`,
+    url: `${SITE_CONFIG.url}/jobs/${job.id}`,
   });
 
   // Breadcrumb Schema

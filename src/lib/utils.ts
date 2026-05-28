@@ -1,8 +1,20 @@
-export function formatPrice(price: number | undefined | null): string {
-  if (!price || isNaN(price)) return '정보 없음';
+export function formatPrice(price: number | string | undefined | null): string {
+  if (!price) return '정보 없음';
+
+  // 문자열이면 "만원" 제거 후 숫자로 변환
+  let numPrice: number;
+  if (typeof price === 'string') {
+    // "312만원" → "312" → 312
+    numPrice = parseInt(price.replace(/[^0-9]/g, ''), 10);
+  } else {
+    numPrice = price;
+  }
+
+  if (isNaN(numPrice) || numPrice === 0) return '정보 없음';
+
   return new Intl.NumberFormat('ko-KR', {
     maximumFractionDigits: 0,
-  }).format(price) + '만원';
+  }).format(numPrice) + '만원';
 }
 
 export function formatDate(date: string | Date | undefined): string {
