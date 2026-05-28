@@ -15,6 +15,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || 'https://xn--oj4bo2hu1o.com'
+  ),
   title: {
     default: `성인PC 성인피씨 성인피시 창업 정보 | ${SITE_CONFIG.businessName}`,
     template: `%s | ${SITE_CONFIG.businessName}`,
@@ -73,6 +76,27 @@ export const metadata: Metadata = {
   verification: {
     google: 'google-site-verification-code',
     naver: 'naver-site-verification-code',
+  },
+  manifest: '/manifest.json',
+  icons: {
+    icon: [
+      {
+        url: '/favicon.png',
+        type: 'image/png',
+      }
+    ],
+    apple: [
+      {
+        url: '/apple-touch-icon.png',
+        type: 'image/png',
+        sizes: '180x180',
+      }
+    ],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: SITE_CONFIG.businessName,
   },
 };
 
@@ -158,15 +182,8 @@ export default function RootLayout({
         <meta name="distribution" content="global" />
         <meta property="og:locale" content="ko_KR" />
         <meta name="format-detection" content="telephone=yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content={SITE_CONFIG.businessName} />
         <meta name="application-name" content={SITE_CONFIG.businessName} />
         <meta name="msapplication-TileColor" content="#c8a96b" />
-
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/favicon.png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="alternate" hrefLang="ko" href={SITE_CONFIG.url} />
         {/* Preconnect for performance optimization */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

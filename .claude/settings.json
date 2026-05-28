@@ -85,7 +85,14 @@
       "Bash(Select-Object Id, ProcessName, Handles)",
       "Bash(curl -s \"http://localhost:3002\")",
       "Bash(curl -s \"http://localhost:3002/jobs/b5e92886-567f-41f5-b87c-430a6519fca7\")",
-      "Bash(curl -s http://localhost:3002/api/jobs/b5e92886-567f-41f5-b87c-430a6519fca7)"
+      "Bash(curl -s http://localhost:3002/api/jobs/b5e92886-567f-41f5-b87c-430a6519fca7)",
+      "Bash(curl -s -I \"http://localhost:3002/logo.png\")",
+      "Bash(curl -s -I \"http://localhost:3002/manifest.json\")",
+      "Bash(curl -s http://localhost:3002/manifest.json)",
+      "Bash(curl -s http://localhost:3002 -I)",
+      "Bash(curl -s http://localhost:3002/favicon.png -I)",
+      "Bash(curl -s http://localhost:3002/apple-touch-icon.png -I)",
+      "Bash(curl -s http://localhost:3002/logo.png -I)"
     ],
     "additionalDirectories": [
       "\\tmp",

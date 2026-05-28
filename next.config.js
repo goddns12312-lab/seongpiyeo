@@ -1,31 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 메타데이터 기본 URL (canonical, og:url 자동 생성)
-  metadataBase: new URL(
-    (() => {
-      // Production: 절대 localhost 사용 금지
-      const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
-
-      let url = process.env.NEXT_PUBLIC_BASE_URL;
-
-      // localhost 감지: production에서는 무시
-      if (url && (url.includes('localhost') || url.includes('127.0.0.1'))) {
-        if (isProduction) {
-          url = undefined; // production에서 localhost는 무시
-        }
-      }
-
-      // 기본값 사용
-      url = url || 'https://xn--oj4bo2hu1o.com';
-
-      // 프로토콜 확인
-      if (url.startsWith('http')) {
-        return url;
-      }
-      return `https://${url}`;
-    })()
-  ),
-
   // 이미지 최적화
   images: {
     remotePatterns: [
