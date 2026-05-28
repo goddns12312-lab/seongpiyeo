@@ -76,7 +76,11 @@
       "Bash(curl -s http://localhost:3000/jobs)",
       "Bash(curl -s http://localhost:3000/secondhand)",
       "Bash(curl -s http://localhost:3000/guide)",
-      "Bash(curl -s http://localhost:3000/faq)"
+      "Bash(curl -s http://localhost:3000/faq)",
+      "Bash(findstr \":3000\")",
+      "Bash(awk '{print $NF}')",
+      "Bash(xargs taskkill /PID /F)",
+      "Bash(curl -s http://localhost:3000/listings/new)"
     ],
     "additionalDirectories": [
       "\\tmp",
