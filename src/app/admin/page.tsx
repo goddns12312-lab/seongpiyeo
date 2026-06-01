@@ -166,17 +166,6 @@ export default function AdminDashboard() {
             </div>
           </Link>
 
-          <Link href="/admin/crawl">
-            <div className="bg-bg-secondary border border-border-light rounded-lg p-6 hover:border-gold transition-colors cursor-pointer group">
-              <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-gold/20 transition-colors">
-                <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-text-primary font-semibold mb-2">신규글 크롤링</h3>
-              <p className="text-text-secondary text-sm">지역별 신규 매물만 수집</p>
-            </div>
-          </Link>
         </div>
       </div>
     </div>

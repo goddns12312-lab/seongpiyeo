@@ -39,10 +39,26 @@
       "Bash(timeout 300 node scripts/scrape-real-images.js)",
       "Bash(tee real-images-scrape.log)",
       "Bash(node scripts/update-listings-with-real-images.js)",
-      "Bash(pkill -f \"next.*start\")"
+      "Bash(pkill -f \"next.*start\")",
+      "Bash(curl -X POST http://localhost:3002/api/admin/crawl -H 'Content-Type: application/json' -d '{\"allRegions\": true}' -s)",
+      "Bash(curl -X POST http://localhost:3002/api/admin/crawl -H 'Content-Type: application/json' -d '{\"region\": \"서울\"}' -s)",
+      "Bash(grep -v \"^$\")",
+      "PowerShell(Stop-Process -Force)",
+      "Bash(curl -s http://localhost:3002/admin)",
+      "Bash(node scripts/create-auth.js)",
+      "Bash(node scripts/crawl-regions.js --region=서울 --new-only --test 2)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\B\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-B-Desktop-aass\\\\ea05f657-6b02-43f9-9d15-dad42670a7ed\\\\tasks\\\\\" -ErrorAction SilentlyContinue | Select-Object -Last 1 | ForEach-Object { Get-Content $_.FullName -Tail 50 })",
+      "Bash(curl -s -X POST http://localhost:3002/api/admin/crawl -H 'Content-Type: application/json' -d '{\"region\": \"서울\"}')",
+      "Bash([ -f \"$file\" ])",
+      "Bash(break)",
+      "Bash(curl -s -X POST http://localhost:3002/api/admin/crawl -H 'Content-Type: application/json' -d '{\"allRegions\": true}')",
+      "Bash(node scripts/crawl-regions.js --region=서울 --new-only)",
+      "PowerShell(Get-Process node)",
+      "Bash(rm /mnt/c/Users/B/Desktop/aass/src/app/api/admin/crawl/route.ts && echo \"✅ API 삭제됨\")"
     ],
     "additionalDirectories": [
-      "\\tmp"
+      "\\tmp",
+      "\\mnt\\c\\Users\\B\\Desktop\\aass\\src\\app\\api\\admin\\crawl"
     ]
   }
 }
