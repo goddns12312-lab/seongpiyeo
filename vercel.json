@@ -17,7 +17,6 @@
   "includes": [
     "scripts/**",
     "src/**",
-    "public/**",
-    ".env.local"
+    "public/**"
   ]
 }
