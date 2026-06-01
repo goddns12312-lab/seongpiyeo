@@ -43,6 +43,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const revalidate = 3600;
+
 interface Props {
   searchParams: Promise<{ category?: string }>;
 }

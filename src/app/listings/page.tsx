@@ -11,8 +11,8 @@ import { buildListingsMetadata, addRobotsToMetadata } from '@/lib/seo-metadata';
 import { buildCollectionPageSchema } from '@/lib/seo-schema';
 import { createCanonicalUrl } from '@/lib/url-utils';
 
-// 매물 목록 캐시 비활성화 (항상 최신 데이터)
-export const revalidate = 0;
+// 1시간마다 재생성 (ISR 캐싱)
+export const revalidate = 3600;
 
 export async function generateMetadata(
   { searchParams }: Props,
@@ -91,11 +91,11 @@ export default async function ListingsPage({ searchParams }: Props) {
 
   const { count: totalCount } = await countQ;
 
-  // 매물 조회를 위한 쿼리 빌더
+  // 매물 조회를 위한 쿼리 빌더 (listing_images 분리)
   const buildQuery = () => {
     let q = supabase
       .from('listings')
-      .select('id, title, price_type, price, region, district, area_sqm, pc_count, deposit, premium_price, monthly_rent, monthly_revenue, monthly_profit, view_count, created_at, thumbnail_url, main_image_url, status, listing_images(id, url, order_num)')
+      .select('id, title, price_type, price, region, district, area_sqm, pc_count, deposit, premium_price, monthly_rent, monthly_revenue, monthly_profit, view_count, created_at, thumbnail_url, main_image_url, status')
       .eq('status', 'active');
 
     if (search) {
@@ -171,16 +171,16 @@ export default async function ListingsPage({ searchParams }: Props) {
     favoriteCount: favoriteCounts[listing.id] || 0
   })) || [];
 
-  // 전체 지역별 개수 조회 (페이지네이션 전)
-  const { data: allRegionListings } = await supabase
-    .from('listings')
-    .select('id, region')
-    .eq('status', 'active');
-
+  // 지역별 개수 조회 (캐시됨)
   const regionCounts: Record<string, number> = {};
-  REGIONS.forEach((r) => {
-    regionCounts[r] = allRegionListings?.filter((l) => l.region === r).length || 0;
-  });
+  for (const r of REGIONS) {
+    const { count } = await supabase
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'active')
+      .eq('region', r);
+    regionCounts[r] = count || 0;
+  }
 
   const filteredListings = listingsWithMeta || [];
   const totalPages = Math.ceil((totalCount || 0) / ITEMS_PER_PAGE);

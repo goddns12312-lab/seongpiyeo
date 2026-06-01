@@ -8,6 +8,8 @@ import { formatPrice, formatDate } from '@/lib/utils';
 import { Listing, Banner, REGIONS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: '성인PC 성인피씨 성인피시 창업 정보 거래 | 성피요',
   description: '성인PC 성인피씨 성인피시 창업 정보와 매물 거래를 한곳에서! 안전한 성인PC방 매매 플랫폼 성피요',

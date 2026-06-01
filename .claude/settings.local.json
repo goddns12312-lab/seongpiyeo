@@ -54,7 +54,11 @@
       "Bash(curl -s -X POST http://localhost:3002/api/admin/crawl -H 'Content-Type: application/json' -d '{\"allRegions\": true}')",
       "Bash(node scripts/crawl-regions.js --region=서울 --new-only)",
       "PowerShell(Get-Process node)",
-      "Bash(rm /mnt/c/Users/B/Desktop/aass/src/app/api/admin/crawl/route.ts && echo \"✅ API 삭제됨\")"
+      "Bash(rm /mnt/c/Users/B/Desktop/aass/src/app/api/admin/crawl/route.ts && echo \"✅ API 삭제됨\")",
+      "Bash(Get-Process -Name \"node\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object Name, Id)",
+      "Bash(curl -w \"HTTP Status: %{http_code}\\\\nTime to Connect: %{time_connect}s\\\\nTime to First Byte: %{time_starttransfer}s\\\\nTotal Time: %{time_total}s\\\\n\" -o /dev/null -s \"https://성피요.com/\")",
+      "Bash(git commit -m 'perf: 성능 최적화 - ISR 캐싱 + 쿼리 분리 로드 *)"
     ],
     "additionalDirectories": [
       "\\tmp",
