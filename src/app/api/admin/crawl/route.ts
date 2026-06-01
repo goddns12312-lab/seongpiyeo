@@ -29,7 +29,9 @@ export async function POST(request: NextRequest) {
     }
 
     // CLI 인자 구성
-    const args = ['scripts/crawl-regions.js', '--new-only'];
+    const projectRoot = path.resolve(process.cwd());
+    const crawlScript = path.join(projectRoot, 'scripts', 'crawl-regions.js');
+    const args = [crawlScript, '--new-only'];
     if (allRegions) {
       args.push('--all-regions');
     } else if (region) {
@@ -40,7 +42,6 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream<CrawlLogMessage>({
       async start(controller) {
         try {
-          const projectRoot = path.resolve(process.cwd());
           const childProcess = spawn('node', args, {
             cwd: projectRoot,
             stdio: ['ignore', 'pipe', 'pipe'],
