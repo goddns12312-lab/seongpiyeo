@@ -435,10 +435,12 @@ async function crawlRegionNewOnly(region, browser) {
           await titleLinks.nth(pageIndex).click();
           await page.waitForTimeout(2000);
 
-          // 클릭 후: URL에서 idx 추출
-          const detailUrl = page.url();
-          const idxMatch = detailUrl.match(/idx=(\d+)/);
-          const listingIdx = idxMatch ? idxMatch[1] : null;
+          // idx 추출: HTML에서 JSON 형식으로 저장된 idx
+          const listingIdx = await page.evaluate(() => {
+            const html = document.body.innerHTML;
+            const match = html.match(/"idx"\s*:\s*"?(\d+)"?/);
+            return match ? match[1] : null;
+          });
 
           if (!listingIdx) {
             console.log(`      ❌ idx 추출 실패 (URL: ${detailUrl})`);
@@ -674,10 +676,12 @@ async function crawlRegion(region, browser) {
           await titleLinks.nth(pageIndex).click();
           await page.waitForTimeout(2000);
 
-          // 클릭 후: URL에서 idx 추출
-          const detailUrl = page.url();
-          const idxMatch = detailUrl.match(/idx=(\d+)/);
-          const listingIdx = idxMatch ? idxMatch[1] : null;
+          // idx 추출: HTML에서 JSON 형식으로 저장된 idx
+          const listingIdx = await page.evaluate(() => {
+            const html = document.body.innerHTML;
+            const match = html.match(/"idx"\s*:\s*"?(\d+)"?/);
+            return match ? match[1] : null;
+          });
 
           if (!listingIdx) {
             console.log(`      ❌ idx 추출 실패 (URL: ${detailUrl})`);
