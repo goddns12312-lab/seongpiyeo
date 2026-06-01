@@ -431,9 +431,13 @@ async function crawlRegionNewOnly(region, browser) {
             continue;
           }
 
-          // 클릭
-          await titleLinks.nth(pageIndex).click();
-          await page.waitForTimeout(2000);
+          // 클릭 후 페이지 로드 대기
+          const titleLink = titleLinks.nth(pageIndex);
+          await Promise.all([
+            page.waitForNavigation({ timeout: 10000, waitUntil: 'domcontentloaded' }).catch(() => {}),
+            titleLink.click(),
+          ]);
+          await page.waitForTimeout(1500);
 
           // idx 추출: HTML에서 JSON 형식으로 저장된 idx
           const listingIdx = await page.evaluate(() => {
@@ -672,9 +676,13 @@ async function crawlRegion(region, browser) {
             continue;
           }
 
-          // 클릭
-          await titleLinks.nth(pageIndex).click();
-          await page.waitForTimeout(2000);
+          // 클릭 후 페이지 로드 대기
+          const titleLink = titleLinks.nth(pageIndex);
+          await Promise.all([
+            page.waitForNavigation({ timeout: 10000, waitUntil: 'domcontentloaded' }).catch(() => {}),
+            titleLink.click(),
+          ]);
+          await page.waitForTimeout(1500);
 
           // idx 추출: HTML에서 JSON 형식으로 저장된 idx
           const listingIdx = await page.evaluate(() => {
