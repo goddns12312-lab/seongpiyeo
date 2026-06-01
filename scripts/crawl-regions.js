@@ -442,7 +442,7 @@ async function crawlRegionNewOnly(region, browser) {
           // 절대 URL 구성
           const detailUrl = href.startsWith('http')
             ? href
-            : `${region.boardUrl}${href}`;
+            : `${region.baseUrl}${href}`;
 
           // 직접 이동 (클릭 대신)
           await page.goto(detailUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
@@ -696,7 +696,7 @@ async function crawlRegion(region, browser) {
           // 절대 URL 구성
           const detailUrl = href.startsWith('http')
             ? href
-            : `${region.boardUrl}${href}`;
+            : `${region.baseUrl}${href}`;
 
           // 직접 이동 (클릭 대신)
           await page.goto(detailUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
