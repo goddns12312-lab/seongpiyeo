@@ -431,12 +431,21 @@ async function crawlRegionNewOnly(region, browser) {
             continue;
           }
 
-          // 클릭 후 페이지 로드 대기
-          const titleLink = titleLinks.nth(pageIndex);
-          await Promise.all([
-            page.waitForNavigation({ timeout: 10000, waitUntil: 'domcontentloaded' }).catch(() => {}),
-            titleLink.click(),
-          ]);
+          // href 속성 추출
+          const href = await titleLinks.nth(pageIndex).getAttribute('href');
+          if (!href) {
+            console.log(`      ❌ href 없음`);
+            skippedCount++;
+            continue;
+          }
+
+          // 절대 URL 구성
+          const detailUrl = href.startsWith('http')
+            ? href
+            : `${region.boardUrl}${href}`;
+
+          // 직접 이동 (클릭 대신)
+          await page.goto(detailUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
           await page.waitForTimeout(1500);
 
           // idx 추출: HTML에서 JSON 형식으로 저장된 idx
@@ -676,12 +685,21 @@ async function crawlRegion(region, browser) {
             continue;
           }
 
-          // 클릭 후 페이지 로드 대기
-          const titleLink = titleLinks.nth(pageIndex);
-          await Promise.all([
-            page.waitForNavigation({ timeout: 10000, waitUntil: 'domcontentloaded' }).catch(() => {}),
-            titleLink.click(),
-          ]);
+          // href 속성 추출
+          const href = await titleLinks.nth(pageIndex).getAttribute('href');
+          if (!href) {
+            console.log(`      ❌ href 없음`);
+            skippedCount++;
+            continue;
+          }
+
+          // 절대 URL 구성
+          const detailUrl = href.startsWith('http')
+            ? href
+            : `${region.boardUrl}${href}`;
+
+          // 직접 이동 (클릭 대신)
+          await page.goto(detailUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
           await page.waitForTimeout(1500);
 
           // idx 추출: HTML에서 JSON 형식으로 저장된 idx
