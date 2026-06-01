@@ -431,22 +431,21 @@ async function crawlRegionNewOnly(region, browser) {
             continue;
           }
 
-          // href 속성 추출
-          const href = await titleLinks.nth(pageIndex).getAttribute('href');
-          if (!href) {
-            console.log(`      ❌ href 없음`);
+          // 클릭 실행 (JavaScript 이벤트)
+          const titleLink = titleLinks.nth(pageIndex);
+          const oldUrl = page.url();
+
+          await titleLink.click();
+          await page.waitForTimeout(2000);
+
+          // 페이지가 변경되었는지 확인
+          const newUrl = page.url();
+          if (oldUrl === newUrl) {
+            // URL 변경 없음 = 페이지 로드 실패
+            console.log(`      ❌ 클릭 후 페이지 로드 실패`);
             skippedCount++;
             continue;
           }
-
-          // 절대 URL 구성
-          const detailUrl = href.startsWith('http')
-            ? href
-            : `${region.baseUrl}${href}`;
-
-          // 직접 이동 (클릭 대신)
-          await page.goto(detailUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
-          await page.waitForTimeout(1500);
 
           // idx 추출: HTML에서 JSON 형식으로 저장된 idx
           const listingIdx = await page.evaluate(() => {
@@ -685,22 +684,21 @@ async function crawlRegion(region, browser) {
             continue;
           }
 
-          // href 속성 추출
-          const href = await titleLinks.nth(pageIndex).getAttribute('href');
-          if (!href) {
-            console.log(`      ❌ href 없음`);
+          // 클릭 실행 (JavaScript 이벤트)
+          const titleLink = titleLinks.nth(pageIndex);
+          const oldUrl = page.url();
+
+          await titleLink.click();
+          await page.waitForTimeout(2000);
+
+          // 페이지가 변경되었는지 확인
+          const newUrl = page.url();
+          if (oldUrl === newUrl) {
+            // URL 변경 없음 = 페이지 로드 실패
+            console.log(`      ❌ 클릭 후 페이지 로드 실패`);
             skippedCount++;
             continue;
           }
-
-          // 절대 URL 구성
-          const detailUrl = href.startsWith('http')
-            ? href
-            : `${region.baseUrl}${href}`;
-
-          // 직접 이동 (클릭 대신)
-          await page.goto(detailUrl, { waitUntil: 'domcontentloaded', timeout: 15000 });
-          await page.waitForTimeout(1500);
 
           // idx 추출: HTML에서 JSON 형식으로 저장된 idx
           const listingIdx = await page.evaluate(() => {
