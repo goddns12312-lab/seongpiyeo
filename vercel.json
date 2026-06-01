@@ -2,18 +2,6 @@
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
   "outputDirectory": ".next",
-  "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "NEXT_PUBLIC_BASE_URL": "@NEXT_PUBLIC_BASE_URL"
-  },
-  "functions": {
-    "src/app/api/**/*.ts": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-      "maxDuration": 300
-    }
-  },
   "includes": [
     "scripts/**",
     "src/**",
