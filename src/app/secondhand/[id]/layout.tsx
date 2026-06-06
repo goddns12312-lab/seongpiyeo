@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
-import { buildSecondhandMetadata, addRobotsToMetadata } from '@/lib/seo-metadata';
+import { buildSecondhandMetadata, addRobotsToMetadata, buildOptimizedSecondhandTitle } from '@/lib/seo-metadata';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -29,8 +29,11 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
   const itemMeta = buildSecondhandMetadata(item);
   const metaWithRobots = addRobotsToMetadata(itemMeta);
 
+  // 최적화된 제목 생성 (짧은 제목 자동 확장)
+  const optimizedTitle = buildOptimizedSecondhandTitle(item);
+
   return {
-    title: metaWithRobots.title,
+    title: optimizedTitle,
     description: metaWithRobots.description,
     keywords: metaWithRobots.keywords,
     robots: metaWithRobots.robots,
@@ -46,7 +49,7 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
       locale: 'ko_KR',
       images: [
         {
-          url: itemMeta.ogImage || `${SITE_CONFIG.url}/og-secondhand.png`,
+          url: itemMeta.ogImage || `${SITE_CONFIG.url}/og-image.png`,
           width: 1200,
           height: 630,
           alt: itemMeta.ogTitle || '중고 물품',
@@ -58,7 +61,7 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
       card: 'summary_large_image',
       title: itemMeta.ogTitle || metaWithRobots.title,
       description: itemMeta.ogDescription || metaWithRobots.description,
-      images: [itemMeta.ogImage || `${SITE_CONFIG.url}/og-secondhand.png`],
+      images: [itemMeta.ogImage || `${SITE_CONFIG.url}/og-image.png`],
     },
   };
 }

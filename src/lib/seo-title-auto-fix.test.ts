@@ -7,7 +7,14 @@ import {
   autoFixPostTitle,
   autoFixPostDescription,
   autoFixPostMetadata,
+  autoFixListingTitle,
+  autoFixJobTitle,
+  autoFixSecondhandTitle,
+  autoFixTitleByType,
   sanitizePostBeforeSave,
+  sanitizeListingBeforeSave,
+  sanitizeJobBeforeSave,
+  sanitizeSecondhandBeforeSave,
 } from './seo-title-auto-fix';
 
 console.log('=== SEO Title Auto-Fix Tests ===\n');
@@ -80,5 +87,68 @@ const test8 = autoFixPostTitle(longTitle, 'free');
 console.log(`100자 입력 길이: ${longTitle.length}`);
 console.log(`출력 길이: ${test8.fixed.length}`);
 console.log(`제한 준수: ${test8.fixed.length <= 80}\n`);
+
+// Test 9: Listings 자동 보정
+console.log('Test 9: Listings 자동 보정');
+const test9 = autoFixListingTitle('급매', '서울', 'rent');
+console.log(`입력: "급매" (지역: 서울, 종류: 임대)`);
+console.log(`출력: "${test9.fixed}"`);
+console.log(`적용됨: ${test9.isApplied}\n`);
+
+// Test 10: Jobs 자동 보정
+console.log('Test 10: Jobs 자동 보정');
+const test10 = autoFixJobTitle('구함', '부산', 'part_time');
+console.log(`입력: "구함" (지역: 부산, 형태: 파트타임)`);
+console.log(`출력: "${test10.fixed}"`);
+console.log(`적용됨: ${test10.isApplied}\n`);
+
+// Test 11: Secondhand 자동 보정
+console.log('Test 11: Secondhand 자동 보정');
+const test11 = autoFixSecondhandTitle('중고', '서울');
+console.log(`입력: "중고" (지역: 서울)`);
+console.log(`출력: "${test11.fixed}"`);
+console.log(`적용됨: ${test11.isApplied}\n`);
+
+// Test 12: 타입별 통합 자동 보정 (Listings)
+console.log('Test 12: 타입별 통합 - Listings');
+const test12 = autoFixTitleByType({
+  type: 'listing',
+  title: '매물',
+  region: '인천',
+  priceType: 'monthly',
+});
+console.log(`타입: listing, 제목: "매물", 지역: 인천`);
+console.log(`출력: "${test12.fixed}"\n`);
+
+// Test 13: 타입별 통합 자동 보정 (Job)
+console.log('Test 13: 타입별 통합 - Job');
+const test13 = autoFixTitleByType({
+  type: 'job',
+  title: '알바',
+  region: '대전',
+  employmentType: 'part_time',
+});
+console.log(`타입: job, 제목: "알바", 지역: 대전`);
+console.log(`출력: "${test13.fixed}"\n`);
+
+// Test 14: Listing Supabase 저장 전 처리
+console.log('Test 14: Listing Supabase 저장 전 처리');
+const test14 = sanitizeListingBeforeSave({
+  title: '좋은',
+  region: '서울',
+  monthly_rent: 150,
+});
+console.log(`저장할 제목: "${test14.title}"`);
+console.log(`SEO 적용: ${test14._seoApplied}\n`);
+
+// Test 15: Job Supabase 저장 전 처리
+console.log('Test 15: Job Supabase 저장 전 처리');
+const test15 = sanitizeJobBeforeSave({
+  title: '지원',
+  region: '서울',
+  employment_type: 'full_time',
+});
+console.log(`저장할 제목: "${test15.title}"`);
+console.log(`SEO 적용: ${test15._seoApplied}\n`);
 
 console.log('=== All Tests Complete ===');

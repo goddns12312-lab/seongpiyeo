@@ -323,3 +323,71 @@ export function resolveOgImage(
 
   return defaults[fallbackType];
 }
+
+/**
+ * ============================================================
+ * 통합 제목 생성 함수 (generateMetadata에서 활용)
+ * ============================================================
+ */
+
+import { autoFixTitleByType, ContentMetadata } from './seo-title-auto-fix';
+
+/**
+ * 제목 길이에 따라 자동 보정된 SEO 제목 생성
+ * generateMetadata 함수에서 제목 생성 시 이 함수를 먼저 호출
+ *
+ * @example
+ * const metadata = {
+ *   type: 'listing',
+ *   title: '급매', // 3자
+ *   region: '서울',
+ *   priceType: 'monthly'
+ * };
+ * const seoTitle = buildOptimizedTitle(metadata);
+ * // 결과: "급매 | 서울 성인PC 임대 | 성피요"
+ */
+export function buildOptimizedTitle(
+  metadata: ContentMetadata,
+  businessName: string = SITE_CONFIG.businessName
+): string {
+  const result = autoFixTitleByType(metadata, businessName);
+  return result.fixed;
+}
+
+/**
+ * Listings 상세페이지용 최적화 제목 생성
+ */
+export function buildOptimizedListingTitle(listing: any, businessName: string = SITE_CONFIG.businessName): string {
+  const metadata: ContentMetadata = {
+    type: 'listing',
+    title: listing.title,
+    region: listing.region,
+    priceType: listing.monthly_rent ? 'monthly' : 'sale',
+  };
+  return buildOptimizedTitle(metadata, businessName);
+}
+
+/**
+ * Jobs 상세페이지용 최적화 제목 생성
+ */
+export function buildOptimizedJobTitle(job: any, businessName: string = SITE_CONFIG.businessName): string {
+  const metadata: ContentMetadata = {
+    type: 'job',
+    title: job.title,
+    region: job.region,
+    employmentType: job.employment_type,
+  };
+  return buildOptimizedTitle(metadata, businessName);
+}
+
+/**
+ * Secondhand 상세페이지용 최적화 제목 생성
+ */
+export function buildOptimizedSecondhandTitle(item: any, businessName: string = SITE_CONFIG.businessName): string {
+  const metadata: ContentMetadata = {
+    type: 'secondhand',
+    title: item.title,
+    region: item.region,
+  };
+  return buildOptimizedTitle(metadata, businessName);
+}

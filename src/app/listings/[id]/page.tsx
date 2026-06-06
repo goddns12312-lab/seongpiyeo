@@ -12,6 +12,7 @@ import { ListingActions } from '@/components/listings/ListingActions';
 import { LikeButton } from '@/components/listings/LikeButton';
 import ListingCommentSection from '@/components/listings/ListingCommentSection';
 import { buildListingProductSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
+import { buildOptimizedListingTitle } from '@/lib/seo-metadata';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -109,7 +110,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const priceDesc = buildPriceDescription(listing);
   const specs = buildSpecDescription(listing);
 
-  const title = buildSeoTitle(listing);
+  // 최적화된 제목 생성 (짧은 제목 자동 확장)
+  const title = buildOptimizedListingTitle(listing);
   const description = buildSeoDescription(listing, location, priceDesc, specs);
   const keywords = buildKeywords(listing, location);
   const ogImage = resolveOgImage(listing, baseUrl);

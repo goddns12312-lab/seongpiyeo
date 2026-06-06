@@ -7,7 +7,7 @@ import { EMPLOYMENT_TYPE_LABELS } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
 import { buildJobPostingSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
-import { buildJobMetadata, addRobotsToMetadata } from '@/lib/seo-metadata';
+import { buildJobMetadata, addRobotsToMetadata, buildOptimizedJobTitle } from '@/lib/seo-metadata';
 import { createClient } from '@/lib/supabase/server';
 
 interface Props {
@@ -44,8 +44,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const jobMeta = buildJobMetadata(job);
     const metaWithRobots = addRobotsToMetadata(jobMeta);
 
+    // 최적화된 제목 생성 (짧은 제목 자동 확장)
+    const optimizedTitle = buildOptimizedJobTitle(job);
+
     return {
-      title: metaWithRobots.title,
+      title: optimizedTitle,
       description: metaWithRobots.description,
       keywords: metaWithRobots.keywords,
       robots: metaWithRobots.robots,

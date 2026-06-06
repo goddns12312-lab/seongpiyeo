@@ -1,6 +1,7 @@
 /**
  * SEO Title Auto-Fix Logic
- * 사용자가 입력한 제목이 너무 짧으면 카테고리 정보를 포함하여 자동 확장
+ * 모든 콘텐츠 타입(커뮤니티, 매물, 공고, 중고)에서
+ * 사용자가 입력한 제목이 너무 짧으면 메타정보를 포함하여 자동 확장
  */
 
 export interface AutoFixResult {
@@ -8,6 +9,16 @@ export interface AutoFixResult {
   fixed: string;
   isApplied: boolean;
   reason?: string;
+}
+
+export interface ContentMetadata {
+  type: 'post' | 'listing' | 'job' | 'secondhand';
+  title: string;
+  category?: string;
+  region?: string;
+  employmentType?: string;
+  priceType?: string;
+  [key: string]: any;
 }
 
 /**
@@ -122,6 +133,157 @@ export function autoFixPostMetadata(
 }
 
 /**
+ * ============================================================
+ * LISTINGS (매물) - 제목 자동 보정
+ * ============================================================
+ */
+
+export function autoFixListingTitle(
+  title: string,
+  region: string,
+  priceType: 'rent' | 'sale' = 'rent',
+  businessName: string = '성피요'
+): AutoFixResult {
+  const trimmedTitle = title.trim();
+  const titleLength = trimmedTitle.length;
+
+  if (titleLength > 5) {
+    return {
+      original: trimmedTitle,
+      fixed: trimmedTitle,
+      isApplied: false,
+    };
+  }
+
+  const priceTypeLabel = priceType === 'rent' ? '임대' : '매매';
+  const fixed = `${region} 성인PC ${priceTypeLabel} - ${trimmedTitle} | ${businessName}`;
+
+  return {
+    original: trimmedTitle,
+    fixed: fixed.slice(0, 80),
+    isApplied: true,
+    reason: `제목이 ${titleLength}자로 너무 짧아 지역/가격타입 정보 추가`,
+  };
+}
+
+/**
+ * ============================================================
+ * JOBS (공고) - 제목 자동 보정
+ * ============================================================
+ */
+
+export function autoFixJobTitle(
+  title: string,
+  region: string,
+  employmentType?: string,
+  businessName: string = '성피요'
+): AutoFixResult {
+  const trimmedTitle = title.trim();
+  const titleLength = trimmedTitle.length;
+
+  if (titleLength > 5) {
+    return {
+      original: trimmedTitle,
+      fixed: trimmedTitle,
+      isApplied: false,
+    };
+  }
+
+  const typeLabel = employmentType ? `[${getEmploymentTypeLabel(employmentType)}]` : '';
+  const fixed = `${region} ${typeLabel} 성인PC 구인 - ${trimmedTitle} | ${businessName}`.replace(
+    /\[\]/,
+    ''
+  ); // 빈 괄호 제거
+
+  return {
+    original: trimmedTitle,
+    fixed: fixed.slice(0, 80),
+    isApplied: true,
+    reason: `제목이 ${titleLength}자로 너무 짧아 지역/직무 정보 추가`,
+  };
+}
+
+/**
+ * ============================================================
+ * SECONDHAND (중고) - 제목 자동 보정
+ * ============================================================
+ */
+
+export function autoFixSecondhandTitle(
+  title: string,
+  region: string,
+  itemCategory?: string,
+  businessName: string = '성피요'
+): AutoFixResult {
+  const trimmedTitle = title.trim();
+  const titleLength = trimmedTitle.length;
+
+  if (titleLength > 5) {
+    return {
+      original: trimmedTitle,
+      fixed: trimmedTitle,
+      isApplied: false,
+    };
+  }
+
+  const categoryLabel = itemCategory ? `중고 ${itemCategory}` : '중고물품';
+  const fixed = `${region} ${categoryLabel} - ${trimmedTitle} | ${businessName}`;
+
+  return {
+    original: trimmedTitle,
+    fixed: fixed.slice(0, 80),
+    isApplied: true,
+    reason: `제목이 ${titleLength}자로 너무 짧아 지역/카테고리 정보 추가`,
+  };
+}
+
+/**
+ * ============================================================
+ * 공용 함수: 타입별 자동 보정 통합 처리
+ * ============================================================
+ */
+
+export function autoFixTitleByType(
+  metadata: ContentMetadata,
+  businessName: string = '성피요'
+): AutoFixResult {
+  const { type, title, region, category, employmentType, priceType, itemCategory } = metadata;
+
+  switch (type) {
+    case 'post':
+      return autoFixPostTitle(title, category, businessName);
+
+    case 'listing':
+      return autoFixListingTitle(
+        title,
+        region || '전국',
+        (priceType === 'monthly' ? 'rent' : 'sale') as 'rent' | 'sale',
+        businessName
+      );
+
+    case 'job':
+      return autoFixJobTitle(title, region || '전국', employmentType, businessName);
+
+    case 'secondhand':
+      return autoFixSecondhandTitle(title, region || '전국', itemCategory, businessName);
+
+    default:
+      return {
+        original: title,
+        fixed: title,
+        isApplied: false,
+        reason: `Unknown type: ${type}`,
+      };
+  }
+}
+
+/**
+ * ============================================================
+ * Supabase 저장 전 일괄 처리
+ * ============================================================
+ */
+
+/**
  * 실제 Supabase insert/update 전에 호출할 함수
  * 게시글 객체를 받아서 title과 description을 자동 보정
  */
@@ -149,4 +311,94 @@ export function sanitizePostBeforeSave(
     _seoApplied: fixed.titleFixed || fixed.descriptionFixed,
     _seoChanges: fixed.changes,
   };
+}
+
+/**
+ * Listings 저장 전 보정
+ */
+export function sanitizeListingBeforeSave(
+  listing: {
+    title: string;
+    region?: string;
+    monthly_rent?: number;
+    [key: string]: any;
+  },
+  businessName: string = '성피요'
+) {
+  const priceType = listing.monthly_rent ? 'rent' : 'sale';
+  const fixed = autoFixListingTitle(
+    listing.title,
+    listing.region || '전국',
+    priceType,
+    businessName
+  );
+
+  return {
+    ...listing,
+    title: fixed.fixed,
+    _seoApplied: fixed.isApplied,
+    _seoReason: fixed.reason,
+  };
+}
+
+/**
+ * Jobs 저장 전 보정
+ */
+export function sanitizeJobBeforeSave(
+  job: {
+    title: string;
+    region?: string;
+    employment_type?: string;
+    [key: string]: any;
+  },
+  businessName: string = '성피요'
+) {
+  const fixed = autoFixJobTitle(
+    job.title,
+    job.region || '전국',
+    job.employment_type,
+    businessName
+  );
+
+  return {
+    ...job,
+    title: fixed.fixed,
+    _seoApplied: fixed.isApplied,
+    _seoReason: fixed.reason,
+  };
+}
+
+/**
+ * Secondhand 저장 전 보정
+ */
+export function sanitizeSecondhandBeforeSave(
+  item: {
+    title: string;
+    region?: string;
+    [key: string]: any;
+  },
+  businessName: string = '성피요'
+) {
+  const fixed = autoFixSecondhandTitle(item.title, item.region || '전국', undefined, businessName);
+
+  return {
+    ...item,
+    title: fixed.fixed,
+    _seoApplied: fixed.isApplied,
+    _seoReason: fixed.reason,
+  };
+}
+
+/**
+ * Helper: 고용 형태 레이블
+ */
+function getEmploymentTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    part_time: '파트타임',
+    full_time: '정규직',
+    contract: '계약직',
+    internship: '인턴',
+    freelance: '프리랜서',
+  };
+  return labels[type] || type;
 }
