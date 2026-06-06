@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         locale: 'ko_KR',
         images: [
           {
-            url: `${SITE_CONFIG.url}/og-jobs.png`,
+            url: `${SITE_CONFIG.url}/og-image.png`,
             width: 1200,
             height: 630,
             alt: `${job.title} - ${job.region || '전국'} PC방 구인`,
@@ -71,7 +71,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         card: 'summary_large_image',
         title: metaWithRobots.ogTitle,
         description: metaWithRobots.ogDescription,
-        images: [`${SITE_CONFIG.url}/og-jobs.png`],
+        images: [`${SITE_CONFIG.url}/og-image.png`],
       },
     };
   } catch (err) {
@@ -128,6 +128,24 @@ export default async function JobDetailPage({ params }: Props) {
     user = data;
   } catch (err) {
     // 사용자 정보 조회 실패 무시
+  }
+
+  // Get related jobs (same region and employment_type, max 4, exclude current)
+  let relatedJobs: any = null;
+  try {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from('jobs')
+      .select('id, slug, title, region, employment_type, salary, created_at')
+      .eq('status', 'active')
+      .is('deleted_at', null)
+      .eq('region', job.region)
+      .neq('id', job.id)
+      .order('created_at', { ascending: false })
+      .limit(4);
+    relatedJobs = data;
+  } catch (err) {
+    // 관련 공고 조회 실패 무시
   }
 
   const isRecruitement = job.category === 'recruitment';
@@ -373,17 +391,61 @@ export default async function JobDetailPage({ params }: Props) {
 
         {/* 하단 영역 - 관련 공고 */}
         <div className="mt-16 pt-12 border-t border-border-light">
-          <h2 className="text-2xl lg:text-3xl font-bold text-text-primary mb-8">다른 공고 보기</h2>
-          <div className="bg-bg-secondary border border-border-light rounded-xl p-8 text-center">
-            <p className="text-text-secondary mb-4">
-              더 많은 공고를 확인하려면 공고 목록을 방문하세요.
-            </p>
-            <Link href="/jobs" className="inline-block">
-              <button className="bg-gold hover:bg-gold/90 text-bg-primary font-bold px-6 py-3 rounded-lg transition-colors">
-                공고 목록으로 이동
-              </button>
-            </Link>
-          </div>
+          <h2 className="text-2xl lg:text-3xl font-bold text-text-primary mb-8">
+            🏢 {job.region} 다른 공고
+          </h2>
+
+          {relatedJobs && relatedJobs.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {relatedJobs.map((relatedJob) => (
+                <Link
+                  key={relatedJob.id}
+                  href={`/jobs/${encodeURIComponent(relatedJob.slug)}`}
+                  className="group bg-bg-secondary border border-border-light rounded-lg p-4 hover:border-gold hover:shadow-lg transition-all"
+                >
+                  {/* Badge */}
+                  <div className="flex gap-2 mb-3 flex-wrap">
+                    <span className="bg-gold/10 text-gold px-2 py-1 rounded text-xs font-semibold">
+                      {relatedJob.employment_type || '채용'}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-text-primary font-bold text-sm mb-2 line-clamp-2 group-hover:text-gold transition-colors">
+                    {relatedJob.title}
+                  </h3>
+
+                  {/* Meta Info */}
+                  <div className="space-y-1 mb-3">
+                    <p className="text-text-secondary text-xs">
+                      📍 {relatedJob.region}
+                    </p>
+                    {relatedJob.salary && (
+                      <p className="text-gold text-xs font-semibold">
+                        {relatedJob.salary}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Date */}
+                  <p className="text-text-muted text-xs">
+                    {new Date(relatedJob.created_at).toLocaleDateString('ko-KR')}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-bg-secondary border border-border-light rounded-xl p-8 text-center">
+              <p className="text-text-secondary mb-4">
+                이 지역의 다른 공고가 없습니다.
+              </p>
+              <Link href="/jobs" className="inline-block">
+                <button className="bg-gold hover:bg-gold/90 text-bg-primary font-bold px-6 py-3 rounded-lg transition-colors">
+                  전체 공고 보기
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

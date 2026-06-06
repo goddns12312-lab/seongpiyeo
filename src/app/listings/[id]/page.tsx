@@ -201,6 +201,18 @@ export default async function ListingDetailPage({ params }: Props) {
     ];
   }
 
+  // DEBUG: 렌더링 직전 데이터 상태 확인
+  console.log('[SERVER] Listing Detail Page - UUID:', id);
+  console.log('[SERVER] premium_price:', (listing as any).premium_price);
+  console.log('[SERVER] main_image_url:', (listing as any).main_image_url);
+  console.log('[SERVER] displayImages count:', displayImages.length);
+  console.log('[SERVER] displayImages[0]:', displayImages[0]?.url?.split('/').pop());
+  console.log('[SERVER] displayImages full:', displayImages.map((i: any) => ({
+    id: i.id,
+    url: i.url?.split('/').pop(),
+    order_num: i.order_num
+  })));
+
   // Get seller info
   const { data: seller } = await supabase
     .from('profiles')
@@ -223,6 +235,16 @@ export default async function ListingDetailPage({ params }: Props) {
     .eq('listing_id', id)
     .eq('status', 'active')
     .order('created_at', { ascending: true });
+
+  // Get related listings (same region, max 4, exclude current listing)
+  const { data: relatedListings } = await supabase
+    .from('listings')
+    .select('id, title, region, monthly_rent, deposit, premium_price, main_image_url, created_at')
+    .eq('region', listing.region)
+    .eq('status', 'active')
+    .neq('id', id)
+    .order('created_at', { ascending: false })
+    .limit(4);
 
   // Increment view count
   await supabase
@@ -280,6 +302,16 @@ export default async function ListingDetailPage({ params }: Props) {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Images */}
+            {/* DEBUG: ImageGallery에 전달되는 images 배열 확인 */}
+            {console.log('[DETAIL IMAGES - FINAL]', {
+              uuid: listing.id,
+              count: displayImages.length,
+              images: displayImages.map((i: any) => ({
+                id: i.id,
+                order_num: i.order_num,
+                filename: i.url?.split('/').pop()
+              }))
+            })}
             <ImageGallery images={displayImages} title={listing.title} />
 
             {/* Title Section */}
@@ -317,7 +349,7 @@ export default async function ListingDetailPage({ params }: Props) {
                         <p className="text-text-primary font-bold text-2xl">{formatPrice(listing.deposit)}</p>
                       </div>
                     )}
-                    {(listing as any).premium_price && (
+                    {(listing as any).premium_price > 0 && (
                       <div>
                         <p className="text-text-secondary text-xs uppercase tracking-widest mb-2 font-semibold">권리금</p>
                         <p className="text-text-primary font-bold text-2xl">{formatPrice((listing as any).premium_price)}</p>
@@ -370,12 +402,63 @@ export default async function ListingDetailPage({ params }: Props) {
 
             {/* 설명 */}
             {listing.description && (
-              <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
+              <div className="bg-bg-secondary border border-border-light rounded-lg p-6 mb-8">
                 <h2 className="text-text-primary font-semibold text-lg mb-4">💬 추가설명</h2>
                 <div className="bg-bg-tertiary rounded p-4 overflow-x-auto">
                   <p className="text-text-primary text-sm whitespace-pre-wrap break-words leading-relaxed">
                     {listing.description}
                   </p>
+                </div>
+              </div>
+            )}
+
+            {/* Related Listings Widget */}
+            {relatedListings && relatedListings.length > 0 && (
+              <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
+                <h2 className="text-text-primary font-semibold text-lg mb-4">
+                  🏢 {listing.region} 다른 매물
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {relatedListings.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/listings/${item.id}`}
+                      className="group bg-bg-tertiary border border-border-light rounded-lg overflow-hidden hover:border-gold transition-colors"
+                    >
+                      {/* Image */}
+                      <div className="relative w-full aspect-square bg-bg-tertiary overflow-hidden">
+                        {item.main_image_url ? (
+                          <img
+                            src={item.main_image_url}
+                            alt={item.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-text-secondary">
+                            📷
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info */}
+                      <div className="p-3">
+                        {/* Price */}
+                        <p className="text-gold font-bold text-sm mb-1">
+                          {item.monthly_rent
+                            ? `월세 ${item.monthly_rent.toLocaleString()}만원`
+                            : item.premium_price
+                            ? `권리금 ${item.premium_price.toLocaleString()}만원`
+                            : '문의'}
+                        </p>
+
+                        {/* Title */}
+                        <p className="text-text-primary text-xs font-semibold line-clamp-2 group-hover:text-gold transition-colors">
+                          {item.title}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               </div>
             )}

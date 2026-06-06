@@ -1,217 +1,249 @@
 import { Metadata } from 'next';
-import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import { Badge } from '@/components/ui/Badge';
-import { CommentSection } from '@/components/community/CommentSection';
-import { formatDateTime } from '@/lib/utils';
-import { CATEGORY_LABELS } from '@/types';
+import Script from 'next/script';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
-import { buildPostMetadata, addRobotsToMetadata } from '@/lib/seo-metadata';
-import { buildBreadcrumbSchema, buildNewsArticleSchema } from '@/lib/seo-schema';
+import { createClient } from '@/lib/supabase/server';
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  try {
+    const supabase = await createClient();
+    const { data: post } = await supabase
+      .from('posts')
+      .select('id, title, content, author_id, created_at, status')
+      .eq('id', params.id)
+      .single();
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const supabase = await createClient();
+    if (!post || post.status !== 'published') {
+      notFound();
+    }
 
-  const { data: post } = await supabase
-    .from('posts')
-    .select('*, profiles(nickname)')
-    .eq('id', id)
-    .single();
+    const cleanContent = post.content
+      .replace(/<[^>]*>/g, '')
+      .replace(/\n/g, ' ')
+      .trim();
+    const description = cleanContent.substring(0, 160);
+    const url = `${SITE_CONFIG.url}/community/${params.id}`;
 
-  if (!post) {
     return {
-      title: 'PC방 커뮤니티 게시글 | 성피요',
-      robots: { index: false },
+      title: `${post.title} | 자유게시판 | 성피요`,
+      description: description || '성인PC 관련 정보를 공유하는 커뮤니티 게시글',
+      keywords: ['성인PC', '커뮤니티', '정보공유', post.title],
+      robots: {
+        index: true,
+        follow: true,
+      },
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title: post.title,
+        description: description,
+        type: 'article',
+        url: url,
+        siteName: SITE_CONFIG.businessName,
+        locale: 'ko_KR',
+        publishedTime: post.created_at,
+        images: [
+          {
+            url: `${SITE_CONFIG.url}/og-community.png`,
+            width: 1200,
+            height: 630,
+            alt: post.title,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: post.title,
+        description: description,
+        images: [`${SITE_CONFIG.url}/og-community.png`],
+      },
     };
+  } catch (error) {
+    console.error('[generateMetadata] 오류:', error);
+    notFound();
   }
-
-  const categoryLabel = CATEGORY_LABELS[post.category as keyof typeof CATEGORY_LABELS] || '커뮤니티';
-
-  // SEO 메타데이터 빌더 활용
-  const postMeta = buildPostMetadata({ ...post, category: post.category, status: 'active' });
-  const metaWithRobots = addRobotsToMetadata(postMeta);
-
-  const author = (post as any).profiles?.nickname || '익명의 사용자';
-
-  return {
-    title: `${post.title} | PC방 ${categoryLabel} | 성인PC 정보`,
-    description: postMeta.description,
-    keywords: [post.title, categoryLabel, 'PC방', '성인PC', '커뮤니티'],
-    authors: [{ name: author }],
-    robots: metaWithRobots.robots,
-    alternates: {
-      canonical: `${SITE_CONFIG.url}/community/${id}`,
-    },
-    openGraph: {
-      title: `${post.title} | ${categoryLabel}`,
-      description: postMeta.description,
-      type: 'article',
-      url: `${SITE_CONFIG.url}/community/${id}`,
-      siteName: SITE_CONFIG.businessName,
-      authors: [author],
-      publishedTime: post.created_at,
-      images: [
-        {
-          url: `${SITE_CONFIG.url}/og-community.png`,
-          width: 1200,
-          height: 630,
-          alt: `${categoryLabel} - ${post.title}`,
-          type: 'image/png',
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${post.title} | ${categoryLabel}`,
-      description: postMeta.description,
-      images: [`${SITE_CONFIG.url}/og-community.png`],
-    },
-  };
 }
 
-export default async function PostDetailPage({ params }: Props) {
-  const { id } = await params;
+export default async function DetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient();
-
-  // Get post
-  const { data: post } = await supabase
+  const { data: post, error } = await supabase
     .from('posts')
-    .select('*, profiles(nickname)')
-    .eq('id', id)
+    .select('*')
+    .eq('id', params.id)
+    .eq('status', 'published')
     .single();
 
-  if (!post) {
+  if (error || !post) {
     notFound();
   }
 
-  // Get comments
-  const { data: comments } = await supabase
-    .from('comments')
-    .select('*, profiles(nickname)')
-    .eq('post_id', id)
-    .order('created_at', { ascending: true });
-
-  // Increment view count
-  await supabase
+  // Get related posts (same category, max 4, exclude current post)
+  const { data: relatedPosts } = await supabase
     .from('posts')
-    .update({ view_count: post.view_count + 1 })
-    .eq('id', id);
-
-  // Article JSON-LD Schema
-  const author = (post as any).profiles?.nickname || '익명의 사용자';
-  const categoryLabel = CATEGORY_LABELS[post.category as keyof typeof CATEGORY_LABELS] || '커뮤니티';
-  const rawDescription = post.content.replace(/[^\w\s가-힣]/g, ' ').replace(/\s+/g, ' ').trim();
-
-  const articleSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: post.title,
-    description: rawDescription.substring(0, 160),
-    image: `${SITE_CONFIG.url}/og-community.png`,
-    datePublished: post.created_at,
-    dateModified: post.updated_at || post.created_at,
-    author: {
-      '@type': 'Person',
-      name: author,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: SITE_CONFIG.businessName,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${SITE_CONFIG.url}/423432.png`,
-      },
-    },
-    articleSection: categoryLabel,
-    keywords: [categoryLabel, '성인PC', '커뮤니티', 'PC방'],
-    articleBody: post.content,
-  };
-
-  // Breadcrumb Schema
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: '홈',
-        item: SITE_CONFIG.url,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: '커뮤니티',
-        item: `${SITE_CONFIG.url}/community`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: post.title,
-        item: `${SITE_CONFIG.url}/community/${id}`,
-      },
-    ],
-  };
+    .select('id, title, category, created_at, views, comments')
+    .eq('status', 'published')
+    .neq('id', params.id)
+    .order('created_at', { ascending: false })
+    .limit(4);
 
   return (
-    <div className="bg-bg-primary min-h-screen py-12">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
+    <div className="min-h-screen bg-bg-primary py-12">
       <div className="max-w-3xl mx-auto px-4">
-        {/* Breadcrumb */}
-        <div className="flex gap-2 text-sm text-text-secondary mb-6">
-          <Link href="/" className="hover:text-gold">홈</Link>
-          <span>/</span>
-          <Link href="/community" className="hover:text-gold">커뮤니티</Link>
-          <span>/</span>
-          <span>{CATEGORY_LABELS[post.category as keyof typeof CATEGORY_LABELS]}</span>
-        </div>
+        {/* Back Button */}
+        <Link href="/community" className="inline-flex items-center text-gold hover:text-gold-light mb-6">
+          ← 목록으로
+        </Link>
 
-        {/* Post */}
-        <article className="bg-bg-secondary border border-border-light rounded-lg p-6 md:p-8 mb-8">
-          <div className="mb-4">
-            <Badge variant="info">
-              {CATEGORY_LABELS[post.category as keyof typeof CATEGORY_LABELS]}
-            </Badge>
+        {/* Content */}
+        <article>
+          <h1 className="text-4xl font-bold text-text-primary mb-4">{post.title}</h1>
+          
+          <div className="flex flex-wrap gap-4 text-text-secondary text-sm mb-8 pb-8 border-b border-border-light">
+            <span>작성자: {post.author}</span>
+            <span>작성일: {post.date}</span>
+            <span>조회수: {post.views}</span>
+            <span>댓글: {post.comments}</span>
           </div>
 
-          <h1 className="text-3xl font-bold text-text-primary mb-4">{post.title}</h1>
+          <div className="prose prose-invert max-w-none mb-12 text-text-secondary">
+            {post.content.split('\n').map((line, idx) => (
+              <div key={idx}>
+                {line.startsWith('## ') ? (
+                  <h2 className="text-2xl font-bold text-text-primary mt-6 mb-3">
+                    {line.replace('## ', '')}
+                  </h2>
+                ) : line.startsWith('- ') ? (
+                  <li className="ml-6 my-2">{line.replace('- ', '')}</li>
+                ) : (
+                  <p className="my-2">{line}</p>
+                )}
+              </div>
+            ))}
+          </div>
 
-          <div className="flex justify-between items-center text-text-secondary text-sm mb-6 pb-6 border-b border-border-light">
-            <div>
-              <p className="font-semibold text-text-primary mb-1">
-                {author}
-              </p>
-              <p>{formatDateTime(post.created_at)}</p>
+          {/* Comment Section */}
+          <div className="bg-bg-secondary border border-border-light rounded-lg p-6 mb-12">
+            <h3 className="text-xl font-bold text-text-primary mb-4">댓글 ({post.comments})</h3>
+
+            <div className="space-y-4 mb-6 text-text-secondary text-sm">
+              첫 번째 댓글을 달아보세요!
             </div>
-            <p>조회수 {post.view_count + 1}</p>
+
+            {/* Comment Input */}
+            <textarea
+              placeholder="댓글을 입력하세요..."
+              className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary placeholder-text-secondary/50 mb-3"
+              rows={3}
+            />
+            <Button variant="primary">댓글 작성</Button>
           </div>
 
-          <div className="prose prose-invert max-w-none mb-6">
-            <p className="text-text-primary whitespace-pre-wrap">{post.content}</p>
-          </div>
-
-          <Link href="/community" className="text-gold hover:text-opacity-80">
-            ← 목록으로 돌아가기
-          </Link>
+          {/* Related Posts Widget */}
+          {relatedPosts && relatedPosts.length > 0 && (
+            <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
+              <h2 className="text-xl font-bold text-text-primary mb-4">📰 다른 게시글</h2>
+              <div className="space-y-3">
+                {relatedPosts.map((relatedPost) => (
+                  <Link
+                    key={relatedPost.id}
+                    href={`/community/${relatedPost.id}`}
+                    className="block group p-3 border border-border-light rounded hover:border-gold hover:bg-bg-primary transition-all"
+                  >
+                    <div className="flex justify-between items-start gap-3">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-text-primary font-semibold text-sm line-clamp-2 group-hover:text-gold transition-colors">
+                          {relatedPost.title}
+                        </h3>
+                        <p className="text-text-muted text-xs mt-1">
+                          {new Date(relatedPost.created_at).toLocaleDateString('ko-KR')}
+                        </p>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-text-secondary text-xs">
+                          조회 {relatedPost.views}
+                        </p>
+                        <p className="text-text-secondary text-xs">
+                          댓글 {relatedPost.comments}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <Link href="/community" className="block mt-4">
+                <button className="w-full bg-bg-tertiary hover:bg-gold/10 text-text-primary font-semibold py-2 rounded transition-colors text-sm">
+                  전체 게시글 보기
+                </button>
+              </Link>
+            </div>
+          )}
         </article>
 
-        {/* Comments */}
-        <div className="bg-bg-secondary border border-border-light rounded-lg p-6 md:p-8">
-          <CommentSection postId={id} initialComments={comments || []} />
-        </div>
+        <Script
+          id={`article-schema-${params.id}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Article',
+              '@id': `${SITE_CONFIG.url}/community/${params.id}`,
+              headline: post.title,
+              description: post.content.substring(0, 160),
+              author: {
+                '@type': 'Person',
+                name: post.author,
+              },
+              datePublished: post.date,
+              dateModified: post.date,
+              url: `${SITE_CONFIG.url}/community/${params.id}`,
+              interactionStatistic: [
+                {
+                  '@type': 'InteractionCounter',
+                  interactionType: 'https://schema.org/ViewAction',
+                  userInteractionCount: post.views,
+                },
+                {
+                  '@type': 'InteractionCounter',
+                  interactionType: 'https://schema.org/CommentAction',
+                  userInteractionCount: post.comments,
+                },
+              ],
+            }),
+          }}
+        />
+        <Script
+          id={`breadcrumb-schema-${params.id}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                {
+                  '@type': 'ListItem',
+                  position: 1,
+                  name: '홈',
+                  item: SITE_CONFIG.url,
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 2,
+                  name: '커뮤니티',
+                  item: `${SITE_CONFIG.url}/community`,
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 3,
+                  name: post.title,
+                  item: `${SITE_CONFIG.url}/community/${params.id}`,
+                },
+              ],
+            }),
+          }}
+        />
       </div>
     </div>
   );
