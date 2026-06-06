@@ -1,57 +1,39 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import { createClient } from '@/lib/supabase/server';
 
-export default function CommunityPage() {
-  const posts = [
-    {
-      id: 1,
-      title: '좋은 가게 찾는 방법 - 초보자를 위한 팁',
-      author: '성공사업가',
-      date: '2026-06-06',
-      views: 284,
-      comments: 23,
-    },
-    {
-      id: 2,
-      title: '성인PC 운영 시 가장 중요한 것은 청소다',
-      author: '10년경력',
-      date: '2026-06-05',
-      views: 512,
-      comments: 67,
-    },
-    {
-      id: 3,
-      title: '고객 만족도를 높이는 운영 노하우 공유',
-      author: '사업자',
-      date: '2026-06-04',
-      views: 389,
-      comments: 45,
-    },
-    {
-      id: 4,
-      title: '신규 오픈했는데 손님이 잘 안 와요',
-      author: '초보운영자',
-      date: '2026-06-03',
-      views: 156,
-      comments: 12,
-    },
-    {
-      id: 5,
-      title: '이곳에서 찾은 좋은 운영자분 감사합니다',
-      author: '고객',
-      date: '2026-06-02',
-      views: 243,
-      comments: 28,
-    },
-    {
-      id: 6,
-      title: '신규 오픈 할 때 주의사항',
-      author: '운영경험자',
-      date: '2026-06-01',
-      views: 389,
-      comments: 45,
-    },
-  ];
+export default async function CommunityPage() {
+  let postsWithAuthor: any[] = [];
+
+  try {
+    const supabase = await createClient();
+
+    // 모든 active 게시글 조회
+    const { data: posts, error } = await supabase
+      .from('posts')
+      .select('id, title, created_at, status, category')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(6);
+
+    console.log('[Community] Posts query result:', { count: posts?.length, error: error?.message });
+
+    if (error) {
+      console.error('Failed to fetch posts:', error);
+      postsWithAuthor = [];
+    } else if (posts && posts.length > 0) {
+      postsWithAuthor = posts.map((post: any) => ({
+        ...post,
+        author: '작성자',
+        date: new Date(post.created_at).toLocaleDateString('ko-KR'),
+        views: 0,
+        comments: 0,
+      }));
+    }
+  } catch (err) {
+    console.error('Community page error:', err);
+    postsWithAuthor = [];
+  }
 
   return (
     <div className="min-h-screen bg-bg-primary">
@@ -111,34 +93,43 @@ export default function CommunityPage() {
         <div className="mb-12">
           <h2 className="text-3xl font-bold text-text-primary mb-8">최신 게시글</h2>
 
-          <div className="space-y-3">
-            {posts.map((post, index) => (
-              <div
-                key={post.id}
-                className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md hover:border-gold/30 transition-all"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="text-text-secondary font-semibold text-lg w-8 flex-shrink-0">
-                    {posts.length - index}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <Link
-                      href={`/community/${post.id}`}
-                      className="text-gold hover:text-gold-light font-semibold transition-colors block truncate mb-2"
-                    >
-                      {post.title}
-                    </Link>
-                    <div className="flex flex-wrap gap-4 text-xs text-text-secondary">
-                      <span>{post.author}</span>
-                      <span>{post.date}</span>
-                      <span>👁 {post.views}</span>
-                      <span>💬 {post.comments}</span>
+          {postsWithAuthor.length > 0 ? (
+            <div className="space-y-3">
+              {postsWithAuthor.map((post, index) => (
+                <div
+                  key={post.id}
+                  className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md hover:border-gold/30 transition-all"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="text-text-secondary font-semibold text-lg w-8 flex-shrink-0">
+                      {postsWithAuthor.length - index}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <Link
+                        href={`/community/${post.id}`}
+                        className="text-gold hover:text-gold-light font-semibold transition-colors block truncate mb-2"
+                      >
+                        {post.title}
+                      </Link>
+                      <div className="flex flex-wrap gap-4 text-xs text-text-secondary">
+                        <span>{post.author}</span>
+                        <span>{post.date}</span>
+                        <span>👁 {post.views}</span>
+                        <span>💬 {post.comments}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-text-secondary mb-4">등록된 게시글이 없습니다</p>
+              <Link href="/community/new">
+                <Button variant="primary" className="bg-gold hover:bg-gold-light">첫 게시글 작성하기</Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Rules Section */}

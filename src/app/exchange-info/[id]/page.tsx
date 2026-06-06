@@ -11,12 +11,13 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     const supabase = await createClient();
     const { data: post } = await supabase
       .from('posts')
-      .select('id, title, content, category, author_id, created_at, status')
+      .select('id, title, content, category, created_at, status')
       .eq('id', params.id)
       .eq('category', 'exchange')
+      .eq('status', 'active')
       .single();
 
-    if (!post || post.status !== 'published') {
+    if (!post) {
       notFound();
     }
 
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     const url = `${SITE_CONFIG.url}/exchange-info/${params.id}`;
 
     return {
-      title: `${post.title} | 환수정보 | 성피요`,
+      title: `${post.title} | 환수정보`,
       description: description || '성인PC 환수율 및 운영정보 게시글',
       keywords: ['성인PC', '환수정보', '운영정보', post.title],
       robots: {
@@ -75,7 +76,7 @@ export default async function DetailPage({ params }: { params: { id: string } })
     .select('*')
     .eq('id', params.id)
     .eq('category', 'exchange')
-    .eq('status', 'published')
+    .eq('status', 'active')
     .single();
 
   if (error || !post) {

@@ -3,7 +3,7 @@ import Script from 'next/script';
 import { SITE_CONFIG } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: 'PC방 커뮤니티 | 성인피씨 정보공유 | 성피요',
+  title: 'PC방 커뮤니티 | 성인피씨 정보공유',
   description: '성인피시 창업 정보, 인테리어, 장비 정보를 공유하는 커뮤니티. PC방 구인구직, 운영 팁, 경험담을 나누는 공간입니다.',
   keywords: ['성인피씨', '성인피시', '성인피씨창업', '성인pc', 'PC방 커뮤니티', 'PC방 창업', 'PC방 정보', 'PC방 운영'],
   robots: {

@@ -11,11 +11,11 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     const supabase = await createClient();
     const { data: post } = await supabase
       .from('posts')
-      .select('id, title, content, author_id, created_at, status')
+      .select('id, title, content, created_at, status')
       .eq('id', params.id)
       .single();
 
-    if (!post || post.status !== 'published') {
+    if (!post || post.status !== 'active') {
       notFound();
     }
 
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     const url = `${SITE_CONFIG.url}/community/${params.id}`;
 
     return {
-      title: `${post.title} | 자유게시판 | 성피요`,
+      title: `${post.title} | 자유게시판`,
       description: description || '성인PC 관련 정보를 공유하는 커뮤니티 게시글',
       keywords: ['성인PC', '커뮤니티', '정보공유', post.title],
       robots: {
@@ -71,9 +71,9 @@ export default async function DetailPage({ params }: { params: { id: string } })
   const supabase = await createClient();
   const { data: post, error } = await supabase
     .from('posts')
-    .select('*')
+    .select('id, title, content, created_at, status, category')
     .eq('id', params.id)
-    .eq('status', 'published')
+    .eq('status', 'active')
     .single();
 
   if (error || !post) {
@@ -83,8 +83,8 @@ export default async function DetailPage({ params }: { params: { id: string } })
   // Get related posts (same category, max 4, exclude current post)
   const { data: relatedPosts } = await supabase
     .from('posts')
-    .select('id, title, category, created_at, views, comments')
-    .eq('status', 'published')
+    .select('id, title, category, created_at')
+    .eq('status', 'active')
     .neq('id', params.id)
     .order('created_at', { ascending: false })
     .limit(4);
@@ -102,10 +102,10 @@ export default async function DetailPage({ params }: { params: { id: string } })
           <h1 className="text-4xl font-bold text-text-primary mb-4">{post.title}</h1>
           
           <div className="flex flex-wrap gap-4 text-text-secondary text-sm mb-8 pb-8 border-b border-border-light">
-            <span>작성자: {post.author}</span>
-            <span>작성일: {post.date}</span>
-            <span>조회수: {post.views}</span>
-            <span>댓글: {post.comments}</span>
+            <span>작성자: 작성자</span>
+            <span>작성일: {new Date(post.created_at).toLocaleDateString('ko-KR')}</span>
+            <span>조회수: 0</span>
+            <span>댓글: 0</span>
           </div>
 
           <div className="prose prose-invert max-w-none mb-12 text-text-secondary">
@@ -126,7 +126,7 @@ export default async function DetailPage({ params }: { params: { id: string } })
 
           {/* Comment Section */}
           <div className="bg-bg-secondary border border-border-light rounded-lg p-6 mb-12">
-            <h3 className="text-xl font-bold text-text-primary mb-4">댓글 ({post.comments})</h3>
+            <h3 className="text-xl font-bold text-text-primary mb-4">댓글 (0)</h3>
 
             <div className="space-y-4 mb-6 text-text-secondary text-sm">
               첫 번째 댓글을 달아보세요!
@@ -163,10 +163,10 @@ export default async function DetailPage({ params }: { params: { id: string } })
                       </div>
                       <div className="text-right flex-shrink-0">
                         <p className="text-text-secondary text-xs">
-                          조회 {relatedPost.views}
+                          조회 0
                         </p>
                         <p className="text-text-secondary text-xs">
-                          댓글 {relatedPost.comments}
+                          댓글 0
                         </p>
                       </div>
                     </div>
@@ -194,21 +194,21 @@ export default async function DetailPage({ params }: { params: { id: string } })
               description: post.content.substring(0, 160),
               author: {
                 '@type': 'Person',
-                name: post.author,
+                name: '작성자',
               },
-              datePublished: post.date,
-              dateModified: post.date,
+              datePublished: post.created_at,
+              dateModified: post.created_at,
               url: `${SITE_CONFIG.url}/community/${params.id}`,
               interactionStatistic: [
                 {
                   '@type': 'InteractionCounter',
                   interactionType: 'https://schema.org/ViewAction',
-                  userInteractionCount: post.views,
+                  userInteractionCount: 0,
                 },
                 {
                   '@type': 'InteractionCounter',
                   interactionType: 'https://schema.org/CommentAction',
-                  userInteractionCount: post.comments,
+                  userInteractionCount: 0,
                 },
               ],
             }),
