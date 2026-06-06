@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     images: [
       {
-        url: `${SITE_CONFIG.url}/og-secondhand.png`,
+        url: `${SITE_CONFIG.url}/og-image.png`,
         width: 1200,
         height: 630,
         alt: '성피요 PC방 중고장터',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PC방 중고장터',
     description: 'PC방 관련 중고물품 거래',
-    images: [`${SITE_CONFIG.url}/og-secondhand.png`],
+    images: [`${SITE_CONFIG.url}/og-image.png`],
   },
 };
 

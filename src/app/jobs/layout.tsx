@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     images: [
       {
-        url: `${SITE_CONFIG.url}/og-jobs.png`,
+        url: `${SITE_CONFIG.url}/og-image.png`,
         width: 1200,
         height: 630,
         alt: '성피요 PC방 구인구직',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PC방 구인구직',
     description: '성인PC방 구인구직 채용정보',
-    images: [`${SITE_CONFIG.url}/og-jobs.png`],
+    images: [`${SITE_CONFIG.url}/og-image.png`],
   },
 };
 

@@ -3,9 +3,9 @@ import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 
 export const metadata: Metadata = {
-  title: 'PC방 창업 가이드 | 성인피씨 운영 팁 | 성피요',
-  description: 'PC방 창업부터 운영까지 필요한 모든 정보. 소방기준, 장비선택, 인테리어 팁, 고객관리 방법 등 전문가 가이드를 확인하세요.',
-  keywords: ['PC방 가이드', 'PC방 창업', '성인PC', '운영 팁', '장비 선택', '인테리어'],
+  title: 'PC방 창업 완벽 가이드 | 소방기준부터 수익화까지 | 성피요',
+  description: '성인PC 창업자를 위한 완벽한 가이드. 법규, 소방기준, 장비 선택, 인테리어, 고객 관리, 수익화 전략까지 A부터 Z까지 배우세요.',
+  keywords: ['PC방 창업 가이드', '성인PC 운영', 'PC방 법규', '소방기준', '창업 팁', '수익화'],
   robots: {
     index: true,
     follow: true,
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     images: [
       {
-        url: `${SITE_CONFIG.url}/og-guide.png`,
+        url: `${SITE_CONFIG.url}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'PC방 창업 가이드',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PC방 창업 가이드',
     description: 'PC방 창업 전략과 운영 가이드',
-    images: [`${SITE_CONFIG.url}/og-guide.png`],
+    images: [`${SITE_CONFIG.url}/og-image.png`],
   },
 };
 

@@ -6,10 +6,10 @@ import { REGIONS } from '@/types';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
 
-  // 모든 활성 매물 조회
+  // 모든 활성 매물 조회 (price_type 포함)
   const { data: listings } = await supabase
     .from('listings')
-    .select('id, region, updated_at')
+    .select('id, region, price_type, updated_at')
     .eq('status', 'active');
 
   // 모든 활성 커뮤니티 글 조회
@@ -127,12 +127,82 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: cat.priority,
   }));
 
-  // 지역별 매물 페이지 (매물이 있는 지역만)
-  const regionEntries = REGIONS.filter((region) => activeRegionSet.has(region)).map((region) => ({
+  // 지역별 매물 페이지 (5개 이상 매물이 있는 지역만 - Thin Content 정책)
+  const regionListingCounts = new Map<string, number>();
+  listings?.forEach((listing: any) => {
+    if (listing.region) {
+      regionListingCounts.set(listing.region, (regionListingCounts.get(listing.region) || 0) + 1);
+    }
+  });
+
+  const listingsRegionEntries = REGIONS.filter((region) => {
+    const count = regionListingCounts.get(region) || 0;
+    return count >= 5; // 5개 이상만 포함
+  }).map((region) => ({
     url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(region)}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
     priority: 0.85,
+  }));
+
+  // 지역+카테고리 매물 페이지 (5개 이상 매물이 있는 조합만 - Thin Content 정책)
+  const regionCategoryListingCounts = new Map<string, Map<string, number>>();
+  listings?.forEach((listing: any) => {
+    if (listing.region && listing.price_type) {
+      const regionMap = regionCategoryListingCounts.get(listing.region) || new Map<string, number>();
+      regionMap.set(listing.price_type, (regionMap.get(listing.price_type) || 0) + 1);
+      regionCategoryListingCounts.set(listing.region, regionMap);
+    }
+  });
+
+  const listingsRegionCategoryEntries: MetadataRoute.Sitemap = [];
+  regionCategoryListingCounts.forEach((categoryMap, region) => {
+    categoryMap.forEach((count, category) => {
+      if (count >= 5) { // 5개 이상만 포함
+        listingsRegionCategoryEntries.push({
+          url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(region)}/category/${encodeURIComponent(category)}`,
+          lastModified: new Date(),
+          changeFrequency: 'daily' as const,
+          priority: 0.8,
+        });
+      }
+    });
+  });
+
+  // 지역별 공고 페이지 (5개 이상 공고가 있는 지역만)
+  const regionJobCounts = new Map<string, number>();
+  jobs?.forEach((job: any) => {
+    if (job.region) {
+      regionJobCounts.set(job.region, (regionJobCounts.get(job.region) || 0) + 1);
+    }
+  });
+
+  const jobsRegionEntries = REGIONS.filter((region) => {
+    const count = regionJobCounts.get(region) || 0;
+    return count >= 5;
+  }).map((region) => ({
+    url: `${SITE_CONFIG.url}/jobs/region/${encodeURIComponent(region)}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 0.8,
+  }));
+
+  // 지역별 중고물품 페이지 (5개 이상 상품이 있는 지역만)
+  const regionSecondhandCounts = new Map<string, number>();
+  secondhand?.forEach((item: any) => {
+    if (item.region) {
+      regionSecondhandCounts.set(item.region, (regionSecondhandCounts.get(item.region) || 0) + 1);
+    }
+  });
+
+  const secondhandRegionEntries = REGIONS.filter((region) => {
+    const count = regionSecondhandCounts.get(region) || 0;
+    return count >= 5;
+  }).map((region) => ({
+    url: `${SITE_CONFIG.url}/secondhand/region/${encodeURIComponent(region)}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 0.75,
   }));
 
   return [
@@ -190,12 +260,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily' as const,
       priority: 0.7,
     },
-    ...regionEntries,
+    // 지역별 페이지 (5개 이상 콘텐츠만 포함)
+    ...listingsRegionEntries,
+    ...jobsRegionEntries,
+    ...secondhandRegionEntries,
+    // 지역+카테고리 조합 페이지 (listings만, 5개 이상 콘텐츠만 포함)
+    ...listingsRegionCategoryEntries,
+    // 콘텐츠 상세 페이지
     ...listingEntries,
     ...postEntries,
     ...jobEntries,
     ...secondhandEntries,
     ...exchangeInfoEntries,
+    // 카테고리 페이지
     ...listingCategoryEntries,
     ...jobCategoryEntries,
     ...secondhandCategoryEntries,

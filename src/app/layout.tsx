@@ -74,8 +74,8 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: 'google-site-verification-code',
-    naver: 'naver-site-verification-code',
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
+    naver: process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION || '',
   },
   manifest: '/manifest.json',
   icons: {

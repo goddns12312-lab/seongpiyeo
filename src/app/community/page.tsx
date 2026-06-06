@@ -1,186 +1,185 @@
-import { Metadata } from 'next';
 import Link from 'next/link';
-import Script from 'next/script';
-import { createClient } from '@/lib/supabase/server';
-import { PostCard } from '@/components/community/PostCard';
 import { Button } from '@/components/ui/Button';
-import { CATEGORY_LABELS } from '@/types';
-import { SITE_CONFIG } from '@/lib/site';
 
-export const metadata: Metadata = {
-  title: 'PC방 창업 커뮤니티 | 성인피씨 사업정보 공유 | 성피요',
-  description: '성인피시 창업자들이 모여 경험과 정보를 공유하는 커뮤니티. 창업팁, 인테리어, 장비정보, 자유로운 질문과 답변을 나누는 공간입니다.',
-  keywords: ['성인피씨', '성인피시', '성인피씨창업', '성인pc', 'PC방커뮤니티', 'PC방창업정보', '피씨방운영팁', 'PC방인테리어', 'PC방장비', '사업정보공유'],
-  robots: {
-    index: true,
-    follow: true,
-  },
-  alternates: {
-    canonical: `${SITE_CONFIG.url}/community`,
-  },
-  openGraph: {
-    title: 'PC방 창업 커뮤니티 | 성피요',
-    description: '성인PC방 창업자들을 위한 경험 공유 및 정보 커뮤니티',
-    type: 'website',
-    url: `${SITE_CONFIG.url}/community`,
-    siteName: SITE_CONFIG.businessName,
-    locale: 'ko_KR',
-    images: [
-      {
-        url: `${SITE_CONFIG.url}/og-community.png`,
-        width: 1200,
-        height: 630,
-        alt: '성피요 PC방 커뮤니티',
-        type: 'image/png',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'PC방 창업 커뮤니티',
-    description: '성인PC방 창업 정보 커뮤니티',
-    images: [`${SITE_CONFIG.url}/og-community.png`],
-  },
-};
-
-export const revalidate = 3600;
-
-interface Props {
-  searchParams: Promise<{ category?: string }>;
-}
-
-export default async function CommunityPage({ searchParams }: Props) {
-  const params = await searchParams;
-  const filterCategory = params.category as keyof typeof CATEGORY_LABELS | undefined;
-
-  const supabase = await createClient();
-
-  let query = supabase
-    .from('posts')
-    .select('*, profiles(nickname)')
-    .order('created_at', { ascending: false });
-
-  // 카테고리 필터링
-  if (filterCategory) {
-    query = query.eq('category', filterCategory);
-  }
-
-  const { data: posts } = await query;
-
-  // Group posts by category
-  const postsByCategory: Record<string, typeof posts> = {};
-  posts?.forEach((post) => {
-    if (!postsByCategory[post.category]) {
-      postsByCategory[post.category] = [];
-    }
-    postsByCategory[post.category].push(post);
-  });
-
-  const collectionSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    '@id': `${SITE_CONFIG.url}/community`,
-    name: 'PC방 창업 커뮤니티 | 성인PC 정보공유',
-    description: '성인PC방 창업자들이 모여 경험과 정보를 공유하는 커뮤니티',
-    url: `${SITE_CONFIG.url}/community`,
-    mainEntity: {
-      '@type': 'ItemList',
-      itemListElement: (posts?.slice(0, 10) || []).map((post, idx) => ({
-        '@type': 'ListItem',
-        position: idx + 1,
-        url: `${SITE_CONFIG.url}/community/${post.id}`,
-        name: post.title,
-        description: `${CATEGORY_LABELS[post.category as keyof typeof CATEGORY_LABELS] || post.category}`,
-      })),
+export default function CommunityPage() {
+  const posts = [
+    {
+      id: 1,
+      title: '좋은 가게 찾는 방법 - 초보자를 위한 팁',
+      author: '성공사업가',
+      date: '2026-06-06',
+      views: 284,
+      comments: 23,
     },
-  };
+    {
+      id: 2,
+      title: '성인PC 운영 시 가장 중요한 것은 청소다',
+      author: '10년경력',
+      date: '2026-06-05',
+      views: 512,
+      comments: 67,
+    },
+    {
+      id: 3,
+      title: '고객 만족도를 높이는 운영 노하우 공유',
+      author: '사업자',
+      date: '2026-06-04',
+      views: 389,
+      comments: 45,
+    },
+    {
+      id: 4,
+      title: '신규 오픈했는데 손님이 잘 안 와요',
+      author: '초보운영자',
+      date: '2026-06-03',
+      views: 156,
+      comments: 12,
+    },
+    {
+      id: 5,
+      title: '이곳에서 찾은 좋은 운영자분 감사합니다',
+      author: '고객',
+      date: '2026-06-02',
+      views: 243,
+      comments: 28,
+    },
+    {
+      id: 6,
+      title: '신규 오픈 할 때 주의사항',
+      author: '운영경험자',
+      date: '2026-06-01',
+      views: 389,
+      comments: 45,
+    },
+  ];
 
   return (
-    <div className="bg-bg-primary">
-      <Script
-        id="community-collection-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(collectionSchema),
-        }}
-      />
-      {/* Header */}
-      <section className="bg-bg-secondary border-b border-border-light">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-3xl font-bold text-text-primary">PC방 창업 커뮤니티 | 성인PC 정보공유</h1>
-            <Link href="/community/new">
-              <Button variant="primary">게시글 작성</Button>
-            </Link>
-          </div>
-          <p className="text-text-secondary">
-            PC방 관련 정보를 공유하고 경험을 나누세요.
-          </p>
+    <div className="min-h-screen bg-bg-primary">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-800 dark:to-pink-800 text-white py-16 px-4">
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-5xl font-bold mb-4">자유게시판</h1>
+          <p className="text-lg text-purple-100 mb-6">성인PC 거래 관련 자유로운 주제를 나누는 커뮤니티입니다</p>
+          <Link href="/community/new">
+            <Button variant="primary" className="bg-gold hover:bg-gold-light">게시글 작성</Button>
+          </Link>
         </div>
-      </section>
+      </div>
 
-      {/* Categories */}
-      <section className="max-w-7xl mx-auto px-4 py-12">
-        {filterCategory ? (
-          // 특정 카테고리만 표시
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-text-primary mb-6">
-              {CATEGORY_LABELS[filterCategory]}
-            </h2>
-
-            {postsByCategory[filterCategory] && postsByCategory[filterCategory].length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                {postsByCategory[filterCategory].map((post) => (
-                  <PostCard key={post.id} post={post} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-text-secondary">
-                <p>게시글이 없습니다.</p>
-                <Link href="/community/new">
-                  <Button variant="primary" size="lg" className="mt-4">
-                    첫 게시글 작성하기
-                  </Button>
-                </Link>
-              </div>
-            )}
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        {/* Category Cards */}
+        <div className="grid md:grid-cols-4 gap-4 mb-12">
+          <div className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md transition-shadow">
+            <div className="text-3xl mb-2">💡</div>
+            <h3 className="font-semibold text-text-primary mb-1">정보공유</h3>
+            <p className="text-xs text-text-secondary">운영 노하우</p>
           </div>
-        ) : (
-          // 모든 카테고리 표시
-          (Object.keys(CATEGORY_LABELS) as Array<keyof typeof CATEGORY_LABELS>).map((category) => (
-            <div key={category} className="mb-12">
-              <h2 className="text-2xl font-bold text-text-primary mb-6">
-                {CATEGORY_LABELS[category]}
-              </h2>
-
-              {postsByCategory[category] && postsByCategory[category].length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  {postsByCategory[category].map((post) => (
-                    <PostCard key={post.id} post={post} />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-text-secondary">
-                  게시글이 없습니다.
-                </div>
-              )}
-
-              <div className="border-b border-border-light" />
-            </div>
-          ))
-        )}
-
-        {!filterCategory && (!posts || posts.length === 0) && (
-          <div className="text-center py-12 text-text-secondary">
-            <p>아직 게시글이 없습니다.</p>
-            <Link href="/community/new">
-              <Button variant="primary" size="lg" className="mt-4">
-                첫 게시글 작성하기
-              </Button>
-            </Link>
+          <div className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md transition-shadow">
+            <div className="text-3xl mb-2">❓</div>
+            <h3 className="font-semibold text-text-primary mb-1">질문답변</h3>
+            <p className="text-xs text-text-secondary">궁금한 점 물어보기</p>
           </div>
-        )}
-      </section>
+          <div className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md transition-shadow">
+            <div className="text-3xl mb-2">🎉</div>
+            <h3 className="font-semibold text-text-primary mb-1">이벤트</h3>
+            <p className="text-xs text-text-secondary">커뮤니티 이벤트</p>
+          </div>
+          <div className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md transition-shadow">
+            <div className="text-3xl mb-2">🤝</div>
+            <h3 className="font-semibold text-text-primary mb-1">거래후기</h3>
+            <p className="text-xs text-text-secondary">만족스러운 거래</p>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid md:grid-cols-3 gap-4 mb-12">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center">
+            <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">234</div>
+            <div className="text-sm text-text-secondary">총 게시글</div>
+          </div>
+          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 text-center">
+            <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">1.2K</div>
+            <div className="text-sm text-text-secondary">총 댓글</div>
+          </div>
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-6 text-center">
+            <div className="text-4xl font-bold text-amber-600 dark:text-amber-400 mb-2">892</div>
+            <div className="text-sm text-text-secondary">활성 회원</div>
+          </div>
+        </div>
+
+        {/* Posts Section */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-text-primary mb-8">최신 게시글</h2>
+
+          <div className="space-y-3">
+            {posts.map((post, index) => (
+              <div
+                key={post.id}
+                className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md hover:border-gold/30 transition-all"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="text-text-secondary font-semibold text-lg w-8 flex-shrink-0">
+                    {posts.length - index}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <Link
+                      href={`/community/${post.id}`}
+                      className="text-gold hover:text-gold-light font-semibold transition-colors block truncate mb-2"
+                    >
+                      {post.title}
+                    </Link>
+                    <div className="flex flex-wrap gap-4 text-xs text-text-secondary">
+                      <span>{post.author}</span>
+                      <span>{post.date}</span>
+                      <span>👁 {post.views}</span>
+                      <span>💬 {post.comments}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Rules Section */}
+        <div className="bg-bg-secondary border border-border-light rounded-lg p-8 mb-12">
+          <h2 className="text-3xl font-bold text-text-primary mb-6">커뮤니티 규칙</h2>
+          <ul className="space-y-3 text-text-secondary">
+            <li className="flex gap-3">
+              <span className="text-gold">✓</span>
+              <span>모든 회원을 존중하는 태도로 댓글을 작성해 주세요</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-gold">✓</span>
+              <span>광고성 글이나 스팸은 엄격하게 제재됩니다</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-gold">✓</span>
+              <span>개인정보 공유는 삼가주세요</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-gold">✓</span>
+              <span>부적절한 내용은 신고 버튼으로 신고해 주세요</span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-center gap-2">
+          {[1, 2, 3].map((page) => (
+            <button
+              key={page}
+              className={`px-4 py-2 rounded border transition-colors font-medium ${
+                page === 1
+                  ? 'bg-gold text-white border-gold'
+                  : 'border-border-light text-text-secondary hover:text-gold hover:border-gold'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

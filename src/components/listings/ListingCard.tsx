@@ -116,7 +116,7 @@ export function ListingCard({ listing, images = [] }: ListingCardProps) {
 
             {/* 보조 정보: 보증금 / 권리금 */}
             {(listing.deposit || (listing as any).premium_price) && (
-              <div className="flex gap-2 text-xs">
+              <div className="flex gap-2 text-xs flex-wrap">
                 {listing.deposit && (
                   <span className="text-text-secondary">보증금: <span className="text-text-primary font-semibold">{formatPrice(listing.deposit)}</span></span>
                 )}

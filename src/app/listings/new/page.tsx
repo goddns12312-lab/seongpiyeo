@@ -1,9 +1,21 @@
 import { Metadata } from 'next';
 import { ListingFormNew } from '@/components/listings/ListingFormNew';
+import { SITE_CONFIG } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: '매물 등록',
-  description: '새로운 PC방 매물을 등록하세요.',
+  title: '매물 등록 | 성피요',
+  description: '성인PC 매물을 등록하고 판매하세요. 빠르고 안전한 거래를 경험해보세요.',
+  robots: {
+    index: false,
+    follow: false,
+  },
+  openGraph: {
+    title: '매물 등록 | 성피요',
+    description: '성인PC 매물을 등록하고 판매하세요.',
+    type: 'website',
+    url: `${SITE_CONFIG.url}/listings/new`,
+    siteName: SITE_CONFIG.businessName,
+  },
 };
 
 export default function NewListingPage() {

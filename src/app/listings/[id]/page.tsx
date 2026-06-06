@@ -12,29 +12,16 @@ import { ListingActions } from '@/components/listings/ListingActions';
 import { LikeButton } from '@/components/listings/LikeButton';
 import ListingCommentSection from '@/components/listings/ListingCommentSection';
 import { buildListingProductSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
-import { buildOptimizedListingTitle } from '@/lib/seo-metadata';
+import { buildOptimizedListingTitle, buildListingSeoTitle, buildListingSeoDescription } from '@/lib/seo-metadata';
+import { RelatedListings } from '@/components/listings/RelatedListings';
+import { AdjacentRegions } from '@/components/listings/AdjacentRegions';
+import { REGIONS } from '@/types';
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
 // SEO 헬퍼 함수들
-function buildSeoTitle(listing: any): string {
-  const location = [listing.region, listing.district].filter(Boolean).join(' ');
-  const priceType = listing.monthly_rent ? '임대' : '매매';
-  return `${location} 성인피씨 ${priceType} - ${listing.title}`;
-}
-
-function buildSeoDescription(listing: any, location: string, priceDesc: string, specs: string): string {
-  const base = `${location} 성인피씨 ${listing.monthly_rent ? '임대' : '매매'} 매물`;
-  const priceInfo = priceDesc ? ` | ${priceDesc}` : '';
-  const specInfo = specs ? ` | ${specs}` : '';
-  const extra = listing.description
-    ? ` | ${listing.description.replace(/<[^>]*>/g, '').slice(0, 50)}`
-    : '';
-  return `${base}${priceInfo}${specInfo}${extra} | 성피요에서 확인하세요`.slice(0, 160);
-}
-
 function buildPriceDescription(listing: any): string {
   const parts: string[] = [];
   if (listing.premium_price) parts.push(`권리금 ${listing.premium_price.toLocaleString()}만원`);
@@ -105,14 +92,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  // SEO 문구 자동 생성
+  // SEO 문구 자동 생성 (최적화 함수)
   const location = [listing.region, listing.district].filter(Boolean).join(' ');
   const priceDesc = buildPriceDescription(listing);
   const specs = buildSpecDescription(listing);
 
-  // 최적화된 제목 생성 (짧은 제목 자동 확장)
-  const title = buildOptimizedListingTitle(listing);
-  const description = buildSeoDescription(listing, location, priceDesc, specs);
+  // TOP 1-3: 최적화된 Title, Description 생성
+  const title = buildListingSeoTitle(listing); // 60자 내외
+  const description = buildListingSeoDescription(listing); // 120~160자
+
   const keywords = buildKeywords(listing, location);
   const ogImage = resolveOgImage(listing, baseUrl);
 
@@ -238,15 +226,71 @@ export default async function ListingDetailPage({ params }: Props) {
     .eq('status', 'active')
     .order('created_at', { ascending: true });
 
-  // Get related listings (same region, max 4, exclude current listing)
-  const { data: relatedListings } = await supabase
+  // Get related listings: prefer district, fallback to region
+  // Step 1: Try to get same district listings
+  let relatedListings = [];
+
+  if (listing.district) {
+    const { data: districtListings } = await supabase
+      .from('listings')
+      .select('id, title, region, district, monthly_rent, deposit, premium_price, main_image_url, created_at')
+      .eq('region', listing.region)
+      .eq('district', listing.district)
+      .eq('status', 'active')
+      .neq('id', id)
+      .order('created_at', { ascending: false })
+      .limit(6);
+
+    relatedListings = districtListings || [];
+
+    // Step 2: If fewer than 3 district listings, add region listings (excluding district)
+    if (relatedListings.length < 3) {
+      const { data: regionListings } = await supabase
+        .from('listings')
+        .select('id, title, region, district, monthly_rent, deposit, premium_price, main_image_url, created_at')
+        .eq('region', listing.region)
+        .eq('status', 'active')
+        .neq('id', id)
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      const combined = [
+        ...relatedListings,
+        ...(regionListings?.filter(r => r.district !== listing.district) || [])
+      ];
+      relatedListings = combined.slice(0, 6);
+    }
+  } else {
+    // No district: get same region listings
+    const { data: regionListings } = await supabase
+      .from('listings')
+      .select('id, title, region, district, monthly_rent, deposit, premium_price, main_image_url, created_at')
+      .eq('region', listing.region)
+      .eq('status', 'active')
+      .neq('id', id)
+      .order('created_at', { ascending: false })
+      .limit(6);
+
+    relatedListings = regionListings || [];
+  }
+
+  // Get region listing counts (for adjacent regions widget)
+  const { data: regionCounts } = await supabase
     .from('listings')
-    .select('id, title, region, monthly_rent, deposit, premium_price, main_image_url, created_at')
-    .eq('region', listing.region)
-    .eq('status', 'active')
-    .neq('id', id)
-    .order('created_at', { ascending: false })
-    .limit(4);
+    .select('region')
+    .eq('status', 'active');
+
+  const regionListingCounts: Record<string, number> = {};
+  REGIONS.forEach(region => {
+    regionListingCounts[region] = 0;
+  });
+  regionCounts?.forEach(item => {
+    if (item.region) {
+      regionListingCounts[item.region] = (regionListingCounts[item.region] || 0) + 1;
+    }
+  });
+
+  const currentRegionCount = regionListingCounts[listing.region] || 0;
 
   // Increment view count
   await supabase
@@ -314,7 +358,7 @@ export default async function ListingDetailPage({ params }: Props) {
                 filename: i.url?.split('/').pop()
               }))
             })}
-            <ImageGallery images={displayImages} title={listing.title} />
+            <ImageGallery images={displayImages} title={listing.title} listing={listing} />
 
             {/* Title Section */}
             <div className="mb-4">
@@ -414,56 +458,19 @@ export default async function ListingDetailPage({ params }: Props) {
               </div>
             )}
 
-            {/* Related Listings Widget */}
-            {relatedListings && relatedListings.length > 0 && (
-              <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-                <h2 className="text-text-primary font-semibold text-lg mb-4">
-                  🏢 {listing.region} 다른 매물
-                </h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {relatedListings.map((item) => (
-                    <Link
-                      key={item.id}
-                      href={`/listings/${item.id}`}
-                      className="group bg-bg-tertiary border border-border-light rounded-lg overflow-hidden hover:border-gold transition-colors"
-                    >
-                      {/* Image */}
-                      <div className="relative w-full aspect-square bg-bg-tertiary overflow-hidden">
-                        {item.main_image_url ? (
-                          <img
-                            src={item.main_image_url}
-                            alt={item.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-text-secondary">
-                            📷
-                          </div>
-                        )}
-                      </div>
+            {/* Related Listings Widget - Enhanced */}
+            <RelatedListings
+              listings={relatedListings}
+              currentRegion={listing.region}
+              currentDistrict={listing.district}
+            />
 
-                      {/* Info */}
-                      <div className="p-3">
-                        {/* Price */}
-                        <p className="text-gold font-bold text-sm mb-1">
-                          {item.monthly_rent
-                            ? `월세 ${item.monthly_rent.toLocaleString()}만원`
-                            : item.premium_price
-                            ? `권리금 ${item.premium_price.toLocaleString()}만원`
-                            : '문의'}
-                        </p>
-
-                        {/* Title */}
-                        <p className="text-text-primary text-xs font-semibold line-clamp-2 group-hover:text-gold transition-colors">
-                          {item.title}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Adjacent Regions Widget - Show when current region has <5 listings */}
+            <AdjacentRegions
+              currentRegion={listing.region}
+              currentListingCount={currentRegionCount}
+              regionListingCounts={regionListingCounts}
+            />
           </div>
 
           {/* Sidebar */}

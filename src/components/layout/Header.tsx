@@ -80,49 +80,82 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-4 lg:gap-8 flex-1">
-            <Link
-              href="/listings"
-              className={`relative text-xs sm:text-sm lg:text-base font-semibold whitespace-nowrap transition-all duration-300 group ${isActive('/listings') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
-            >
-              성인PC 팝니다
-              <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-full transition-all duration-300 ${isActive('/listings') ? 'w-full' : ''}`}></span>
-            </Link>
-            <Link
-              href="/jobs"
-              className={`relative text-xs sm:text-sm lg:text-base font-semibold whitespace-nowrap transition-all duration-300 group ${isActive('/jobs') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
-            >
-              구인구직
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-full transition-all duration-300 ${isActive('/jobs') ? 'w-full' : 'w-0'}`}></span>
-            </Link>
-            <Link
-              href="/guide"
-              className={`hidden lg:inline relative text-xs sm:text-sm lg:text-base font-semibold whitespace-nowrap transition-all duration-300 group ${isActive('/guide') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
-            >
-              가이드
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-full transition-all duration-300 ${isActive('/guide') ? 'w-full' : 'w-0'}`}></span>
-            </Link>
-            <Link
-              href="/faq"
-              className={`hidden lg:inline relative text-xs sm:text-sm lg:text-base font-semibold whitespace-nowrap transition-all duration-300 group ${isActive('/faq') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
-            >
-              FAQ
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-full transition-all duration-300 ${isActive('/faq') ? 'w-full' : 'w-0'}`}></span>
-            </Link>
-            <Link
-              href="/secondhand"
-              className={`hidden lg:inline relative text-xs sm:text-sm lg:text-base font-semibold whitespace-nowrap transition-all duration-300 group ${isActive('/secondhand') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
-            >
-              중고장터
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-full transition-all duration-300 ${isActive('/secondhand') ? 'w-full' : 'w-0'}`}></span>
-            </Link>
-            <Link
-              href="/notice"
-              className={`hidden lg:inline relative text-xs sm:text-sm lg:text-base font-semibold whitespace-nowrap transition-all duration-300 group ${isActive('/notice') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
-            >
-              공지사항
-              <span className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-full transition-all duration-300 ${isActive('/notice') ? 'w-full' : 'w-0'}`}></span>
-            </Link>
+          <nav className="hidden md:flex gap-2 lg:gap-4 flex-1 items-center">
+            {/* Main Menu - Button Style */}
+            <div className="flex gap-2 lg:gap-3">
+              <Link
+                href="/listings"
+                className={`cursor-pointer px-3 py-1.5 rounded-lg border-2 transition-all duration-300 font-semibold text-xs sm:text-sm whitespace-nowrap ${isActive('/listings') ? 'border-gold bg-gold/10 text-gold-light' : 'border-gold text-gold hover:bg-gold/10'}`}
+              >
+                성인PC 팝니다
+              </Link>
+              <Link
+                href="/jobs"
+                className={`cursor-pointer px-3 py-1.5 rounded-lg border-2 transition-all duration-300 font-semibold text-xs sm:text-sm whitespace-nowrap ${isActive('/jobs') ? 'border-gold bg-gold/10 text-gold-light' : 'border-gold text-gold hover:bg-gold/10'}`}
+              >
+                구인구직
+              </Link>
+            </div>
+
+            {/* Additional Menu */}
+            <div className="hidden lg:flex gap-3 pl-4 border-l border-border-light/50">
+              <Link
+                href="/guide"
+                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/guide') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+              >
+                가이드
+                <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/guide') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
+              </Link>
+              <Link
+                href="/faq"
+                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/faq') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+              >
+                FAQ
+                <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/faq') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
+              </Link>
+              <Link
+                href="/secondhand"
+                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/secondhand') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+              >
+                중고장터
+                <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/secondhand') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
+              </Link>
+              <Link
+                href="/notice"
+                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/notice') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+              >
+                공지사항
+                <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/notice') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
+              </Link>
+            </div>
+
+            {/* Community Menu */}
+            <div className="hidden lg:flex gap-3 pl-4 border-l border-border-light/50 bg-bg-tertiary/50 rounded-lg px-3 py-1">
+              <Link
+                href="/community"
+                className={`cursor-pointer relative text-sm font-semibold whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-gold/10 ${isActive('/community') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+              >
+                자유게시판
+                <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/community') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
+              </Link>
+              <Link
+                href="/exchange-info"
+                className={`cursor-pointer relative text-sm font-semibold whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-gold/10 ${isActive('/exchange-info') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+              >
+                환수 및 정보
+                <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/exchange-info') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
+              </Link>
+              <a
+                href="https://t.me/pc365_112"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer relative text-sm font-semibold whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-red-500/10 text-red-500 hover:text-red-400"
+                title="블랙진상조회"
+              >
+                블랙진상조회
+                <span className="absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-red-500 to-red-400 group-hover:w-[calc(100%-1rem)] transition-all duration-300 w-0"></span>
+              </a>
+            </div>
           </nav>
 
           {/* Auth Section */}
@@ -177,23 +210,53 @@ export function Header() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <nav className="md:hidden mt-6 pb-6 border-t border-border-light pt-6 flex flex-col gap-4" id="mobile-menu" role="navigation" aria-label="모바일 네비게이션">
-            <div className="flex items-center justify-between mb-4 pb-4 border-b border-border-light/50">
+          <nav className="md:hidden mt-6 pb-6 border-t border-border-light pt-6 flex flex-col gap-5" id="mobile-menu" role="navigation" aria-label="모바일 네비게이션">
+            {/* Theme Toggle */}
+            <div className="flex items-center justify-between mb-2 pb-4 border-b border-border-light/50">
               <span className="text-text-secondary text-xs font-semibold uppercase tracking-wider">테마</span>
               <ThemeToggle />
             </div>
-            <Link href="/listings" className="text-text-primary hover:text-gold font-semibold transition-colors">
-              성인PC 팝니다
-            </Link>
-            <Link href="/jobs" className="text-text-primary hover:text-gold font-semibold transition-colors">
-              구인구직
-            </Link>
-            <Link href="/secondhand" className="text-text-primary hover:text-gold font-semibold transition-colors">
-              중고장터
-            </Link>
-            <Link href="/notice" className="text-text-primary hover:text-gold font-semibold transition-colors">
-              공지사항
-            </Link>
+
+            {/* Main Menu */}
+            <div className="flex flex-col gap-2">
+              <span className="text-gold text-xs font-bold uppercase tracking-wider">주요메뉴</span>
+              <Link href="/listings" className="cursor-pointer px-3 py-2 rounded border-2 border-gold text-gold hover:bg-gold/10 font-semibold transition-all">
+                성인PC 팝니다
+              </Link>
+              <Link href="/jobs" className="cursor-pointer px-3 py-2 rounded border-2 border-gold text-gold hover:bg-gold/10 font-semibold transition-all">
+                구인구직
+              </Link>
+            </div>
+
+            {/* Additional Menu */}
+            <div className="flex flex-col gap-3">
+              <span className="text-gold text-xs font-bold uppercase tracking-wider">정보</span>
+              <Link href="/secondhand" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold hover:bg-bg-tertiary/50 font-semibold transition-all rounded">
+                중고장터
+              </Link>
+              <Link href="/notice" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold hover:bg-bg-tertiary/50 font-semibold transition-all rounded">
+                공지사항
+              </Link>
+            </div>
+
+            {/* Community Menu */}
+            <div className="flex flex-col gap-2 bg-bg-tertiary/50 rounded-lg p-4 border border-border-light/30">
+              <span className="text-gold text-xs font-bold uppercase tracking-wider">커뮤니티</span>
+              <Link href="/community" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold hover:bg-gold/10 font-semibold transition-all rounded">
+                자유게시판
+              </Link>
+              <Link href="/exchange-info" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold hover:bg-gold/10 font-semibold transition-all rounded">
+                환수 및 정보
+              </Link>
+              <a
+                href="https://t.me/pc365_112"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer px-3 py-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 font-semibold transition-all rounded"
+              >
+                🚨 블랙진상조회
+              </a>
+            </div>
             <Link href="/support" className="text-text-primary hover:text-gold font-semibold transition-colors">
               고객센터
             </Link>

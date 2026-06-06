@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     images: [
       {
-        url: `${SITE_CONFIG.url}/og-faq.png`,
+        url: `${SITE_CONFIG.url}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'PC방 FAQ',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PC방 자주묻는질문(FAQ)',
     description: 'PC방 창업 Q&A',
-    images: [`${SITE_CONFIG.url}/og-faq.png`],
+    images: [`${SITE_CONFIG.url}/og-image.png`],
   },
 };
 

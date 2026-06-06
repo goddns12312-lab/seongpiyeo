@@ -95,7 +95,7 @@ export default async function ListingsPage({ searchParams }: Props) {
   const buildQuery = () => {
     let q = supabase
       .from('listings')
-      .select('id, title, price_type, price, region, district, area_sqm, pc_count, deposit, premium_price, monthly_rent, monthly_revenue, monthly_profit, view_count, created_at, thumbnail_url, main_image_url, status')
+      .select('id, idx, title, price_type, price, region, district, area_sqm, pc_count, deposit, premium_price, monthly_rent, monthly_revenue, monthly_profit, view_count, created_at, thumbnail_url, main_image_url, status')
       .eq('status', 'active');
 
     if (search) {

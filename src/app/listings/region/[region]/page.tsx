@@ -1,13 +1,14 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Script from 'next/script';
+import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { ListingGrid } from '@/components/listings/ListingGrid';
 import { Button } from '@/components/ui/Button';
 import { REGIONS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
 
-export const revalidate = 0;
+export const revalidate = 3600; // 1시간마다 재검증
 
 interface Props {
   params: Promise<{ region: string }>;
@@ -69,7 +70,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 
   const listingCount = count || 0;
 
-  // 매물이 없는 지역은 noindex 처리
+  // Thin Content 정책 적용
+  // 0개: noindex + nofollow
   if (listingCount === 0) {
     return {
       title: `${decodedRegion} PC방 매물 | 성피요`,
@@ -80,6 +82,22 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     };
   }
 
+  // 1~2개: noindex (하지만 follow)
+  if (listingCount < 3) {
+    return {
+      title: buildRegionTitle(decodedRegion, listingCount),
+      description: buildRegionDescription(decodedRegion, listingCount),
+      robots: {
+        index: false,
+        follow: true,
+      },
+      alternates: {
+        canonical: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
+      },
+    };
+  }
+
+  // 3개 이상: index + 상세 메타데이터
   const title = buildRegionTitle(decodedRegion, listingCount);
   const description = buildRegionDescription(decodedRegion, listingCount);
   const keywords = buildRegionKeywords(decodedRegion);
@@ -205,6 +223,12 @@ export default async function RegionListingsPage({ params, searchParams }: Props
     });
   }
 
+  // 콘텐츠 0개인 경우 404 반환 (Thin Content 방지)
+  const listingCount = totalCount || 0;
+  if (listingCount === 0) {
+    notFound();
+  }
+
   // 리스팅에 메타데이터 추가
   const listingsWithMeta = allListings?.map(listing => ({
     ...listing,
@@ -212,8 +236,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
     favoriteCount: favoriteCounts[listing.id] || 0
   })) || [];
 
-  const listingCount = totalCount || 0;
-  const totalPages = Math.ceil((totalCount || 0) / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(listingCount / ITEMS_PER_PAGE);
   const filteredListings = listingsWithMeta;
 
   // CollectionPage JSON-LD Schema

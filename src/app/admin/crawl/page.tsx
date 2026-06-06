@@ -22,15 +22,28 @@ interface CrawlerState {
     latestTitle: string | null;
     lastCrawledAt: string | null;
     totalCount: number;
+    newCount?: number;
+    savedCount?: number;
+    duplicateCount?: number;
+    excludedCount?: number;
+    lastStatus?: string;
   };
 }
 
 interface LogEntry {
   type: 'log' | 'error' | 'complete' | 'status';
   message?: string;
-  crawledCount?: number;
-  skippedCount?: number;
+  region?: string;
+  newCount?: number;
+  savedCount?: number;
+  duplicateCount?: number;
   timestamp: string;
+}
+
+interface FinalStats {
+  newCount: number;
+  savedCount: number;
+  duplicateCount: number;
 }
 
 export default function AdminCrawlPage() {
@@ -39,7 +52,7 @@ export default function AdminCrawlPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [crawlerState, setCrawlerState] = useState<CrawlerState>({});
-  const [finalStats, setFinalStats] = useState<{ crawledCount: number; skippedCount: number } | null>(null);
+  const [finalStats, setFinalStats] = useState<FinalStats | null>(null);
   const logsEndRef = useRef<HTMLDivElement>(null);
 
   // 크롤러 상태 로드
@@ -121,12 +134,16 @@ export default function AdminCrawlPage() {
               const logEntry: LogEntry = JSON.parse(line);
               setLogs((prev) => [...prev, logEntry]);
 
-              // 완료 메시지 처리
-              if (logEntry.type === 'complete') {
-                setFinalStats({
-                  crawledCount: logEntry.crawledCount || 0,
-                  skippedCount: logEntry.skippedCount || 0,
-                });
+              // 완료 메시지 처리 (모든 지역 완료)
+              if (logEntry.type === 'complete' && !logEntry.region) {
+                // 최종 통계는 마지막 로그에서만 처리
+                if (logEntry.newCount !== undefined) {
+                  setFinalStats({
+                    newCount: logEntry.newCount,
+                    savedCount: logEntry.savedCount || 0,
+                    duplicateCount: logEntry.duplicateCount || 0,
+                  });
+                }
               }
             } catch (e) {
               // JSON 파싱 실패 시 무시
@@ -237,31 +254,50 @@ export default function AdminCrawlPage() {
           )}
 
           {/* 크롤링 버튼 */}
-          <button
-            onClick={handleStartCrawl}
-            disabled={isRunning || (!selectedRegion && !allRegions)}
-            className={`w-full py-3 px-4 rounded font-semibold transition ${
-              isRunning || (!selectedRegion && !allRegions)
-                ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                : 'bg-[#c9a227] text-black hover:bg-yellow-500'
-            }`}
-          >
-            {isRunning ? '크롤링 진행 중...' : '크롤링 시작'}
-          </button>
+          {allRegions ? (
+            <button
+              onClick={handleStartCrawl}
+              disabled={isRunning}
+              className={`w-full py-3 px-4 rounded font-semibold transition ${
+                isRunning
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : 'bg-[#c9a227] text-black hover:bg-yellow-500'
+              }`}
+            >
+              {isRunning ? '전체 지역 동기화 중...' : '전체 지역 신규글 동기화'}
+            </button>
+          ) : (
+            <button
+              onClick={handleStartCrawl}
+              disabled={isRunning || !selectedRegion}
+              className={`w-full py-3 px-4 rounded font-semibold transition ${
+                isRunning || !selectedRegion
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : 'bg-[#c9a227] text-black hover:bg-yellow-500'
+              }`}
+            >
+              {isRunning ? '동기화 중...' : '신규글 동기화'}
+            </button>
+          )}
         </div>
 
         {/* 최종 통계 */}
         {finalStats && (
-          <div className="bg-green-900 border border-green-700 rounded-lg p-4 mb-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-green-200 text-sm">신규 저장</p>
-                <p className="text-white text-2xl font-bold">{finalStats.crawledCount}개</p>
-              </div>
-              <div>
-                <p className="text-green-200 text-sm">스킵됨</p>
-                <p className="text-white text-2xl font-bold">{finalStats.skippedCount}개</p>
-              </div>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="bg-blue-900 border border-blue-700 rounded-lg p-4">
+              <p className="text-blue-200 text-sm font-semibold">신규 발견</p>
+              <p className="text-white text-3xl font-bold">{finalStats.newCount}</p>
+              <p className="text-blue-300 text-xs mt-1">개</p>
+            </div>
+            <div className="bg-green-900 border border-green-700 rounded-lg p-4">
+              <p className="text-green-200 text-sm font-semibold">신규 저장</p>
+              <p className="text-white text-3xl font-bold">{finalStats.savedCount}</p>
+              <p className="text-green-300 text-xs mt-1">개</p>
+            </div>
+            <div className="bg-yellow-900 border border-yellow-700 rounded-lg p-4">
+              <p className="text-yellow-200 text-sm font-semibold">기존 중복</p>
+              <p className="text-white text-3xl font-bold">{finalStats.duplicateCount}</p>
+              <p className="text-yellow-300 text-xs mt-1">개</p>
             </div>
           </div>
         )}

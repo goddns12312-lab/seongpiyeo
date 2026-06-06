@@ -2,14 +2,35 @@
 
 import { useState } from 'react';
 import { ListingImage } from '@/types';
+import { buildListingImageAlt } from '@/lib/seo-metadata';
 
 interface ImageGalleryProps {
   images: ListingImage[];
   title: string;
+  listing?: any;
 }
 
-export function ImageGallery({ images, title }: ImageGalleryProps) {
+export function ImageGallery({ images, title, listing }: ImageGalleryProps) {
+  const getImageAlt = (index?: number) => {
+    if (!listing) {
+      return index !== undefined ? `${title} 이미지 ${index + 1}` : `${title} - 성인PC 매물 메인 이미지`;
+    }
+    const baseAlt = buildListingImageAlt(listing);
+    return index !== undefined ? `${baseAlt} (${index + 1})` : baseAlt;
+  };
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  // DEBUG: 클라이언트에서 받은 images 배열 확인
+  console.log('[CLIENT IMAGE GALLERY] props received', {
+    imagesCount: images?.length || 0,
+    imagesArray: images?.map(i => ({
+      id: i.id,
+      filename: i.url?.split('/').pop(),
+      fullUrl: i.url
+    })),
+    firstImage: images?.[0]?.url?.split('/').pop(),
+    firstImageFull: images?.[0]?.url
+  });
 
   if (!images || images.length === 0) {
     return (
@@ -34,17 +55,26 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
           tabIndex={0}
           aria-label="갤러리 보기"
         >
+          {console.log('[CLIENT MAIN IMAGE] rendering', {
+            src: images[0]?.url,
+            filename: images[0]?.url?.split('/').pop()
+          })}
           <img
             src={images[0].url}
-            alt={`${title} - 성인PC 매물 메인 이미지`}
+            alt={getImageAlt()}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
             loading="eager"
+            key={`main-${images[0]?.url}`}
           />
         </div>
 
         {/* Thumbnail Gallery */}
         {images.length > 1 && (
           <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-1 sm:gap-2 p-3 sm:p-4">
+            {console.log('[CLIENT THUMBNAILS] rendering', {
+              count: images.slice(0, 8).length,
+              thumbnails: images.slice(0, 8).map(i => i.url?.split('/').pop())
+            })}
             {images.slice(0, 8).map((image, index) => (
               <button
                 key={image.id}
@@ -54,7 +84,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
               >
                 <img
                   src={image.url}
-                  alt={`${title} 이미지 ${index + 1}`}
+                  alt={getImageAlt(index)}
                   className="w-full h-full object-cover rounded"
                   loading="lazy"
                 />
@@ -74,7 +104,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
             {/* Image */}
             <img
               src={images[selectedIndex].url}
-              alt={`${title} ${selectedIndex + 1}`}
+              alt={getImageAlt(selectedIndex)}
               className="w-full h-auto rounded-lg"
             />
 

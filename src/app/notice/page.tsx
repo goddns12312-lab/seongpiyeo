@@ -1,10 +1,3 @@
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: '공지사항 | 성피요',
-  description: '성피요 공지사항',
-};
-
 export default function NoticePage() {
   const notices = [
     {

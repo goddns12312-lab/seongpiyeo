@@ -2,11 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 
-// export const metadata: Metadata = {
-//   title: '고객센터 | 성피요',
-//   description: '성피요 고객센터',
-// };
-
 export default function SupportPage() {
   const router = useRouter();
 

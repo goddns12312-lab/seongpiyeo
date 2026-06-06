@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { sanitizeJobBeforeSave } from '@/lib/seo-title-auto-fix';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -93,13 +94,25 @@ export async function POST(request: NextRequest) {
     // 3단계: Service Role Key로 Supabase 클라이언트 생성 (RLS 우회)
     const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
+    // 3-1단계: SEO 제목 자동 보정 적용
+    const sanitized = sanitizeJobBeforeSave({
+      title: payload.title,
+      region: payload.region,
+      employment_type: payload.employment_type,
+    });
+    console.log('[POST /api/jobs/create] 📝 SEO 제목 자동 보정:', {
+      original: payload.title,
+      fixed: sanitized.title,
+      applied: sanitized._seoApplied,
+    });
+
     // 4단계: jobs 테이블에 데이터 삽입
     console.log('[POST /api/jobs/create] ✓ Supabase insert 시작...');
     console.log('[POST /api/jobs/create] 삽입 데이터:', {
       user_id: session.id,
       category: payload.category,
       slug: payload.slug,
-      title: payload.title,
+      title: sanitized.title,
       region: payload.region,
       imageCount: payload.images?.length || 0,
     });
@@ -110,7 +123,7 @@ export async function POST(request: NextRequest) {
         user_id: session.id,
         category: payload.category,
         slug: payload.slug,
-        title: payload.title,
+        title: sanitized.title,
         company_name: payload.company_name || null,
         description: payload.description,
         region: payload.region,

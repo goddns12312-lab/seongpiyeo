@@ -391,3 +391,156 @@ export function buildOptimizedSecondhandTitle(item: any, businessName: string = 
   };
   return buildOptimizedTitle(metadata, businessName);
 }
+
+/**
+ * ============================================================
+ * Listings 상세페이지 SEO 최적화 함수 (TOP 1-3)
+ * ============================================================
+ */
+
+function extractTitleKeyword(originalTitle: string): string {
+  if (!originalTitle) return '';
+  const title = originalTitle.toLowerCase();
+  const excludeWords = ['팝니다', '정리', '팔아요', '팔게요', '거래중', '판매', '매매', '취급', '운영', '입니다', '입니까'];
+  const keyword = originalTitle
+    .split(' ')
+    .filter(word => !excludeWords.some(exclude => word.includes(exclude)))
+    .slice(0, 3)
+    .join(' ')
+    .trim();
+  return keyword && keyword.length > 1 ? keyword : '';
+}
+
+/**
+ * Listings 상세페이지 SEO Title 생성
+ * 지역(district/location 필수) + 성인PC 매물 + 가격 + 핵심키워드 + 브랜드
+ *
+ * @example
+ * const listing = {
+ *   region: '서울', district: '답십리', title: '동대문구 독점',
+ *   premium_price: 1100, monthly_rent: 80
+ * }
+ * buildListingSeoTitle(listing)
+ * // "서울 답십리 성인PC | 권리금 1100만·월세 80만 | 독점 | 성피요"
+ */
+export function buildListingSeoTitle(listing: any, businessName: string = SITE_CONFIG.businessName): string {
+  const { region, district, location, premium_price, deposit, monthly_rent, title: originalTitle } = listing;
+
+  // 지역 정보 (district 우선, 없으면 location, 모두 없으면 region만)
+  const locationPart = district || location || '';
+  const fullLocation = locationPart ? `${region} ${locationPart}` : region;
+
+  // 가격 정보 (최대 2개) - 띄어쓰기 추가
+  const priceParts: string[] = [];
+  if (premium_price) priceParts.push(`권리금 ${premium_price}만`);
+  if (deposit && !premium_price) priceParts.push(`보증금 ${deposit}만`);
+  if (monthly_rent && priceParts.length < 2) priceParts.push(`월세 ${monthly_rent}만`);
+  const priceInfo = priceParts.length > 0 ? ` | ${priceParts.join(' · ')}` : '';
+
+  // 완성된 제목 (성인PC 매물로 더 명확하게)
+  let title = `${fullLocation} 성인PC 매물${priceInfo} | ${businessName}`;
+
+  // 60자 제한: 너무 길면 "매물" 제거
+  if (title.length > 60) {
+    title = `${fullLocation} 성인PC${priceInfo} | ${businessName}`;
+  }
+
+  // 여전히 길면 가격을 1개만 유지
+  if (title.length > 60 && priceParts.length > 1) {
+    const shortPriceInfo = ` | ${priceParts[0]}`;
+    title = `${fullLocation} 성인PC${shortPriceInfo} | ${businessName}`;
+  }
+
+  // 마지막 수단: 가격 제거
+  if (title.length > 60) {
+    title = `${fullLocation} 성인PC | ${businessName}`;
+  }
+
+  return title.slice(0, 60);
+}
+
+/**
+ * Listings 상세페이지 SEO Description 생성 (120~160자)
+ * 목표: 100% 고유성 + 데이터 기반 + 120~160자 달성
+ */
+export function buildListingSeoDescription(listing: any): string {
+  const { region, district, location, premium_price, deposit, monthly_rent, area_sqm, pc_count } = listing;
+
+  const locationPart = district ? `${region} ${district}` : location ? `${region} ${location}` : region;
+
+  // 핵심 가격 (중복 최소화)
+  let priceInfo = '';
+  if (premium_price && monthly_rent) {
+    priceInfo = `권리금 ${premium_price}만원, 월세 ${monthly_rent}만원`;
+  } else if (premium_price && deposit) {
+    priceInfo = `권리금 ${premium_price}만원, 보증금 ${deposit}만원`;
+  } else if (premium_price) {
+    priceInfo = `권리금 ${premium_price}만원`;
+  } else if (monthly_rent) {
+    priceInfo = `월세 ${monthly_rent}만원`;
+  }
+
+  // 데이터 기반 특성화된 설명
+  let desc = '';
+
+  // 가격 + 규모 조합
+  if (pc_count && area_sqm) {
+    desc = `${locationPart} 성인PC. ${priceInfo}. ${area_sqm}평 규모에 PC ${pc_count}대. 체계적으로 운영할 수 있는 환경이 갖춰져 있습니다.`;
+  } else if (pc_count) {
+    const scale = pc_count >= 20 ? '중대형' : '중규모';
+    desc = `${locationPart} 성인PC. ${priceInfo}. PC ${pc_count}대 규모의 ${scale} 점포. 안정적인 사업 운영이 가능합니다.`;
+  } else if (area_sqm) {
+    desc = `${locationPart} 성인PC. ${priceInfo}. ${area_sqm}평 규모. 충분한 공간에서 사업을 시작할 수 있습니다.`;
+  } else if ((premium_price || 0) + (deposit || 0) >= 3000) {
+    desc = `${locationPart} 성인PC. ${priceInfo}. 프리미엄 상권의 수익성 높은 매물. 성장 잠재력이 큰 점포입니다.`;
+  } else if (premium_price && premium_price < 500) {
+    desc = `${locationPart} 성인PC. ${priceInfo}. 저가 진입 조건으로 작은 자본금으로도 창업할 수 있습니다.`;
+  } else {
+    desc = `${locationPart} 성인PC 거래 중. ${priceInfo}. 투명한 거래 절차와 함께 맞춤형 컨설팅을 받을 수 있습니다.`;
+  }
+
+  // 상권 정보 추가로 길이 확대
+  const remainingChars = 160 - desc.length;
+  if (remainingChars > 35) {
+    if (district) {
+      desc += ` ${district} 상권의 성인PC 사업 정보를 성피요에서 확인해보세요.`;
+    } else {
+      desc += ` ${region} 지역 성인PC 매물과 사업 정보를 성피요에서 확인해보세요.`;
+    }
+  } else if (remainingChars > 20) {
+    desc += ` 상세 정보는 성피요에서 확인하세요.`;
+  } else if (remainingChars > 10) {
+    desc += ` 성피요에서 확인.`;
+  }
+
+  return desc.length > 160 ? desc.slice(0, 157) + '...' : desc;
+}
+
+/**
+ * Listings 이미지 Alt Text 생성
+ * 형식: {지역} {district/location} 성인PC 매물 이미지 - 권리금 {amount}, {면적}평
+ *
+ * @example
+ * const listing = {
+ *   region: '서울', district: '강남구', premium_price: 1500, area_sqm: 20
+ * }
+ * buildListingImageAlt(listing) // "서울 강남구 성인PC 매물 이미지 - 권리금 1500만원, 20평"
+ */
+export function buildListingImageAlt(listing: any): string {
+  const { region, district, location, premium_price, area_sqm } = listing;
+
+  // 지역 정보
+  const locationPart = district ? `${region} ${district}` : location ? `${region} ${location}` : region;
+  let alt = `${locationPart} 성인PC 매물 이미지`;
+
+  // 추가 정보
+  const details: string[] = [];
+  if (premium_price) details.push(`권리금 ${premium_price}만원`);
+  if (area_sqm) details.push(`${area_sqm}평`);
+
+  if (details.length > 0) {
+    alt += ` - ${details.join(', ')}`;
+  }
+
+  return alt;
+}

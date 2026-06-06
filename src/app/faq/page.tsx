@@ -1,7 +1,59 @@
-'use client';
+import { Metadata } from 'next';
+import Script from 'next/script';
+import { SITE_CONFIG } from '@/lib/site';
+import { FAQAccordion } from '@/components/faq/FAQAccordion';
 
-import Link from 'next/link';
-import { useState } from 'react';
+export const metadata: Metadata = {
+  title: '성인PC 창업 자주 묻는 질문 | PC방 매물 비용 법규 | 성피요',
+  description: '성인PC방 창업 비용, 법규, 거래 방법, 구인구직 등 자주 묻는 질문(FAQ)을 한 곳에서 확인하세요. 초기비용 5,000만원~2억원, 월순이익 500~1,500만원.',
+  keywords: [
+    '성인PC FAQ',
+    '성인피씨 자주묻는질문',
+    'PC방 창업 비용',
+    'PC방 월세',
+    '권리금 설명',
+    'PC방 보증금',
+    '성인PC법규',
+    '성인피씨 소방',
+    'PC방 수익',
+    'PC방 창업 가이드'
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
+      'max-video-preview': -1,
+    },
+  },
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/faq`,
+  },
+  openGraph: {
+    title: '성인PC 창업 자주 묻는 질문 | 성피요',
+    description: '성인PC방 창업, 법규, 거래, 구인구직 FAQ - 초기비용부터 수익까지 모든 질문에 답변합니다.',
+    type: 'website',
+    url: `${SITE_CONFIG.url}/faq`,
+    siteName: SITE_CONFIG.businessName,
+    images: [
+      {
+        url: `${SITE_CONFIG.url}/og-faq.png`,
+        width: 1200,
+        height: 630,
+        alt: '성인PC 창업 자주 묻는 질문',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '성인PC 창업 자주 묻는 질문',
+    description: '성인PC방 창업 비용, 법규, 거래 정보 FAQ',
+    images: [`${SITE_CONFIG.url}/og-faq.png`],
+  },
+};
 
 const faqs = [
   {
@@ -79,12 +131,12 @@ const faqs = [
         a: '지역과 경력에 따라 다르지만, 알바 시급 10,000~12,000원, 정직원 월급 1,800~2,500만원 정도입니다.'
       },
       {
-        q: 'PC방 관리자의 역할이 뭔가요?',
-        a: '시스템 관리, 손님 관리, 청소, 기자재 유지보수, 매출 관리 등을 담당합니다.'
+        q: '성피요에서 직원을 구할 수 있나요?',
+        a: '네. 성피요 구인공고 게시판에서 PC방 직원 모집 공고를 올릴 수 있습니다. 무료로 이용할 수 있습니다.'
       },
       {
-        q: '구인공고는 어디서 올리나요?',
-        a: '성피요의 구인구직 페이지에서 무료로 공고를 올릴 수 있습니다. 로그인 후 "공고 등록" 버튼을 클릭하세요.'
+        q: '구인공고 등록은 어떻게 하나요?',
+        a: '로그인 후 "구인공고" 섹션에서 "새 공고 올리기"를 클릭하여 직종, 급여, 근무 시간 등을 입력하면 됩니다.'
       }
     ]
   },
@@ -92,11 +144,15 @@ const faqs = [
     category: '중고 거래',
     items: [
       {
-        q: '중고 기자재는 어디서 구하나요?',
-        a: '성피요의 중고장터에서 중고 PC, 모니터, 의자, 냉각기 등을 저렴하게 구할 수 있습니다.'
+        q: 'PC방 장비를 중고로 살 수 있나요?',
+        a: '네. 성피요 중고장터에서 PC방 운영에 필요한 장비(PC, 의자, 책상, 냉난방기 등)를 중고 가격으로 구매할 수 있습니다.'
       },
       {
-        q: '중고 기자재 품질 보장이 되나요?',
+        q: '중고 물품은 어떻게 판매하나요?',
+        a: '로그인 후 "중고장터"에서 판매 물품을 등록하면 됩니다. 사진, 설명, 가격을 입력하세요.'
+      },
+      {
+        q: '거래는 어떻게 이루어지나요?',
         a: '거래는 구매자와 판매자 간 직접 이루어집니다. 구매 전 상세 정보와 사진을 충분히 확인하세요.'
       },
       {
@@ -121,9 +177,8 @@ const faqs = [
 ];
 
 export default function FAQPage() {
-  const [openIndex, setOpenIndex] = useState<string | null>(null);
-
-  const schema = {
+  // Build FAQ schema for Google Rich Results
+  const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     'mainEntity': faqs.flatMap(cat =>
@@ -139,83 +194,43 @@ export default function FAQPage() {
   };
 
   return (
-    <>
-      <script type="application/ld+json">
-        {JSON.stringify(schema)}
-      </script>
+    <div className="bg-bg-primary min-h-screen py-12">
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
 
-      <div className="bg-bg-primary min-h-screen py-12">
-        <div className="max-w-4xl mx-auto px-4">
-          {/* Header */}
-          <div className="mb-12">
-            <h1 className="text-4xl lg:text-5xl font-bold text-text-primary mb-4">
-              자주 묻는 질문
-            </h1>
-            <p className="text-text-secondary text-lg">
-              PC방 창업, 거래, 구인구직에 관해 자주 묻는 질문들을 모았습니다.
-            </p>
-          </div>
+      <div className="max-w-4xl mx-auto px-4">
+        {/* Header */}
+        <div className="mb-12">
+          <h1 className="text-4xl lg:text-5xl font-bold text-text-primary mb-4">
+            자주 묻는 질문
+          </h1>
+          <p className="text-text-secondary text-lg">
+            PC방 창업, 거래, 구인구직에 관해 자주 묻는 질문들을 모았습니다.
+          </p>
+        </div>
 
-          {/* FAQ Items */}
-          <div className="space-y-6">
-            {faqs.map((category, catIdx) => (
-              <div key={catIdx}>
-                <h2 className="text-2xl font-bold text-text-primary mb-4 flex items-center gap-2">
-                  <span className="w-1 h-8 bg-gold rounded-full"></span>
-                  {category.category}
-                </h2>
+        {/* FAQ Accordion */}
+        <FAQAccordion faqs={faqs} />
 
-                <div className="space-y-2 ml-4">
-                  {category.items.map((faq, itemIdx) => {
-                    const key = `${catIdx}-${itemIdx}`;
-                    const isOpen = openIndex === key;
-
-                    return (
-                      <div
-                        key={key}
-                        className="bg-bg-secondary border border-border-light rounded-lg overflow-hidden"
-                      >
-                        <button
-                          onClick={() => setOpenIndex(isOpen ? null : key)}
-                          className="w-full p-5 flex items-start justify-between hover:bg-bg-tertiary transition-colors text-left"
-                        >
-                          <span className="text-text-primary font-semibold flex-1 pr-4">
-                            Q. {faq.q}
-                          </span>
-                          <span className={`text-gold flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}>
-                            ▼
-                          </span>
-                        </button>
-
-                        {isOpen && (
-                          <div className="px-5 py-4 bg-bg-tertiary border-t border-border-light">
-                            <p className="text-text-secondary">
-                              <span className="text-gold font-semibold">A. </span>
-                              {faq.a}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <div className="mt-12 p-6 bg-gradient-to-r from-gold/10 to-gold/5 border border-gold/20 rounded-lg text-center">
-            <p className="text-text-primary mb-4">
-              더 궁금한 점이 있으신가요?
-            </p>
-            <Link href="/support">
-              <button className="bg-gold hover:bg-gold/90 text-bg-primary font-bold px-8 py-3 rounded-lg transition-colors">
-                고객센터 문의
-              </button>
-            </Link>
-          </div>
+        {/* Footer CTA */}
+        <div className="mt-16 p-8 bg-bg-secondary border border-border-light rounded-lg text-center">
+          <h2 className="text-2xl font-bold text-text-primary mb-4">
+            더 많은 매물을 확인하고 싶으신가요?
+          </h2>
+          <p className="text-text-secondary mb-6">
+            성피요에서는 전국 638개 이상의 성인PC 매물을 한눈에 볼 수 있습니다.
+          </p>
+          <a
+            href="/listings"
+            className="inline-block px-8 py-3 bg-gold text-bg-primary font-semibold rounded-lg hover:bg-gold-light transition-colors"
+          >
+            전체 매물 보기
+          </a>
         </div>
       </div>
-    </>
+    </div>
   );
 }
