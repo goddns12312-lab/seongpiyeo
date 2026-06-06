@@ -7,6 +7,7 @@ import { getSession } from '@/lib/auth';
 import { Button } from '@/components/ui/Button';
 import { REGIONS } from '@/types';
 import { createListing, createListingImages, updateListing, deleteListingImages } from '@/lib/actions';
+import { buildListingSeoTitle, buildListingSeoDescription, buildListingImageAlt } from '@/lib/seo-metadata';
 
 interface ListingFormNewProps {
   initialData?: any;
@@ -30,6 +31,25 @@ const STRENGTH_EMOJIS = [
   { emoji: '⚡️', label: '급매' },
 ];
 
+const DISTRICT_MAP: Record<string, string[]> = {
+  '서울': ['강남구', '강동구', '강북구', '강서구', '관악구', '광진구', '구로구', '금천구', '노원구', '도봉구', '동대문구', '동작구', '마포구', '서대문구', '서초구', '성동구', '성북구', '송파구', '양천구', '영등포구', '용산구', '은평구', '종로구', '중구', '중랑구'],
+  '부산': ['강서구', '금정구', '남구', '북구', '사상구', '사하구', '서구', '수영구', '연제구', '영도구', '중구', '해운대구'],
+  '대구': ['남구', '달서구', '달성군', '동구', '북구', '서구', '수성구', '중구'],
+  '인천': ['강화군', '계양구', '남동구', '동구', '미추홀구', '부평구', '서구', '연수구', '중구'],
+  '광주': ['광산구', '남구', '동구', '북구', '서구'],
+  '대전': ['대덕구', '동구', '서구', '유성구', '중구'],
+  '울산': ['남구', '동구', '북구', '울주군', '중구'],
+  '경기도': ['가평군', '고양시', '과천시', '광명시', '광주시', '구리시', '군포시', '김포시', '남양주시', '동두천시', '부천시', '성남시', '수원시', '시흥시', '안산시', '안성시', '안양시', '양주시', '양평군', '여주시', '연천군', '오산시', '용인시', '의왕시', '의정부시', '이천시', '파주시', '평택시', '포천시', '하남시', '화성시'],
+  '강원도': ['강릉시', '고성군', '동해시', '삼척시', '속초시', '양구군', '양양군', '영월군', '원주시', '인제군', '정선군', '철원군', '춘천시', '태백시', '평창군', '홍천군', '화천군', '횡성군'],
+  '충청북도': ['괴산군', '단양군', '보은군', '영동군', '옥천군', '음성군', '제천시', '증평군', '진천군', '청주시', '충주시'],
+  '충청남도': ['계룡시', '공주시', '금산군', '논산시', '당진시', '보령시', '부여군', '서산시', '서천군', '아산시', '예산군', '천안시', '청양군', '태안군', '홍성군'],
+  '전라북도': ['고창군', '군산시', '김제시', '남원시', '무주군', '부안군', '순창군', '완주군', '익산시', '임실군', '장수군', '전주시', '정읍시', '진안군'],
+  '전라남도': ['강진군', '고흥군', '곡성군', '광양시', '구례군', '나주시', '담양군', '동구', '목포시', '무안군', '보성군', '봉화군', '순천시', '신안군', '여수시', '영광군', '영순군', '완도군', '장성군', '장흥군', '진도군', '함평군', '해남군'],
+  '경상북도': ['경산시', '경주시', '고령군', '구미시', '군위군', '김천시', '문경시', '봉화군', '상주시', '성주군', '안동시', '영덕군', '영양군', '영주시', '영천시', '예천군', '울릉군', '울진군', '의성군', '청도군', '청송군', '칠곡군', '포항시'],
+  '경상남도': ['거제시', '거창군', '고성군', '김해시', '남해군', '밀양시', '사천시', '산청군', '서귀포시', '양산시', '의령군', '진주시', '창녕군', '창원시', '통영시', '하동군', '함안군', '함양군', '합천군'],
+  '제주도': ['서귀포시', '제주시'],
+};
+
 export function ListingFormNew({ initialData, mode = 'create', listingId, existingImages = [] }: ListingFormNewProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -40,6 +60,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [currentExistingImages, setCurrentExistingImages] = useState(existingImages);
   const [imagesToRemove, setImagesToRemove] = useState<Set<string>>(new Set());
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   const defaultTemplate = `1. 매물업종: 성인PC방
 2. 매물위치:
@@ -72,6 +93,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
     facilities: '',
     description: defaultTemplate,
     strengths: [] as string[],
+    features: '', // 특징/장점 필드 추가
   });
 
   useEffect(() => {
@@ -83,7 +105,6 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
     setIsAuthenticated(true);
     setIsCheckingAuth(false);
 
-    // 초기 데이터로 폼 설정
     if (initialData) {
       setFormData({
         title: initialData?.title || '',
@@ -102,6 +123,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
         phone: initialData?.phone || '',
         facilities: initialData?.facilities || '',
         description: initialData?.description || '',
+        features: initialData?.features || '',
         strengths: (initialData?.facilities ? initialData.facilities.split(',').filter((s: string) => {
           const trimmed = s.trim();
           return STRENGTH_EMOJIS.some(item => item.emoji === trimmed);
@@ -110,12 +132,64 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
     }
   }, [router, initialData]);
 
+  // 실시간 필드 검증
+  const validateField = (name: string, value: string) => {
+    const errors = { ...validationErrors };
+
+    if (name === 'title' && value.trim().length > 0 && value.trim().length < 10) {
+      errors.title = '제목은 최소 10자 이상이어야 합니다.';
+    } else {
+      delete errors.title;
+    }
+
+    if (name === 'district' && value.trim() === '' && mode === 'create') {
+      errors.district = '시/군/구는 필수 입력입니다.';
+    } else if (name === 'district') {
+      delete errors.district;
+    }
+
+    if (name === 'description' && value.trim().length > 0 && value.trim().length < 50) {
+      errors.description = '상세설명은 최소 50자 이상이어야 합니다.';
+    } else {
+      delete errors.description;
+    }
+
+    if (name === 'features' && value.trim().length > 0 && value.trim().length < 30) {
+      errors.features = '특징/장점은 최소 30자 이상이어야 합니다.';
+    } else {
+      delete errors.features;
+    }
+
+    setValidationErrors(errors);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
+
+    // 실시간 검증
+    if (['title', 'district', 'description', 'features'].includes(name)) {
+      validateField(name, value);
+    }
+  };
+
+  // Region 변경 시 district 초기화
+  const handleRegionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newRegion = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      region: newRegion,
+      district: '',
+    }));
+    // district 오류 제거
+    setValidationErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors.district;
+      return newErrors;
+    });
   };
 
   const handleStrengthToggle = (emoji: string) => {
@@ -189,12 +263,39 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
     e.preventDefault();
     setError('');
 
+    // 필수 필드 검증
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.title || formData.title.trim().length < 10) {
+      newErrors.title = '제목은 최소 10자 이상 입력해주세요.';
+    }
+
+    if (!formData.region) {
+      newErrors.region = '시/도를 선택해주세요.';
+    }
+
+    if (!formData.district || formData.district.trim() === '') {
+      newErrors.district = '시/군/구는 필수 입력입니다.';
+    }
+
+    if (!formData.description || formData.description.trim().length < 50) {
+      newErrors.description = '상세설명은 최소 50자 이상 입력해주세요.';
+    }
+
+    if (!formData.features || formData.features.trim().length < 30) {
+      newErrors.features = '특징/장점은 최소 30자 이상 입력해주세요.';
+    }
+
     if (!formData.phone) {
-      setError('연락처를 입력해주세요.');
+      newErrors.phone = '연락처를 입력해주세요.';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setValidationErrors(newErrors);
+      setError('필수 필드를 확인해주세요.');
       return;
     }
 
-    // 이미지 필수 체크 (신규 등록 시)
     const totalImages = uploadedImages.length + currentExistingImages.length;
     if (mode === 'create' && totalImages === 0) {
       setError('사진을 1장 이상 등록해주세요.');
@@ -214,11 +315,31 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
 
       const facilitiesText = formData.strengths.join(',');
 
+      // SEO 자동 생성
+      const seoTitle = buildListingSeoTitle({
+        region: formData.region,
+        district: formData.district,
+        title: formData.title,
+        premium_price: formData.royalty ? parseInt(formData.royalty) : null,
+        monthly_rent: formData.monthly_rent ? parseInt(formData.monthly_rent) : null,
+      });
+
+      const seoDescription = buildListingSeoDescription({
+        region: formData.region,
+        district: formData.district,
+        location: formData.address,
+        premium_price: formData.royalty ? parseInt(formData.royalty) : null,
+        deposit: formData.deposit ? parseInt(formData.deposit) : null,
+        monthly_rent: formData.monthly_rent ? parseInt(formData.monthly_rent) : null,
+        area_sqm: formData.area_sqm ? parseInt(formData.area_sqm) : null,
+        pc_count: formData.pc_count ? parseInt(formData.pc_count) : null,
+      });
+
       const listingData = {
-        title: formData.title || `${formData.region} ${formData.district} PC방`,
+        title: seoTitle, // SEO 제목 사용
         description: formData.description,
         region: formData.region,
-        district: formData.district || null,
+        district: formData.district,
         address: formData.address || null,
         premium_price: formData.royalty ? parseInt(formData.royalty) : null,
         deposit: formData.deposit ? parseInt(formData.deposit) : null,
@@ -230,6 +351,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
         business_license: formData.business_license ? 'yes' : 'no',
         administrative_record: formData.administrative_record ? '있음' : '없음',
         facilities: facilitiesText || null,
+        features: formData.features,
       };
 
       if (mode === 'edit' && listingId) {
@@ -253,13 +375,14 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
             url,
             is_primary: currentExistingImages.length === 0 && index === 0,
             order_num: currentExistingImages.length + index,
+            alt: buildListingImageAlt({ region: formData.region, district: formData.district, premium_price: formData.royalty ? parseInt(formData.royalty) : null, area_sqm: formData.area_sqm ? parseInt(formData.area_sqm) : null }),
           }));
           await createListingImages(images);
         }
 
         router.push(`/listings/${listingId}`);
       } else {
-        // 신규 등록: status = 'active' (즉시 공개)
+        // 신규 등록: status = 'active'
         const createResult = await createListing({
           user_id: session.id,
           ...listingData,
@@ -282,6 +405,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
             url,
             is_primary: index === 0,
             order_num: index,
+            alt: buildListingImageAlt({ region: formData.region, district: formData.district, premium_price: formData.royalty ? parseInt(formData.royalty) : null, area_sqm: formData.area_sqm ? parseInt(formData.area_sqm) : null }),
           }));
           await createListingImages(images);
         }
@@ -304,6 +428,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
   }
 
   const totalImages = uploadedImages.length + currentExistingImages.length;
+  const availableDistricts = DISTRICT_MAP[formData.region] || [];
 
   return (
     <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-6">
@@ -316,7 +441,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
       {/* 사진 섹션 */}
       <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-text-primary font-semibold text-lg">사진</h2>
+          <h2 className="text-text-primary font-semibold text-lg">사진 *</h2>
           <span className="text-text-secondary text-sm">({totalImages}/10)</span>
         </div>
 
@@ -351,18 +476,13 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
           </div>
         )}
 
-        {/* 기존 이미지 */}
         {currentExistingImages.length > 0 && (
           <div className="mb-4">
             <p className="text-text-secondary text-xs mb-2">기존 사진</p>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
               {currentExistingImages.map((image, index) => (
                 <div key={image.id} className="relative group">
-                  <img
-                    src={image.url}
-                    alt={`Existing ${index + 1}`}
-                    className="w-full h-20 object-cover rounded"
-                  />
+                  <img src={image.url} alt={`Existing ${index + 1}`} className="w-full h-20 object-cover rounded" />
                   <button
                     type="button"
                     onClick={() => removeImage(index, true)}
@@ -378,18 +498,13 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
           </div>
         )}
 
-        {/* 새로 업로드된 이미지 */}
         {uploadedImages.length > 0 && (
           <div>
             <p className="text-text-secondary text-xs mb-2">새로운 사진</p>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
               {uploadedImages.map((url, index) => (
                 <div key={index} className="relative group">
-                  <img
-                    src={url}
-                    alt={`New ${index + 1}`}
-                    className="w-full h-20 object-cover rounded"
-                  />
+                  <img src={url} alt={`New ${index + 1}`} className="w-full h-20 object-cover rounded" />
                   <button
                     type="button"
                     onClick={() => removeImage(index, false)}
@@ -404,20 +519,45 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
             </div>
           </div>
         )}
+
+        {totalImages === 0 && mode === 'create' && (
+          <p className="text-red-400 text-sm">📸 사진은 필수입니다. 1장 이상 등록해주세요.</p>
+        )}
       </div>
 
       {/* 제목 */}
       <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-        <label className="block text-text-primary text-sm font-medium mb-2">제목 (선택)</label>
-        <p className="text-text-secondary text-xs mb-2">미입력시 자동으로 생성됩니다</p>
+        <label className="block text-text-primary text-sm font-medium mb-2">제목 *</label>
+        <p className="text-text-secondary text-xs mb-2">최소 10자 이상 입력하세요. SEO 최적화 제목이 자동으로 생성됩니다.</p>
         <input
           type="text"
           name="title"
           value={formData.title}
           onChange={handleInputChange}
           placeholder="예: 강남역 근처 30평 PC방"
-          className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary rounded focus:outline-none focus:border-gold"
+          minLength={10}
+          className={`w-full px-4 py-2 bg-bg-tertiary border text-text-primary rounded focus:outline-none focus:border-gold ${
+            validationErrors.title ? 'border-red-500' : 'border-border-light'
+          }`}
         />
+        {validationErrors.title && <p className="text-red-400 text-sm mt-1">{validationErrors.title}</p>}
+        <div className="text-text-secondary text-xs mt-2">{formData.title.length}/100 (최소 10자)</div>
+
+        {/* SEO 미리보기 */}
+        {formData.title && formData.region && formData.district && (
+          <div className="bg-blue-900/20 border border-blue-500 rounded-lg p-3 mt-3">
+            <p className="text-blue-300 text-xs font-semibold mb-1">SEO 제목 미리보기</p>
+            <p className="text-text-primary text-sm">
+              {buildListingSeoTitle({
+                region: formData.region,
+                district: formData.district,
+                title: formData.title,
+                premium_price: formData.royalty ? parseInt(formData.royalty) : null,
+                monthly_rent: formData.monthly_rent ? parseInt(formData.monthly_rent) : null,
+              })}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* 지역 */}
@@ -429,7 +569,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
             <select
               name="region"
               value={formData.region}
-              onChange={handleInputChange}
+              onChange={handleRegionChange}
               className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary rounded focus:outline-none focus:border-gold"
             >
               {REGIONS.map((region) => (
@@ -440,22 +580,30 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
             </select>
           </div>
           <div>
-            <label className="block text-text-secondary text-xs mb-2">시/군/구</label>
-            <input
-              type="text"
+            <label className="block text-text-secondary text-xs mb-2">시/군/구 *</label>
+            <select
               name="district"
               value={formData.district}
               onChange={handleInputChange}
-              placeholder="예: 강남구"
-              className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary rounded focus:outline-none focus:border-gold"
-            />
+              className={`w-full px-4 py-2 bg-bg-tertiary border text-text-primary rounded focus:outline-none focus:border-gold ${
+                validationErrors.district ? 'border-red-500' : 'border-border-light'
+              }`}
+            >
+              <option value="">선택하세요</option>
+              {availableDistricts.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+            {validationErrors.district && <p className="text-red-400 text-sm mt-1">{validationErrors.district}</p>}
           </div>
         </div>
       </div>
 
       {/* 가격 정보 */}
       <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-        <h3 className="text-text-primary font-semibold text-sm mb-4">가격 정보 *</h3>
+        <h3 className="text-text-primary font-semibold text-sm mb-4">가격 정보</h3>
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="block text-text-secondary text-xs mb-2">권리금</label>
@@ -547,8 +695,6 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
           </div>
         </div>
 
-
-        {/* 입주가능일 */}
         <div>
           <label className="block text-text-secondary text-xs mb-2">입주가능일</label>
           <input
@@ -562,9 +708,51 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
         </div>
       </div>
 
-      {/* 허가 및 처분 정보 */}
+      {/* 특징/장점 */}
       <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-        <h3 className="text-text-primary font-semibold text-sm mb-4">사업 정보 *</h3>
+        <label className="block text-text-primary text-sm font-medium mb-2">특징/장점 *</label>
+        <p className="text-text-secondary text-xs mb-2">매물의 주요 특징과 장점을 설명해주세요. (최소 30자)</p>
+        <textarea
+          name="features"
+          value={formData.features}
+          onChange={handleInputChange}
+          placeholder="예: 최근 인테리어로 쾌적한 환경, 고객층 안정적, 상권 우수, 주차 가능"
+          rows={3}
+          maxLength={200}
+          className={`w-full px-4 py-2 bg-bg-tertiary border text-text-primary text-sm rounded focus:outline-none focus:border-gold ${
+            validationErrors.features ? 'border-red-500' : 'border-border-light'
+          }`}
+        />
+        {validationErrors.features && <p className="text-red-400 text-sm mt-1">{validationErrors.features}</p>}
+        <div className="text-text-secondary text-xs mt-2 text-right">{formData.features.length}/200 (최소 30자)</div>
+      </div>
+
+      {/* 매물강점 */}
+      <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
+        <label className="block text-text-primary text-sm font-medium mb-4">매물강점 (선택)</label>
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+          {STRENGTH_EMOJIS.map(({ emoji, label }) => (
+            <button
+              key={emoji}
+              type="button"
+              onClick={() => handleStrengthToggle(emoji)}
+              className={`p-3 rounded border-2 transition text-center ${
+                formData.strengths.includes(emoji)
+                  ? 'border-gold bg-gold/10'
+                  : 'border-border-light bg-bg-tertiary'
+              }`}
+              title={label}
+            >
+              <div className="text-2xl">{emoji}</div>
+              <div className="text-text-secondary text-xs mt-1">{label}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 사업 정보 */}
+      <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
+        <h3 className="text-text-primary font-semibold text-sm mb-4">사업 정보</h3>
         <div className="grid grid-cols-2 gap-6">
           <div>
             <label className="block text-text-secondary text-xs mb-3">허가여부</label>
@@ -628,49 +816,30 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
           value={formData.phone}
           onChange={handleInputChange}
           placeholder="010-0000-0000"
-          className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary rounded focus:outline-none focus:border-gold"
+          className={`w-full px-4 py-2 bg-bg-tertiary border text-text-primary rounded focus:outline-none focus:border-gold ${
+            validationErrors.phone ? 'border-red-500' : 'border-border-light'
+          }`}
           required
         />
-      </div>
-
-      {/* 매물강점 */}
-      <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-        <label className="block text-text-primary text-sm font-medium mb-4">매물강점 (선택)</label>
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
-          {STRENGTH_EMOJIS.map(({ emoji, label }) => (
-            <button
-              key={emoji}
-              type="button"
-              onClick={() => handleStrengthToggle(emoji)}
-              className={`p-3 rounded border-2 transition text-center ${
-                formData.strengths.includes(emoji)
-                  ? 'border-gold bg-gold/10'
-                  : 'border-border-light bg-bg-tertiary'
-              }`}
-              title={label}
-            >
-              <div className="text-2xl">{emoji}</div>
-              <div className="text-text-secondary text-xs mt-1">{label}</div>
-            </button>
-          ))}
-        </div>
+        {validationErrors.phone && <p className="text-red-400 text-sm mt-1">{validationErrors.phone}</p>}
       </div>
 
       {/* 상세설명 */}
       <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-        <label className="block text-text-primary text-sm font-medium mb-2">상세설명 (기본 양식 제공)</label>
-        <p className="text-text-secondary text-xs mb-2">매물 정보를 입력하세요. 기본 양식이 자동으로 제공됩니다.</p>
+        <label className="block text-text-primary text-sm font-medium mb-2">상세설명 *</label>
+        <p className="text-text-secondary text-xs mb-2">최소 50자 이상 입력하세요. 기본 양식이 자동으로 제공됩니다.</p>
         <textarea
           name="description"
           value={formData.description}
           onChange={handleInputChange}
           rows={12}
           maxLength={1000}
-          className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary text-sm rounded focus:outline-none focus:border-gold resize-none font-mono"
+          className={`w-full px-4 py-2 bg-bg-tertiary border text-text-primary text-sm rounded focus:outline-none focus:border-gold resize-none font-mono ${
+            validationErrors.description ? 'border-red-500' : 'border-border-light'
+          }`}
         />
-        <div className="text-text-secondary text-xs mt-2 text-right">
-          {formData.description.length}/1000
-        </div>
+        {validationErrors.description && <p className="text-red-400 text-sm mt-1">{validationErrors.description}</p>}
+        <div className="text-text-secondary text-xs mt-2 text-right">{formData.description.length}/1000 (최소 50자)</div>
       </div>
 
       {/* 제출 버튼 */}
@@ -679,14 +848,14 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
           variant="primary"
           size="lg"
           isLoading={loading}
-          disabled={mode === 'create' && totalImages === 0}
+          disabled={totalImages === 0 || Object.keys(validationErrors).length > 0}
           className="w-full"
         >
           {mode === 'edit' ? '수정 완료' : '매물 등록'}
         </Button>
-        {mode === 'create' && totalImages === 0 && (
+        {Object.keys(validationErrors).length > 0 && (
           <p className="text-red-400 text-sm mt-2 text-center">
-            📸 사진을 1장 이상 등록한 후 진행해주세요.
+            ⚠️ 필수 필드를 모두 입력해주세요.
           </p>
         )}
       </div>

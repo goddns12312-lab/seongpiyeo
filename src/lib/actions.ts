@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { sanitizeListingBeforeSave, sanitizeJobBeforeSave, sanitizeSecondhandBeforeSave, sanitizePostBeforeSave } from '@/lib/seo-title-auto-fix';
+import { buildListingSeoDescription, buildListingImageAlt } from '@/lib/seo-metadata';
 
 export async function deleteZeroPriceListings() {
   const supabase = await createClient();
@@ -42,15 +43,34 @@ export async function createListing(data: any) {
 
   // SEO 제목 자동 보정 적용
   const sanitized = sanitizeListingBeforeSave(data);
-  console.log('[SEO] Listing title auto-fix applied:', {
-    original: data.title,
-    fixed: sanitized.title,
-    applied: sanitized._seoApplied,
+
+  // SEO Description 자동 생성 (formData에 없으면 자동 생성)
+  const seoDescription = data.seo_description || buildListingSeoDescription({
+    region: sanitized.region,
+    district: sanitized.district,
+    location: sanitized.address,
+    premium_price: sanitized.premium_price,
+    deposit: sanitized.deposit,
+    monthly_rent: sanitized.monthly_rent,
+    area_sqm: sanitized.area_sqm,
+    pc_count: sanitized.pc_count,
+  });
+
+  const finalData = {
+    ...sanitized,
+    seo_description: seoDescription,
+  };
+
+  console.log('[SEO] Listing SEO applied:', {
+    title: finalData.title,
+    region: finalData.region,
+    district: finalData.district,
+    hasDescription: !!seoDescription,
   });
 
   const { data: listing, error: listingError } = await supabase
     .from('listings')
-    .insert([sanitized])
+    .insert([finalData])
     .select();
 
   if (listingError) {
@@ -74,9 +94,17 @@ export async function createListing(data: any) {
 export async function createListingImages(images: any[]) {
   const supabase = await createClient();
 
+  // alt 필드를 포함하여 저장 (buildListingImageAlt로 생성된 텍스트)
+  const imagesToInsert = images.map(img => ({
+    listing_id: img.listing_id,
+    image_url: img.image_url,
+    alt: img.alt || '',
+    order_num: img.order_num || 0,
+  }));
+
   const { error: imageError } = await supabase
     .from('listing_images')
-    .insert(images);
+    .insert(imagesToInsert);
 
   if (imageError) {
     console.error('Image insert error:', imageError);
@@ -140,6 +168,127 @@ export async function deleteListingImages(listingId: string) {
   }
 
   return { success: true };
+}
+
+/**
+ * ============================================================
+ * COMMUNITY 게시글 저장
+ * ============================================================
+ */
+
+export async function createCommunityPost(data: any) {
+  const supabase = await createClient();
+
+  // SEO 제목 자동 보정 적용
+  const sanitized = sanitizePostBeforeSave(data);
+  console.log('[SEO] Community post title auto-fix applied:', {
+    original: data.title,
+    fixed: sanitized.title,
+    applied: sanitized._seoApplied,
+  });
+
+  const { data: post, error: postError } = await supabase
+    .from('posts')
+    .insert([sanitized])
+    .select();
+
+  if (postError) {
+    return { error: postError.message };
+  }
+
+  if (!post || post.length === 0) {
+    return { error: '게시글 작성에 실패했습니다.' };
+  }
+
+  const newPost = post[0];
+
+  // 캐시 무효화
+  revalidatePath('/');
+  revalidatePath('/community');
+  revalidatePath(`/community/${newPost.id}`);
+
+  return { success: true, postId: newPost.id };
+}
+
+/**
+ * ============================================================
+ * SECONDHAND 상품 저장
+ * ============================================================
+ */
+
+export async function createSecondhandItem(data: any) {
+  const supabase = await createClient();
+
+  // SEO 제목 자동 보정 적용
+  const sanitized = sanitizeSecondhandBeforeSave(data);
+  console.log('[SEO] Secondhand item title auto-fix applied:', {
+    original: data.title,
+    fixed: sanitized.title,
+    applied: sanitized._seoApplied,
+  });
+
+  const { data: item, error: itemError } = await supabase
+    .from('secondhand_items')
+    .insert([sanitized])
+    .select();
+
+  if (itemError) {
+    return { error: itemError.message };
+  }
+
+  if (!item || item.length === 0) {
+    return { error: '상품 등록에 실패했습니다.' };
+  }
+
+  const newItem = item[0];
+
+  // 캐시 무효화
+  revalidatePath('/');
+  revalidatePath('/secondhand');
+  revalidatePath(`/secondhand/${newItem.id}`);
+
+  return { success: true, itemId: newItem.id };
+}
+
+/**
+ * ============================================================
+ * EXCHANGE-INFO 게시글 저장
+ * ============================================================
+ */
+
+export async function createExchangeInfoPost(data: any) {
+  const supabase = await createClient();
+
+  // SEO 제목 자동 보정 적용 (category: 'exchange' 추가)
+  const exchangeData = { ...data, category: 'exchange' };
+  const sanitized = sanitizePostBeforeSave(exchangeData);
+  console.log('[SEO] Exchange-info post title auto-fix applied:', {
+    original: data.title,
+    fixed: sanitized.title,
+    applied: sanitized._seoApplied,
+  });
+
+  const { data: post, error: postError } = await supabase
+    .from('posts')
+    .insert([sanitized])
+    .select();
+
+  if (postError) {
+    return { error: postError.message };
+  }
+
+  if (!post || post.length === 0) {
+    return { error: '게시글 작성에 실패했습니다.' };
+  }
+
+  const newPost = post[0];
+
+  // 캐시 무효화
+  revalidatePath('/');
+  revalidatePath('/exchange-info');
+  revalidatePath(`/exchange-info/${newPost.id}`);
+
+  return { success: true, postId: newPost.id };
 }
 
 export async function deleteListing(id: string) {
