@@ -127,7 +127,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `${baseUrl}/listings/${id}`,
     },
     openGraph: {
-      title,
+      title: `${title} | ${SITE_CONFIG.businessName}`,
       description,
       type: 'article',
       url: `${baseUrl}/listings/${id}`,
@@ -141,7 +141,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title,
+      title: `${title} | ${SITE_CONFIG.businessName}`,
       description,
       images: [ogImage],
     },

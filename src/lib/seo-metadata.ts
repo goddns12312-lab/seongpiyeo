@@ -438,25 +438,26 @@ export function buildListingSeoTitle(listing: any, businessName: string = SITE_C
   const priceInfo = priceParts.length > 0 ? ` | ${priceParts.join(' · ')}` : '';
 
   // 완성된 제목 (성인PC 매물로 더 명확하게)
-  let title = `${fullLocation} 성인PC 매물${priceInfo} | ${businessName}`;
+  // ⚠️ 브랜드명은 layout.tsx의 title.template에서 추가되므로 여기서는 제거
+  let title = `${fullLocation} 성인PC 매물${priceInfo}`;
 
   // 60자 제한: 너무 길면 "매물" 제거
   if (title.length > 60) {
-    title = `${fullLocation} 성인PC${priceInfo} | ${businessName}`;
+    title = `${fullLocation} 성인PC${priceInfo}`;
   }
 
   // 여전히 길면 가격을 1개만 유지
   if (title.length > 60 && priceParts.length > 1) {
     const shortPriceInfo = ` | ${priceParts[0]}`;
-    title = `${fullLocation} 성인PC${shortPriceInfo} | ${businessName}`;
+    title = `${fullLocation} 성인PC${shortPriceInfo}`;
   }
 
   // 마지막 수단: 가격 제거
   if (title.length > 60) {
-    title = `${fullLocation} 성인PC | ${businessName}`;
+    title = `${fullLocation} 성인PC`;
   }
 
-  return title.slice(0, 60);
+  return title;
 }
 
 /**
