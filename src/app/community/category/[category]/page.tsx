@@ -5,13 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { getSession } from '@/lib/auth';
-
-const CATEGORIES = {
-  free: { label: '자유', color: 'text-blue-500' },
-  startup: { label: '창업 & 사업', color: 'text-green-500' },
-  interior: { label: '인테리어 & 시설', color: 'text-purple-500' },
-  equipment: { label: '장비 & 기자재', color: 'text-orange-500' }
-};
+import { COMMUNITY_CATEGORIES } from '@/lib/community-categories';
 
 export default function CategoryPage({ params }: { params: { category: string } }) {
   const router = useRouter();
@@ -46,7 +40,7 @@ export default function CategoryPage({ params }: { params: { category: string } 
     }
   };
 
-  const cat = CATEGORIES[params.category as keyof typeof CATEGORIES];
+  const cat = COMMUNITY_CATEGORIES[params.category as keyof typeof COMMUNITY_CATEGORIES];
   if (!cat) {
     return (
       <div className="min-h-screen flex items-center justify-center">
