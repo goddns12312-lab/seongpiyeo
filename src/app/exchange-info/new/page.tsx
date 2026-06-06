@@ -2,11 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
+import { createExchangeInfoPost } from '@/lib/actions';
 
 export default function NewPostPage() {
+  const router = useRouter();
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleImageSelect = (files: FileList | null) => {
     if (!files) return;
@@ -57,37 +62,45 @@ export default function NewPostPage() {
     handleImageSelect(e.dataTransfer.files);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
-    const title = formData.get('title');
-    const category = formData.get('category');
-    const content = formData.get('content');
+    const title = formData.get('title') as string;
+    const category = formData.get('category') as string;
+    const content = formData.get('content') as string;
 
     // 유효성 검사
     if (!title || !category || !content) {
-      alert('제목, 카테고리, 내용은 필수입니다');
+      setError('제목, 카테고리, 내용은 필수입니다');
+      setIsSubmitting(false);
       return;
     }
 
-    // 이미지 추가
-    images.forEach(image => {
-      formData.append('images', image);
-    });
+    try {
+      const postData = {
+        title,
+        category,
+        content,
+        status: 'active',
+      };
 
-    // 개발 환경: 콘솔에 출력
-    console.log('게시글 작성:', {
-      title,
-      category,
-      content,
-      imagesCount: images.length,
-    });
+      const result = await createExchangeInfoPost(postData);
 
-    alert(`게시글이 작성되었습니다!\n제목: ${title}\n이미지: ${images.length}개`);
-
-    // TODO: API 호출하여 저장
-    // 나중에 실제 API 연동 시 이곳에 코드 추가
+      if (result.error) {
+        setError(result.error);
+      } else if (result.postId) {
+        // 성공 후 상세 페이지로 이동
+        router.push(`/exchange-info/${result.postId}`);
+      }
+    } catch (err) {
+      setError('게시글 작성 중 오류가 발생했습니다');
+      console.error('Post creation error:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -101,6 +114,12 @@ export default function NewPostPage() {
         {/* Form */}
         <div className="bg-bg-secondary border border-border-light rounded-lg p-8">
           <h1 className="text-3xl font-bold text-text-primary mb-8">게시글 작성</h1>
+
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-red-700 dark:text-red-300">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Title */}
@@ -187,11 +206,15 @@ export default function NewPostPage() {
 
             {/* Buttons */}
             <div className="flex gap-3 pt-4">
-              <button type="submit" className="flex-1 bg-gold hover:bg-gold-light text-white font-semibold py-3 rounded transition">
-                작성 완료
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 bg-gold hover:bg-gold-light disabled:bg-gold/50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded transition"
+              >
+                {isSubmitting ? '작성 중...' : '작성 완료'}
               </button>
               <Link href="/exchange-info" className="flex-1">
-                <Button variant="secondary" className="w-full">취소</Button>
+                <Button variant="secondary" className="w-full" disabled={isSubmitting}>취소</Button>
               </Link>
             </div>
           </form>

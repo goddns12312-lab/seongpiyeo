@@ -3,7 +3,7 @@ import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 
 export const metadata: Metadata = {
-  title: 'PC방 중고장터 | 성인피씨 중고물품 거래 | 성피요',
+  title: 'PC방 중고장터 | 성인피씨 중고물품 거래',
   description: 'PC방 관련 중고 물품을 안전하게 거래하는 공간. 성인PC 장비, PC방 물품 구매, 판매, 렌탈 정보를 한곳에서 찾으세요.',
   keywords: ['중고', '중고장터', '성인피씨', '성인피시', 'PC방', '물품', '장비', '거래'],
   robots: {

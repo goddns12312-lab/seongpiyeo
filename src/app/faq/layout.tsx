@@ -3,7 +3,7 @@ import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 
 export const metadata: Metadata = {
-  title: 'PC방 자주묻는질문(FAQ) | 성인PC 창업 Q&A | 성피요',
+  title: 'PC방 자주묻는질문(FAQ) | 성인PC 창업 Q&A',
   description: 'PC방 창업 시 자주하는 질문들과 답변. 비용, 법규, 거래 방법 등 모든 궁금증을 해결하세요.',
   keywords: ['FAQ', 'Q&A', 'PC방 질문', '성인PC', '창업 질문', '거래 방법'],
   robots: {

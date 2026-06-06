@@ -3,7 +3,7 @@ import Script from 'next/script';
 import { SITE_CONFIG } from '@/lib/site';
 
 export const metadata: Metadata = {
-  title: '환수 및 정보게시판 | 성인PC 운영정보 | 성피요',
+  title: '환수 및 정보게시판 | 성인PC 운영정보',
   description: '성인PC 환수율, 운영정보, 거래 팁 등을 공유하는 게시판. PC방 창업자들의 경험과 정보를 한 곳에서 확인하세요.',
   keywords: ['성인PC', '환수율', '운영정보', 'PC방 정보', 'PC방 운영팁', '환수정보'],
   robots: {

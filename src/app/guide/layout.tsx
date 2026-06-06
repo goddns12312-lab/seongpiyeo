@@ -3,7 +3,7 @@ import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 
 export const metadata: Metadata = {
-  title: 'PC방 창업 완벽 가이드 | 소방기준부터 수익화까지 | 성피요',
+  title: 'PC방 창업 완벽 가이드 | 소방기준부터 수익화까지',
   description: '성인PC 창업자를 위한 완벽한 가이드. 법규, 소방기준, 장비 선택, 인테리어, 고객 관리, 수익화 전략까지 A부터 Z까지 배우세요.',
   keywords: ['PC방 창업 가이드', '성인PC 운영', 'PC방 법규', '소방기준', '창업 팁', '수익화'],
   robots: {

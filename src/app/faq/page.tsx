@@ -4,7 +4,7 @@ import { SITE_CONFIG } from '@/lib/site';
 import { FAQAccordion } from '@/components/faq/FAQAccordion';
 
 export const metadata: Metadata = {
-  title: '성인PC 창업 자주 묻는 질문 | PC방 매물 비용 법규 | 성피요',
+  title: '성인PC 창업 자주 묻는 질문 | PC방 매물 비용 법규',
   description: '성인PC방 창업 비용, 법규, 거래 방법, 구인구직 등 자주 묻는 질문(FAQ)을 한 곳에서 확인하세요. 초기비용 5,000만원~2억원, 월순이익 500~1,500만원.',
   keywords: [
     '성인PC FAQ',

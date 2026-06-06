@@ -3,7 +3,7 @@ import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 
 export const metadata: Metadata = {
-  title: 'PC방 창업 공지사항 | 성인PC 최신 뉴스 | 성피요',
+  title: 'PC방 창업 공지사항 | 성인PC 최신 뉴스',
   description: '성인PC 창업자 및 운영자를 위한 최신 소식, 정책 변경, 업데이트 안내를 확인하세요. 중요한 알림을 놓치지 마세요.',
   keywords: ['PC방 공지사항', '성인PC 뉴스', '창업 소식', '업데이트', '정책 변경'],
   robots: {
