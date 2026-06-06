@@ -91,6 +91,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.65,
     })) || [];
 
+  // Listings 카테고리 페이지
+  const listingCategoryEntries = [
+    { name: 'rent', priority: 0.75 },
+    { name: 'sale', priority: 0.75 },
+    { name: 'transfer', priority: 0.7 },
+  ].map(cat => ({
+    url: `${SITE_CONFIG.url}/listings/category/${cat.name}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: cat.priority,
+  }));
+
+  // Jobs 카테고리 페이지
+  const jobCategoryEntries = [
+    { name: 'recruitment', priority: 0.75 },
+    { name: 'job_seeker', priority: 0.75 },
+  ].map(cat => ({
+    url: `${SITE_CONFIG.url}/jobs/category/${cat.name}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: cat.priority,
+  }));
+
+  // Secondhand 카테고리 페이지
+  const secondhandCategoryEntries = [
+    { name: 'equipment', priority: 0.7 },
+    { name: 'furniture', priority: 0.7 },
+    { name: 'supplies', priority: 0.7 },
+    { name: 'other', priority: 0.65 },
+  ].map(cat => ({
+    url: `${SITE_CONFIG.url}/secondhand/category/${cat.name}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: cat.priority,
+  }));
+
   // 지역별 매물 페이지 (매물이 있는 지역만)
   const regionEntries = REGIONS.filter((region) => activeRegionSet.has(region)).map((region) => ({
     url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(region)}`,
@@ -160,5 +196,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...jobEntries,
     ...secondhandEntries,
     ...exchangeInfoEntries,
+    ...listingCategoryEntries,
+    ...jobCategoryEntries,
+    ...secondhandCategoryEntries,
   ];
 }

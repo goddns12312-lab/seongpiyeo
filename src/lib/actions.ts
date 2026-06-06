@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { sanitizeListingBeforeSave, sanitizeJobBeforeSave, sanitizeSecondhandBeforeSave, sanitizePostBeforeSave } from '@/lib/seo-title-auto-fix';
 
 export async function deleteZeroPriceListings() {
   const supabase = await createClient();
@@ -39,9 +40,17 @@ export async function deleteZeroPriceListings() {
 export async function createListing(data: any) {
   const supabase = await createClient();
 
+  // SEO 제목 자동 보정 적용
+  const sanitized = sanitizeListingBeforeSave(data);
+  console.log('[SEO] Listing title auto-fix applied:', {
+    original: data.title,
+    fixed: sanitized.title,
+    applied: sanitized._seoApplied,
+  });
+
   const { data: listing, error: listingError } = await supabase
     .from('listings')
-    .insert([data])
+    .insert([sanitized])
     .select();
 
   if (listingError) {
