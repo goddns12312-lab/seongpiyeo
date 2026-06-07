@@ -7,7 +7,11 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const canDelete = await canDeletePost(id);
+    // Authorization 헤더에서 토큰 추출
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.replace('Bearer ', '');
+
+    const canDelete = token ? await canDeletePost(id, token) : false;
 
     return Response.json({
       postId: id,

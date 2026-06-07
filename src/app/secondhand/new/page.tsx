@@ -75,6 +75,15 @@ export default function SecondhandNewPage() {
     setSubmitting(true);
 
     try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        setError('로그인이 필요합니다');
+        setSubmitting(false);
+        return;
+      }
+
       // 이미지 업로드
       let uploadedImages: string[] = [];
       if (images.length > 0) {
@@ -86,6 +95,7 @@ export default function SecondhandNewPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
           title: formData.title,

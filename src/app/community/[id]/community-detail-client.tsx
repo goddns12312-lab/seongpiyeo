@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import DeletePostButton from '@/components/DeletePostButton';
+import { createClient } from '@/lib/supabase/client';
 
 interface Props {
   postId: string;
@@ -16,7 +17,15 @@ export default function CommunityDetailClient({ postId }: Props) {
   useEffect(() => {
     async function checkPermission() {
       try {
-        const response = await fetch(`/api/check-post-permission/${postId}`);
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const headers: HeadersInit = {};
+        if (session?.access_token) {
+          headers['Authorization'] = `Bearer ${session.access_token}`;
+        }
+
+        const response = await fetch(`/api/check-post-permission/${postId}`, { headers });
         if (response.ok) {
           const data = await response.json();
           setCanDelete(data.canDelete);

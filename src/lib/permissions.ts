@@ -47,12 +47,14 @@ export async function getCurrentUserId(): Promise<string | null> {
 /**
  * 게시글(posts) 수정 권한 확인
  */
-export async function canEditPost(postId: string): Promise<boolean> {
+export async function canEditPost(postId: string, token?: string): Promise<boolean> {
   try {
     const supabase = await createClient();
 
     // 한 번에 user와 post 정보 조회
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = token
+      ? await supabase.auth.getUser(token)
+      : await supabase.auth.getUser();
 
     if (authError) {
       console.error('[canEditPost] auth.getUser() 오류:', authError);
@@ -135,8 +137,8 @@ export async function canEditPost(postId: string): Promise<boolean> {
 /**
  * 게시글(posts) 삭제 권한 확인
  */
-export async function canDeletePost(postId: string): Promise<boolean> {
-  return canEditPost(postId); // 수정 권한과 동일
+export async function canDeletePost(postId: string, token?: string): Promise<boolean> {
+  return canEditPost(postId, token); // 수정 권한과 동일
 }
 
 /**
@@ -207,11 +209,13 @@ export async function canDeleteSecondhand(itemId: string): Promise<boolean> {
 /**
  * 매물(listings) 수정 권한 확인
  */
-export async function canEditListing(listingId: string): Promise<boolean> {
+export async function canEditListing(listingId: string, token?: string): Promise<boolean> {
   try {
     const supabase = await createClient();
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = token
+      ? await supabase.auth.getUser(token)
+      : await supabase.auth.getUser();
 
     if (authError) {
       console.error('[canEditListing] auth.getUser() 오류:', authError);
@@ -265,6 +269,6 @@ export async function canEditListing(listingId: string): Promise<boolean> {
 /**
  * 매물(listings) 삭제 권한 확인
  */
-export async function canDeleteListing(listingId: string): Promise<boolean> {
-  return canEditListing(listingId);
+export async function canDeleteListing(listingId: string, token?: string): Promise<boolean> {
+  return canEditListing(listingId, token);
 }
