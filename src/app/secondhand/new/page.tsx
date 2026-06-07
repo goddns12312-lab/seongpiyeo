@@ -2,17 +2,15 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getSession } from '@/lib/auth';
-import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
+import { createClient } from '@/lib/supabase/client';
 
 const REGIONS = ['서울', '경기', '인천', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];
 
 export default function SecondhandNewPage() {
   const router = useRouter();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -23,16 +21,6 @@ export default function SecondhandNewPage() {
 
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-
-  useEffect(() => {
-    const session = getSession();
-    if (!session) {
-      router.push('/login?redirect=/secondhand/new');
-      return;
-    }
-    setUser(session);
-    setLoading(false);
-  }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -77,73 +65,64 @@ export default function SecondhandNewPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
     if (!formData.title || !formData.price) {
-      alert('제목과 가격은 필수입니다.');
+      setError('제목과 가격은 필수입니다.');
       return;
     }
 
     setSubmitting(true);
 
     try {
-      const supabase = createClient();
-
       // 이미지 업로드
       let uploadedImages: string[] = [];
       if (images.length > 0) {
         uploadedImages = await uploadImages();
       }
 
-      // 물품 등록
-      const { data: item, error: itemError } = await supabase
-        .from('secondhand_items')
-        .insert({
-          user_id: user.id,
+      // API route로 물품 등록
+      const response = await fetch('/api/secondhand/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           title: formData.title,
           description: formData.description,
-          price: parseInt(formData.price),
+          price: formData.price,
           region: formData.region,
-          main_image_url: uploadedImages[0] || null,
-          status: 'active'
-        })
-        .select()
-        .single();
+          imageUrls: uploadedImages,
+        }),
+      });
 
-      if (itemError) throw itemError;
+      const result = await response.json();
 
-      // 이미지 정보 저장
-      if (uploadedImages.length > 0) {
-        const imageData = uploadedImages.map((url, index) => ({
-          item_id: item.id,
-          url,
-          order_num: index
-        }));
-
-        const { error: imageError } = await supabase
-          .from('secondhand_images')
-          .insert(imageData);
-
-        if (imageError) throw imageError;
+      if (!response.ok) {
+        setError(result.error || '물품 등록에 실패했습니다');
+      } else if (result.success && result.itemId) {
+        router.push(`/secondhand/${result.itemId}`);
+      } else {
+        setError('물품 등록에 실패했습니다');
       }
-
-      alert('물품이 등록되었습니다!');
-      router.push('/secondhand');
-    } catch (error) {
-      console.error('등록 실패:', error);
-      alert('물품 등록에 실패했습니다.');
+    } catch (err) {
+      console.error('등록 실패:', err);
+      setError('물품 등록에 실패했습니다.');
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">로딩 중...</div>;
-  }
-
   return (
     <div className="bg-bg-primary min-h-screen py-12">
       <div className="max-w-2xl mx-auto px-4">
         <h1 className="text-4xl font-bold text-text-primary mb-8">물품 등록</h1>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-red-700 dark:text-red-300">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="bg-bg-secondary border border-border-light rounded-lg p-8">
           {/* 제목 */}

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { createExchangeInfoPost } from '@/lib/actions';
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -87,13 +86,23 @@ export default function NewPostPage() {
         status: 'active',
       };
 
-      const result = await createExchangeInfoPost(postData);
+      const response = await fetch('/api/exchange-info/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postData),
+      });
 
-      if (result.error) {
-        setError(result.error);
-      } else if (result.postId) {
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error || '게시글 작성에 실패했습니다');
+      } else if (result.success && result.postId) {
         // 성공 후 상세 페이지로 이동
         router.push(`/exchange-info/${result.postId}`);
+      } else {
+        setError('게시글 작성에 실패했습니다');
       }
     } catch (err) {
       setError('게시글 작성 중 오류가 발생했습니다');
