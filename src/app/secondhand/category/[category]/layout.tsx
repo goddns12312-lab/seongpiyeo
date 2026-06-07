@@ -41,13 +41,13 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
 
   if (!isCategoryValid(category)) {
     return {
-      title: '카테고리를 찾을 수 없습니다 | 성피요',
+      title: '카테고리를 찾을 수 없습니다',
       robots: { index: false, follow: false },
     };
   }
 
   const info = SECONDHAND_CATEGORIES[category];
-  const title = `PC방 중고 ${info.label} | 성인PC 운영 물품 | 성피요`;
+  const title = `PC방 중고 ${info.label} | 성인PC 운영 물품`;
   const description = info.description;
   const keywords = ['중고 판매', '중고 물품', 'PC방 운영', ...info.keywords];
   const url = createCanonicalUrl(`/secondhand/category/${category}`);

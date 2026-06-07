@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // 0개: noindex + nofollow
   if (jobCount === 0) {
     return {
-      title: `${decodedRegion} PC방 구인구직 | 성피요`,
+      title: `${decodedRegion} PC방 구인구직`,
       robots: {
         index: false,
         follow: false,

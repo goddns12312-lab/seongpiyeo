@@ -3,7 +3,7 @@ import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 
 export const metadata: Metadata = {
-  title: '고객 지원 | 문의하기 | 성피요',
+  title: '고객 지원 | 문의하기',
   description: '성피요 고객 지원. 문의사항이 있으시면 언제든지 연락주세요. 빠른 답변을 드리겠습니다.',
   keywords: ['고객 지원', '문의', 'support', '도움', '연락'],
   robots: {
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     canonical: createCanonicalUrl('/support'),
   },
   openGraph: {
-    title: '고객 지원 | 성피요',
+    title: '고객 지원',
     description: '성피요 고객 지원',
     type: 'website',
     url: `${SITE_CONFIG.url}/support`,

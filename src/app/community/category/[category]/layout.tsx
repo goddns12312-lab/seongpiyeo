@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Validate category exists
   if (!COMMUNITY_CATEGORIES[category as keyof typeof COMMUNITY_CATEGORIES]) {
     return {
-      title: '카테고리를 찾을 수 없습니다 | 성피요',
+      title: '카테고리를 찾을 수 없습니다',
       robots: { index: false, follow: false },
     };
   }

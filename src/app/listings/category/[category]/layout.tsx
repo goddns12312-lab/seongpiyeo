@@ -37,13 +37,13 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
   // Validate category
   if (!isCategoryValid(category)) {
     return {
-      title: '카테고리를 찾을 수 없습니다 | 성피요',
+      title: '카테고리를 찾을 수 없습니다',
       robots: { index: false, follow: false },
     };
   }
 
   const info = LISTING_CATEGORIES[category];
-  const title = `성인PC ${info.label} 매물 | 성인PC 가게 ${info.label} 정보 | 성피요`;
+  const title = `성인PC ${info.label} 매물 | 성인PC 가게 ${info.label} 정보`;
   const description = info.description;
   const keywords = [
     '성인PC',

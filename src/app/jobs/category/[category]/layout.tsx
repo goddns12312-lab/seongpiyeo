@@ -31,13 +31,13 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
 
   if (!isCategoryValid(category)) {
     return {
-      title: '카테고리를 찾을 수 없습니다 | 성피요',
+      title: '카테고리를 찾을 수 없습니다',
       robots: { index: false, follow: false },
     };
   }
 
   const info = JOB_CATEGORIES[category];
-  const title = `성인PC ${info.label} | PC방 구인구직 정보 | 성피요`;
+  const title = `성인PC ${info.label} | PC방 구인구직 정보`;
   const description = info.description;
   const keywords = ['성인PC', '성인피씨', '구인구직', ...info.keywords];
   const url = createCanonicalUrl(`/jobs/category/${category}`);

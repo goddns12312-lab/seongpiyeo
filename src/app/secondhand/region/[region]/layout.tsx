@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // 0개: noindex + nofollow
   if (itemCount === 0) {
     return {
-      title: `${decodedRegion} 중고 PC방 용품 | 성피요`,
+      title: `${decodedRegion} 중고 PC방 용품`,
       robots: {
         index: false,
         follow: false,
