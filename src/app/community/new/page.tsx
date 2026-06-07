@@ -31,7 +31,7 @@ export default function NewPostPage() {
     try {
       const postData = {
         title,
-        category,
+        category: 'free',
         content,
         status: 'active',
       };
