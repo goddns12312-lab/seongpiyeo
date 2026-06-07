@@ -9,11 +9,14 @@ import { createClient } from '@/lib/supabase/server';
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   try {
     const supabase = await createClient();
-    const { data: post } = await supabase
+    const { data: posts } = await supabase
       .from('posts')
       .select('id, title, content, created_at, status')
       .eq('id', params.id)
-      .single();
+      .eq('category', 'free')
+      .limit(1);
+
+    const post = posts?.[0];
 
     if (!post || post.status !== 'active') {
       notFound();
@@ -69,12 +72,15 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function DetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient();
-  const { data: post, error } = await supabase
+  const { data: posts, error } = await supabase
     .from('posts')
     .select('id, title, content, created_at, status, category')
     .eq('id', params.id)
+    .eq('category', 'free')
     .eq('status', 'active')
-    .single();
+    .limit(1);
+
+  const post = posts?.[0];
 
   if (error || !post) {
     notFound();

@@ -13,6 +13,7 @@ export default async function CommunityPage() {
       .from('posts')
       .select('id, title, created_at, status, category')
       .eq('status', 'active')
+      .eq('category', 'free')
       .order('created_at', { ascending: false })
       .limit(6);
 

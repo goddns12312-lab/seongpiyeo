@@ -9,19 +9,20 @@ import { createClient } from '@/lib/supabase/server';
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   try {
     const supabase = await createClient();
-    const { data: post } = await supabase
+    const { data: posts } = await supabase
       .from('posts')
       .select('id, title, content, category, created_at, status')
       .eq('id', params.id)
       .eq('category', 'exchange')
-      .eq('status', 'active')
-      .single();
+      .limit(1);
+
+    const post = posts?.[0];
 
     if (!post) {
       notFound();
     }
 
-    const cleanContent = post.content
+    const cleanContent = (post.content || '')
       .replace(/<[^>]*>/g, '')
       .replace(/\n/g, ' ')
       .trim();
@@ -71,15 +72,20 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function DetailPage({ params }: { params: { id: string } }) {
   const supabase = await createClient();
-  const { data: post, error } = await supabase
+  const { data: posts, error } = await supabase
     .from('posts')
     .select('*')
     .eq('id', params.id)
     .eq('category', 'exchange')
     .eq('status', 'active')
-    .single();
+    .limit(1);
+
+  const post = posts?.[0];
+
+  console.log('[DetailPage] Query result:', { id: params.id, found: !!post, error: error?.message, count: posts?.length });
 
   if (error || !post) {
+    console.log('[DetailPage] Post not found or error, calling notFound()');
     notFound();
   }
 
@@ -96,14 +102,14 @@ export default async function DetailPage({ params }: { params: { id: string } })
           <h1 className="text-4xl font-bold text-text-primary mb-4">{post.title}</h1>
           
           <div className="flex flex-wrap gap-4 text-text-secondary text-sm mb-8 pb-8 border-b border-border-light">
-            <span>작성자: {post.author}</span>
-            <span>작성일: {post.date}</span>
-            <span>조회수: {post.views}</span>
-            <span>댓글: {post.comments}</span>
+            <span>작성자: 작성자</span>
+            <span>작성일: {new Date(post.created_at).toLocaleDateString('ko-KR')}</span>
+            <span>조회수: 0</span>
+            <span>댓글: 0</span>
           </div>
 
           <div className="prose prose-invert max-w-none mb-12 text-text-secondary">
-            {post.content.split('\n').map((line, idx) => (
+            {(post.content || '').split('\n').map((line: string, idx: number) => (
               <div key={idx}>
                 {line.startsWith('## ') ? (
                   <h2 className="text-2xl font-bold text-text-primary mt-6 mb-3">
@@ -120,7 +126,7 @@ export default async function DetailPage({ params }: { params: { id: string } })
 
           {/* Comment Section */}
           <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-            <h3 className="text-xl font-bold text-text-primary mb-4">댓글 ({post.comments})</h3>
+            <h3 className="text-xl font-bold text-text-primary mb-4">댓글 (0)</h3>
 
             <div className="space-y-4 mb-6 text-text-secondary text-sm">
               첫 번째 댓글을 달아보세요!
@@ -145,24 +151,24 @@ export default async function DetailPage({ params }: { params: { id: string } })
               '@type': 'Article',
               '@id': `${SITE_CONFIG.url}/exchange-info/${params.id}`,
               headline: post.title,
-              description: post.content.substring(0, 160),
+              description: (post.content || '').substring(0, 160),
               author: {
                 '@type': 'Person',
-                name: post.author,
+                name: '작성자',
               },
-              datePublished: post.date,
-              dateModified: post.date,
+              datePublished: post.created_at,
+              dateModified: post.created_at,
               url: `${SITE_CONFIG.url}/exchange-info/${params.id}`,
               interactionStatistic: [
                 {
                   '@type': 'InteractionCounter',
                   interactionType: 'https://schema.org/ViewAction',
-                  userInteractionCount: post.views,
+                  userInteractionCount: 0,
                 },
                 {
                   '@type': 'InteractionCounter',
                   interactionType: 'https://schema.org/CommentAction',
-                  userInteractionCount: post.comments,
+                  userInteractionCount: 0,
                 },
               ],
             }),

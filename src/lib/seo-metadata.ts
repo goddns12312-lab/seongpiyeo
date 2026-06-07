@@ -153,8 +153,8 @@ export function buildPostMetadata(post: any): SEOMetadataOptions {
 export function buildListingsMetadata(region?: string, count?: number): SEOMetadataOptions {
   const regionText = region && region !== 'all' && region !== 'undefined' ? `${region} ` : '';
 
-  const seoTitle = `${regionText}성인피씨 성인피시 성인pc 매물 | 창업 정보 | ${SITE_CONFIG.businessName}`;
-  const seoDescription = `${regionText ? `${region} 지역의 ` : '전국'}성인피씨 성인피시 성인pc 매물 거래 정보 | PC방 창업, 매매, 임대 정보 한눈에 | ${SITE_CONFIG.businessName} 매물 검색`.slice(0, 160);
+  const seoTitle = `${regionText}성인피씨 성인피시 성인pc 매물 | 창업 정보`;
+  const seoDescription = `${regionText ? `${region} 지역의 ` : '전국'}성인피씨 성인피시 성인pc 매물 거래 정보 | PC방 창업, 매매, 임대 정보 한눈에 | 성피요 매물 검색`.slice(0, 160);
 
   return {
     title: seoTitle,

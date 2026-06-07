@@ -1,8 +1,41 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import { createClient } from '@/lib/supabase/server';
 
-export default function ExchangeInfoPage() {
-  const posts = [];
+export default async function ExchangeInfoPage() {
+  let postsWithAuthor: any[] = [];
+
+  try {
+    const supabase = await createClient();
+
+    // 환수정보 게시글 조회
+    const { data: posts, error } = await supabase
+      .from('posts')
+      .select('id, title, created_at, status, category')
+      .eq('status', 'active')
+      .eq('category', 'exchange')
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    console.log('[ExchangeInfo] Posts query result:', { count: posts?.length, error: error?.message, posts: posts });
+
+    if (error) {
+      console.error('Failed to fetch exchange-info posts:', error);
+      postsWithAuthor = [];
+    } else if (posts && posts.length > 0) {
+      postsWithAuthor = posts.map((post: any) => ({
+        ...post,
+        author: '작성자',
+        date: new Date(post.created_at).toLocaleDateString('ko-KR'),
+        views: 0,
+        comments: 0,
+        isPinned: false,
+      }));
+    }
+  } catch (err) {
+    console.error('Exchange-info page error:', err);
+    postsWithAuthor = [];
+  }
 
   return (
     <div className="min-h-screen bg-bg-primary">
@@ -41,9 +74,12 @@ export default function ExchangeInfoPage() {
         <div className="mb-12">
           <h2 className="text-3xl font-bold text-text-primary mb-8">최신 공지사항</h2>
 
+          {/* Posts */}
+          {postsWithAuthor.length > 0 ? (
+          <>
           {/* Pinned Posts */}
           <div className="space-y-4 mb-10">
-            {posts.filter(p => p.isPinned).map((post) => (
+            {postsWithAuthor.filter((p: any) => p.isPinned).map((post: any) => (
               <div
                 key={post.id}
                 className="bg-gold/10 dark:bg-gold/5 border-l-4 border-gold rounded-lg p-6 hover:shadow-md transition-shadow"
@@ -71,14 +107,14 @@ export default function ExchangeInfoPage() {
 
           {/* Regular Posts */}
           <div className="space-y-3">
-            {posts.filter(p => !p.isPinned).map((post, index) => (
+            {postsWithAuthor.filter((p: any) => !p.isPinned).map((post: any, index: number) => (
               <div
                 key={post.id}
                 className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md hover:border-gold/30 transition-all"
               >
                 <div className="flex items-start gap-4">
                   <div className="text-text-secondary font-semibold text-lg w-8 flex-shrink-0">
-                    {posts.filter(p => !p.isPinned).length - index}
+                    {postsWithAuthor.filter((p: any) => !p.isPinned).length - index}
                   </div>
                   <div className="flex-1 min-w-0">
                     <Link
@@ -98,6 +134,15 @@ export default function ExchangeInfoPage() {
               </div>
             ))}
           </div>
+          </>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-text-secondary mb-4">등록된 게시글이 없습니다</p>
+              <Link href="/exchange-info/new">
+                <Button variant="primary" className="bg-gold hover:bg-gold-light">첫 게시글 작성하기</Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* FAQ Section */}
