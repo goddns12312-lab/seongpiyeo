@@ -1,26 +1,57 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
-import { SITE_CONFIG } from '@/lib/site';
+'use client';
 
-export const metadata: Metadata = {
-  title: '게시글 작성 | 자유게시판 | 성피요',
-  description: '성인PC 관련 주제로 자유롭게 게시글을 작성할 수 있습니다.',
-  robots: {
-    index: false,
-    follow: false,
-  },
-  openGraph: {
-    title: '게시글 작성 | 자유게시판',
-    description: '성인PC 관련 주제로 자유롭게 게시글을 작성할 수 있습니다.',
-    type: 'website',
-    url: `${SITE_CONFIG.url}/community/new`,
-    siteName: SITE_CONFIG.businessName,
-    locale: 'ko_KR',
-  },
-};
+import { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button';
+import { createCommunityPost } from '@/lib/actions';
 
 export default function NewPostPage() {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    const title = formData.get('title') as string;
+    const category = formData.get('category') as string;
+    const content = formData.get('content') as string;
+
+    // 유효성 검사
+    if (!title || !category || !content) {
+      setError('제목, 카테고리, 내용은 필수입니다');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const postData = {
+        title,
+        category,
+        content,
+        status: 'active',
+      };
+
+      const result = await createCommunityPost(postData);
+
+      if (result.error) {
+        setError(result.error);
+      } else if (result.postId) {
+        // 성공 후 상세 페이지로 이동
+        router.push(`/community/${result.postId}`);
+      }
+    } catch (err) {
+      setError('게시글 작성 중 오류가 발생했습니다');
+      console.error('Post creation error:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-bg-primary py-12">
       <div className="max-w-2xl mx-auto px-4">
@@ -33,12 +64,19 @@ export default function NewPostPage() {
         <div className="bg-bg-secondary border border-border-light rounded-lg p-8">
           <h1 className="text-3xl font-bold text-text-primary mb-8">게시글 작성</h1>
 
-          <form className="space-y-6">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-red-700 dark:text-red-300">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Title */}
             <div>
               <label className="block text-text-primary font-semibold mb-2">제목</label>
               <input
                 type="text"
+                name="title"
                 placeholder="게시글 제목을 입력하세요"
                 className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary placeholder-text-secondary/50 focus:border-gold outline-none transition"
               />
@@ -47,7 +85,7 @@ export default function NewPostPage() {
             {/* Category */}
             <div>
               <label className="block text-text-primary font-semibold mb-2">카테고리</label>
-              <select className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary focus:border-gold outline-none transition">
+              <select name="category" className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary focus:border-gold outline-none transition">
                 <option value="">카테고리를 선택하세요</option>
                 <option value="info">💡 정보공유</option>
                 <option value="qa">❓ 질문답변</option>
@@ -60,6 +98,7 @@ export default function NewPostPage() {
             <div>
               <label className="block text-text-primary font-semibold mb-2">내용</label>
               <textarea
+                name="content"
                 placeholder="게시글 내용을 입력하세요"
                 className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary placeholder-text-secondary/50 focus:border-gold outline-none transition"
                 rows={10}
@@ -69,9 +108,15 @@ export default function NewPostPage() {
 
             {/* Buttons */}
             <div className="flex gap-3 pt-4">
-              <Button variant="primary" className="flex-1">작성 완료</Button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 bg-gold hover:bg-gold-light disabled:bg-gold/50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded transition"
+              >
+                {isSubmitting ? '작성 중...' : '작성 완료'}
+              </button>
               <Link href="/community" className="flex-1">
-                <Button variant="secondary" className="w-full">취소</Button>
+                <Button variant="secondary" className="w-full" disabled={isSubmitting}>취소</Button>
               </Link>
             </div>
           </form>
