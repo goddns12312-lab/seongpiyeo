@@ -187,9 +187,12 @@ export async function createCommunityPost(data: any) {
     applied: sanitized._seoApplied,
   });
 
+  // posts 테이블에 없는 컬럼 제거
+  const { _seoApplied, _seoChanges, ...postData } = sanitized;
+
   const { data: post, error: postError } = await supabase
     .from('posts')
-    .insert([sanitized])
+    .insert([postData])
     .select();
 
   if (postError) {
@@ -227,9 +230,12 @@ export async function createSecondhandItem(data: any) {
     applied: sanitized._seoApplied,
   });
 
+  // secondhand_items 테이블에 없는 컬럼 제거
+  const { _seoApplied, _seoChanges, ...itemData } = sanitized;
+
   const { data: item, error: itemError } = await supabase
     .from('secondhand_items')
-    .insert([sanitized])
+    .insert([itemData])
     .select();
 
   if (itemError) {
@@ -268,9 +274,12 @@ export async function createExchangeInfoPost(data: any) {
     applied: sanitized._seoApplied,
   });
 
+  // posts 테이블에 없는 컬럼 제거
+  const { _seoApplied, _seoChanges, ...postData } = sanitized;
+
   const { data: post, error: postError } = await supabase
     .from('posts')
-    .insert([sanitized])
+    .insert([postData])
     .select();
 
   if (postError) {
