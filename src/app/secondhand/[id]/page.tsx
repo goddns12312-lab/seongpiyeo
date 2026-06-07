@@ -1,6 +1,7 @@
 import { Metadata, notFound } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { SITE_CONFIG } from '@/lib/site';
+import { canDeleteListing } from '@/lib/permissions';
 import { SecondhandDetailClient } from './secondhand-detail-client';
 
 interface Props {
@@ -59,7 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     const item = items?.[0];
 
-    if (!item) {
+    if (!item || item.status === 'deleted') {
       console.warn('[generateMetadata] Item not found:', { id });
       return {
         title: '상품을 찾을 수 없습니다',
@@ -139,12 +140,16 @@ export default async function SecondhandDetailPage({ params }: Props) {
 
     const item = items?.[0];
 
-    if (!item) {
+    if (!item || item.status === 'deleted') {
       console.warn('[SecondhandDetailPage] Item not found:', { id });
       notFound();
     }
 
-    return <SecondhandDetailClient item={item} />;
+    // 현재 로그인한 유저와 권한 확인
+    const { data: { user } } = await supabase.auth.getUser();
+    const canDelete = user ? await canDeleteListing(id) : false;
+
+    return <SecondhandDetailClient item={item} canDelete={canDelete} />;
   } catch (err) {
     console.error('[SecondhandDetailPage] Exception:', err);
     notFound();

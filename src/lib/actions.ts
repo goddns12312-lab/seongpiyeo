@@ -360,3 +360,111 @@ export async function deleteBanner(id: string) {
 
   return { success: true };
 }
+
+/**
+ * ============================================================
+ * 권한 기반 삭제 함수들
+ * ============================================================
+ */
+
+export async function deletePost(id: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: '로그인이 필요합니다' };
+  }
+
+  // 게시글 조회
+  const { data: post, error: fetchError } = await supabase
+    .from('posts')
+    .select('user_id')
+    .eq('id', id)
+    .single();
+
+  if (fetchError) {
+    return { error: '게시글을 찾을 수 없습니다' };
+  }
+
+  // 권한 확인
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  const isAdmin = profile?.role === 'admin';
+  const isAuthor = post.user_id === user.id;
+
+  if (!isAdmin && !isAuthor) {
+    return { error: '삭제 권한이 없습니다' };
+  }
+
+  // status를 'deleted'로 변경 (soft delete)
+  const { error: updateError } = await supabase
+    .from('posts')
+    .update({ status: 'deleted', updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (updateError) {
+    return { error: updateError.message };
+  }
+
+  revalidatePath('/');
+  revalidatePath('/community');
+  revalidatePath('/exchange-info');
+  revalidatePath(`/community/${id}`);
+  revalidatePath(`/exchange-info/${id}`);
+
+  return { success: true };
+}
+
+export async function deleteSecondhandItem(id: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: '로그인이 필요합니다' };
+  }
+
+  // 중고물품 조회
+  const { data: item, error: fetchError } = await supabase
+    .from('secondhand_items')
+    .select('user_id')
+    .eq('id', id)
+    .single();
+
+  if (fetchError) {
+    return { error: '물품을 찾을 수 없습니다' };
+  }
+
+  // 권한 확인
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  const isAdmin = profile?.role === 'admin';
+  const isAuthor = item.user_id === user.id;
+
+  if (!isAdmin && !isAuthor) {
+    return { error: '삭제 권한이 없습니다' };
+  }
+
+  // status를 'deleted'로 변경
+  const { error: updateError } = await supabase
+    .from('secondhand_items')
+    .update({ status: 'deleted', updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (updateError) {
+    return { error: updateError.message };
+  }
+
+  revalidatePath('/');
+  revalidatePath('/secondhand');
+  revalidatePath(`/secondhand/${id}`);
+
+  return { success: true };
+}

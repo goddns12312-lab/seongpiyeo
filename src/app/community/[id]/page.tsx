@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
 import { createClient } from '@/lib/supabase/server';
+import { canDeletePost } from '@/lib/permissions';
+import DeletePostButton from '@/components/DeletePostButton';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   try {
@@ -18,7 +20,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
     const post = posts?.[0];
 
-    if (!post || post.status !== 'active') {
+    if (!post || post.status === 'deleted' || post.status !== 'active') {
       notFound();
     }
 
@@ -74,17 +76,20 @@ export default async function DetailPage({ params }: { params: { id: string } })
   const supabase = await createClient();
   const { data: posts, error } = await supabase
     .from('posts')
-    .select('id, title, content, created_at, status, category')
+    .select('id, title, content, created_at, status, category, user_id, view_count')
     .eq('id', params.id)
     .eq('category', 'free')
-    .eq('status', 'active')
     .limit(1);
 
   const post = posts?.[0];
 
-  if (error || !post) {
+  if (error || !post || post.status !== 'active') {
     notFound();
   }
+
+  // 현재 로그인한 유저와 권한 확인
+  const { data: { user } } = await supabase.auth.getUser();
+  const canDelete = user ? await canDeletePost(params.id) : false;
 
   // Get related posts (same category, max 4, exclude current post)
   const { data: relatedPosts } = await supabase
@@ -105,12 +110,22 @@ export default async function DetailPage({ params }: { params: { id: string } })
 
         {/* Content */}
         <article>
-          <h1 className="text-4xl font-bold text-text-primary mb-4">{post.title}</h1>
-          
+          <div className="flex items-start justify-between mb-4">
+            <h1 className="text-4xl font-bold text-text-primary flex-1">{post.title}</h1>
+            {canDelete && (
+              <div className="flex gap-2 ml-4">
+                <Link href={`/community/${params.id}/edit`}>
+                  <Button variant="secondary" size="sm">수정</Button>
+                </Link>
+                <DeletePostButton postId={params.id} />
+              </div>
+            )}
+          </div>
+
           <div className="flex flex-wrap gap-4 text-text-secondary text-sm mb-8 pb-8 border-b border-border-light">
             <span>작성자: 작성자</span>
             <span>작성일: {new Date(post.created_at).toLocaleDateString('ko-KR')}</span>
-            <span>조회수: 0</span>
+            <span>조회수: {post.view_count || 0}</span>
             <span>댓글: 0</span>
           </div>
 

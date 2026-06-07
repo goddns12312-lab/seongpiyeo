@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button';
+import { deleteSecondhandItem } from '@/lib/actions';
 
 export interface SecondhandItem {
   id: string;
@@ -18,12 +20,13 @@ export interface SecondhandItem {
 
 interface Props {
   item: SecondhandItem;
+  canDelete?: boolean;
 }
 
-export function SecondhandDetailClient({ item }: Props) {
+export function SecondhandDetailClient({ item, canDelete = false }: Props) {
   const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const isOwner = false;
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const mainImage = item.main_image_url;
 
@@ -43,8 +46,16 @@ export function SecondhandDetailClient({ item }: Props) {
             {/* 헤더 카드 */}
             <div className="bg-bg-secondary border border-border-light rounded-xl p-6 space-y-4">
               {/* 제목 */}
-              <div>
-                <h1 className="text-2xl lg:text-4xl font-bold text-text-primary leading-tight">{item.title}</h1>
+              <div className="flex items-start justify-between gap-4">
+                <h1 className="text-2xl lg:text-4xl font-bold text-text-primary leading-tight flex-1">{item.title}</h1>
+                {canDelete && (
+                  <div className="flex gap-2 flex-shrink-0">
+                    <Link href={`/secondhand/${item.id}/edit`}>
+                      <Button variant="secondary" size="sm">수정</Button>
+                    </Link>
+                    <DeleteSecondhandButton itemId={item.id} />
+                  </div>
+                )}
               </div>
 
               {/* 메타 정보 그리드 */}
@@ -137,14 +148,14 @@ export function SecondhandDetailClient({ item }: Props) {
                   📞 판매자에게 문의
                 </button>
 
-                {isOwner && (
+                {canDelete && (
                   <div className="flex gap-2">
-                    <button className="flex-1 bg-bg-secondary border border-border-light hover:border-gold text-text-primary font-semibold py-2 rounded-lg transition-colors text-sm">
-                      수정
-                    </button>
-                    <button className="flex-1 bg-red-600/20 border border-red-500/30 hover:bg-red-600/30 text-red-400 font-semibold py-2 rounded-lg transition-colors text-sm">
-                      삭제
-                    </button>
+                    <Link href={`/secondhand/${item.id}/edit`} className="flex-1">
+                      <button className="w-full bg-bg-secondary border border-border-light hover:border-gold text-text-primary font-semibold py-2 rounded-lg transition-colors text-sm">
+                        수정
+                      </button>
+                    </Link>
+                    <DeleteSecondhandButton itemId={item.id} />
                   </div>
                 )}
 
@@ -164,5 +175,34 @@ export function SecondhandDetailClient({ item }: Props) {
         </div>
       </div>
     </div>
+  );
+}
+
+function DeleteSecondhandButton({ itemId }: { itemId: string }) {
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+
+    setIsDeleting(true);
+    const result = await deleteSecondhandItem(itemId);
+
+    if (result.success) {
+      router.push('/secondhand');
+    } else {
+      alert(result.error || '삭제 실패');
+      setIsDeleting(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleDelete}
+      disabled={isDeleting}
+      className="flex-1 bg-red-600/20 border border-red-500/30 hover:bg-red-600/30 text-red-400 font-semibold py-2 rounded-lg transition-colors text-sm disabled:opacity-50"
+    >
+      {isDeleting ? '삭제 중...' : '삭제'}
+    </button>
   );
 }
