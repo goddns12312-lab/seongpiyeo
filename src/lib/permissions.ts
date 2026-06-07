@@ -112,22 +112,38 @@ export async function canDeletePost(postId: string): Promise<boolean> {
  */
 export async function canEditSecondhand(itemId: string): Promise<boolean> {
   try {
-    const [userId, adminStatus] = await Promise.all([
-      getCurrentUserId(),
-      isAdmin(),
-    ]);
-
-    if (!userId) return false;
-    if (adminStatus) return true;
-
     const supabase = await createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      console.log('[canEditSecondhand] 비로그인 사용자');
+      return false;
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    const isAdmin = profile?.role === 'admin';
+
+    if (isAdmin) {
+      console.log('[canEditSecondhand] 관리자 권한 확인됨');
+      return true;
+    }
+
     const { data: item } = await supabase
       .from('secondhand_items')
       .select('user_id')
       .eq('id', itemId)
       .single();
 
-    return item?.user_id === userId;
+    const isAuthor = item?.user_id === user.id;
+    console.log('[canEditSecondhand] 작성자 권한:', { isAuthor });
+
+    return isAuthor;
   } catch (error) {
     console.error('[permissions] canEditSecondhand error:', error);
     return false;
@@ -146,22 +162,38 @@ export async function canDeleteSecondhand(itemId: string): Promise<boolean> {
  */
 export async function canEditListing(listingId: string): Promise<boolean> {
   try {
-    const [userId, adminStatus] = await Promise.all([
-      getCurrentUserId(),
-      isAdmin(),
-    ]);
-
-    if (!userId) return false;
-    if (adminStatus) return true;
-
     const supabase = await createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      console.log('[canEditListing] 비로그인 사용자');
+      return false;
+    }
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    const isAdmin = profile?.role === 'admin';
+
+    if (isAdmin) {
+      console.log('[canEditListing] 관리자 권한 확인됨');
+      return true;
+    }
+
     const { data: listing } = await supabase
       .from('listings')
       .select('user_id')
       .eq('id', listingId)
       .single();
 
-    return listing?.user_id === userId;
+    const isAuthor = listing?.user_id === user.id;
+    console.log('[canEditListing] 작성자 권한:', { isAuthor });
+
+    return isAuthor;
   } catch (error) {
     console.error('[permissions] canEditListing error:', error);
     return false;

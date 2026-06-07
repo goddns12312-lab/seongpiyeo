@@ -149,6 +149,13 @@ export default async function SecondhandDetailPage({ params }: Props) {
     const { data: { user } } = await supabase.auth.getUser();
     const canDelete = user ? await canDeleteListing(id) : false;
 
+    console.log('[secondhand/[id]] 상세페이지 권한 정보:', {
+      userId: user?.id?.substring(0, 8),
+      itemId: id.substring(0, 8),
+      itemUserId: item?.user_id?.substring(0, 8),
+      canDelete,
+    });
+
     return <SecondhandDetailClient item={item} canDelete={canDelete} />;
   } catch (err) {
     console.error('[SecondhandDetailPage] Exception:', err);
