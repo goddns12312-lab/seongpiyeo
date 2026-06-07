@@ -72,6 +72,7 @@ export default async function HomePage() {
     { count: listingCount },
     { data: latestListings },
     { data: latestJobs },
+    { data: latestPosts },
   ] = await Promise.all([
     supabase
       .from('banners')
@@ -100,6 +101,12 @@ export default async function HomePage() {
     supabase
       .from('jobs')
       .select('id, title, region, category')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(6),
+    supabase
+      .from('posts')
+      .select('id, title, category, view_count, status, created_at')
       .eq('status', 'active')
       .order('created_at', { ascending: false })
       .limit(6),
@@ -331,85 +338,37 @@ export default async function HomePage() {
       )}
 
       {/* Latest Posts Section */}
-      <section className="max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-gold/20">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 게시글</h2>
-            <Link href="/community" className="text-gold text-sm font-medium hover:text-gold/80 transition-colors">
-              전체 보기 →
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              {
-                id: 1,
-                title: '좋은 가게 찾는 방법 - 초보자를 위한 팁',
-                author: '성공사업가',
-                date: '2026-06-06',
-                views: 284,
-                comments: 23,
-              },
-              {
-                id: 2,
-                title: '성인PC 운영 시 가장 중요한 것은 청소다',
-                author: '10년경력',
-                date: '2026-06-05',
-                views: 512,
-                comments: 67,
-              },
-              {
-                id: 3,
-                title: '고객 만족도를 높이는 운영 노하우 공유',
-                author: '사업자',
-                date: '2026-06-04',
-                views: 389,
-                comments: 45,
-              },
-              {
-                id: 4,
-                title: '신규 오픈했는데 손님이 잘 안 와요',
-                author: '초보운영자',
-                date: '2026-06-03',
-                views: 156,
-                comments: 12,
-              },
-              {
-                id: 5,
-                title: '이곳에서 찾은 좋은 운영자분 감사합니다',
-                author: '고객',
-                date: '2026-06-02',
-                views: 243,
-                comments: 28,
-              },
-              {
-                id: 6,
-                title: '신규 오픈 할 때 주의사항',
-                author: '운영경험자',
-                date: '2026-06-01',
-                views: 389,
-                comments: 45,
-              },
-            ].map((post: any) => (
-              <Link
-                key={post.id}
-                href={`/community/${post.id}`}
-                className="p-4 bg-bg-secondary border border-gold/20 rounded-lg hover:border-gold/50 transition-all duration-300 hover:shadow-md"
-              >
-                <p className="text-text-primary font-semibold text-sm line-clamp-2 mb-3">{post.title}</p>
-                <div className="flex items-center justify-between text-xs text-text-secondary">
-                  <span>{post.author}</span>
-                  <span>{formatDate(post.date)}</span>
-                </div>
-                <div className="flex items-center gap-3 mt-3 text-xs text-text-secondary">
-                  <span>👁 {post.views}</span>
-                  <span>💬 {post.comments}</span>
-                </div>
+      {latestPosts && latestPosts.length > 0 && (
+        <section className="max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-gold/20">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 게시글</h2>
+              <Link href="/community" className="text-gold text-sm font-medium hover:text-gold/80 transition-colors">
+                전체 보기 →
               </Link>
-            ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {latestPosts.map((post: any) => (
+                <Link
+                  key={post.id}
+                  href={`/community/${post.id}`}
+                  className="p-4 bg-bg-secondary border border-gold/20 rounded-lg hover:border-gold/50 transition-all duration-300 hover:shadow-md"
+                >
+                  <p className="text-text-primary font-semibold text-sm line-clamp-2 mb-3">{post.title}</p>
+                  <div className="flex items-center justify-between text-xs text-text-secondary">
+                    <span>{post.category}</span>
+                    <span>{formatDate(post.created_at)}</span>
+                  </div>
+                  <div className="flex items-center gap-3 mt-3 text-xs text-text-secondary">
+                    <span>👁 {post.view_count || 0}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Features Section */}
       <section className="max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-gold/20 relative">
