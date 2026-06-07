@@ -397,6 +397,146 @@ export async function deleteBanner(id: string) {
 
 /**
  * ============================================================
+ * 게시글 수정
+ * ============================================================
+ */
+
+export async function updatePost(id: string, data: any) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: '로그인이 필요합니다' };
+  }
+
+  // 게시글 조회
+  const { data: post, error: fetchError } = await supabase
+    .from('posts')
+    .select('user_id, category')
+    .eq('id', id)
+    .single();
+
+  if (fetchError) {
+    return { error: '게시글을 찾을 수 없습니다' };
+  }
+
+  // 권한 확인
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  const isAdmin = profile?.role === 'admin';
+  const isAuthor = post.user_id === user.id;
+  const isNullOwner = post.user_id === null;
+
+  // user_id가 NULL이면 관리자만 수정 가능
+  if (isNullOwner && !isAdmin) {
+    return { error: '수정 권한이 없습니다' };
+  }
+
+  // user_id가 있으면 관리자 또는 작성자만
+  if (!isNullOwner && !isAdmin && !isAuthor) {
+    return { error: '수정 권한이 없습니다' };
+  }
+
+  // 수정할 데이터 준비
+  const updateData = {
+    title: data.title,
+    content: data.content,
+    category: post.category, // 카테고리는 유지
+    updated_at: new Date().toISOString(),
+  };
+
+  // 업데이트
+  const { error: updateError } = await supabase
+    .from('posts')
+    .update(updateData)
+    .eq('id', id);
+
+  if (updateError) {
+    return { error: updateError.message };
+  }
+
+  revalidatePath('/');
+  revalidatePath('/community');
+  revalidatePath('/exchange-info');
+  revalidatePath(`/community/${id}`);
+  revalidatePath(`/exchange-info/${id}`);
+
+  return { success: true, postId: id };
+}
+
+export async function updateSecondhandItem(id: string, data: any) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: '로그인이 필요합니다' };
+  }
+
+  // 중고물품 조회
+  const { data: item, error: fetchError } = await supabase
+    .from('secondhand_items')
+    .select('user_id')
+    .eq('id', id)
+    .single();
+
+  if (fetchError) {
+    return { error: '물품을 찾을 수 없습니다' };
+  }
+
+  // 권한 확인
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  const isAdmin = profile?.role === 'admin';
+  const isAuthor = item.user_id === user.id;
+  const isNullOwner = item.user_id === null;
+
+  // user_id가 NULL이면 관리자만 수정 가능
+  if (isNullOwner && !isAdmin) {
+    return { error: '수정 권한이 없습니다' };
+  }
+
+  // user_id가 있으면 관리자 또는 작성자만
+  if (!isNullOwner && !isAdmin && !isAuthor) {
+    return { error: '수정 권한이 없습니다' };
+  }
+
+  // 수정할 데이터 준비
+  const updateData = {
+    title: data.title,
+    description: data.description,
+    price: data.price,
+    region: data.region,
+    main_image_url: data.main_image_url,
+    updated_at: new Date().toISOString(),
+  };
+
+  // 업데이트
+  const { error: updateError } = await supabase
+    .from('secondhand_items')
+    .update(updateData)
+    .eq('id', id);
+
+  if (updateError) {
+    return { error: updateError.message };
+  }
+
+  revalidatePath('/');
+  revalidatePath('/secondhand');
+  revalidatePath(`/secondhand/${id}`);
+
+  return { success: true, itemId: id };
+}
+
+/**
+ * ============================================================
  * 권한 기반 삭제 함수들
  * ============================================================
  */
