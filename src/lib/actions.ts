@@ -41,6 +41,12 @@ export async function deleteZeroPriceListings() {
 export async function createListing(data: any) {
   const supabase = await createClient();
 
+  // 현재 로그인한 사용자 확인
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: '로그인이 필요합니다' };
+  }
+
   // SEO 제목 자동 보정 적용
   const sanitized = sanitizeListingBeforeSave(data);
 
@@ -59,6 +65,7 @@ export async function createListing(data: any) {
   const finalData = {
     ...sanitized,
     seo_description: seoDescription,
+    user_id: user.id,
   };
 
   console.log('[SEO] Listing SEO applied:', {
@@ -179,6 +186,12 @@ export async function deleteListingImages(listingId: string) {
 export async function createCommunityPost(data: any) {
   const supabase = await createClient();
 
+  // 현재 로그인한 사용자 확인
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: '로그인이 필요합니다' };
+  }
+
   // SEO 제목 자동 보정 적용
   const sanitized = sanitizePostBeforeSave(data);
   console.log('[SEO] Community post title auto-fix applied:', {
@@ -189,6 +202,9 @@ export async function createCommunityPost(data: any) {
 
   // posts 테이블에 없는 컬럼 제거
   const { _seoApplied, _seoChanges, ...postData } = sanitized;
+
+  // user_id 추가
+  postData.user_id = user.id;
 
   const { data: post, error: postError } = await supabase
     .from('posts')
@@ -222,6 +238,12 @@ export async function createCommunityPost(data: any) {
 export async function createSecondhandItem(data: any) {
   const supabase = await createClient();
 
+  // 현재 로그인한 사용자 확인
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: '로그인이 필요합니다' };
+  }
+
   // SEO 제목 자동 보정 적용
   const sanitized = sanitizeSecondhandBeforeSave(data);
   console.log('[SEO] Secondhand item title auto-fix applied:', {
@@ -232,6 +254,9 @@ export async function createSecondhandItem(data: any) {
 
   // secondhand_items 테이블에 없는 컬럼 제거
   const { _seoApplied, _seoChanges, ...itemData } = sanitized;
+
+  // user_id 추가
+  itemData.user_id = user.id;
 
   const { data: item, error: itemError } = await supabase
     .from('secondhand_items')
@@ -265,6 +290,12 @@ export async function createSecondhandItem(data: any) {
 export async function createExchangeInfoPost(data: any) {
   const supabase = await createClient();
 
+  // 현재 로그인한 사용자 확인
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: '로그인이 필요합니다' };
+  }
+
   // SEO 제목 자동 보정 적용 (category: 'exchange' 추가)
   const exchangeData = { ...data, category: 'exchange' };
   const sanitized = sanitizePostBeforeSave(exchangeData);
@@ -276,6 +307,9 @@ export async function createExchangeInfoPost(data: any) {
 
   // posts 테이블에 없는 컬럼 제거
   const { _seoApplied, _seoChanges, ...postData } = sanitized;
+
+  // user_id 추가
+  postData.user_id = user.id;
 
   const { data: post, error: postError } = await supabase
     .from('posts')
