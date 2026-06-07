@@ -49,23 +49,51 @@ export async function getCurrentUserId(): Promise<string | null> {
  */
 export async function canEditPost(postId: string): Promise<boolean> {
   try {
-    const [userId, adminStatus] = await Promise.all([
-      getCurrentUserId(),
-      isAdmin(),
-    ]);
-
-    if (!userId) return false; // 비로그인
-    if (adminStatus) return true; // 관리자는 모두 가능
-
-    // 작성자만 가능
     const supabase = await createClient();
+
+    // 한 번에 user와 post 정보 조회
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      console.log('[canEditPost] 비로그인 사용자');
+      return false;
+    }
+
+    // 사용자 프로필 조회
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    const isAdmin = profile?.role === 'admin';
+
+    if (isAdmin) {
+      console.log('[canEditPost] 관리자 권한 확인됨', {
+        userId: user.id?.substring(0, 8),
+        postId: postId.substring(0, 8),
+      });
+      return true;
+    }
+
+    // 작성자 확인
     const { data: post } = await supabase
       .from('posts')
       .select('user_id')
       .eq('id', postId)
       .single();
 
-    return post?.user_id === userId;
+    const isAuthor = post?.user_id === user.id;
+
+    console.log('[canEditPost] 권한 검증:', {
+      userId: user.id?.substring(0, 8),
+      postUserId: post?.user_id?.substring(0, 8),
+      isAdmin,
+      isAuthor,
+      canEdit: isAuthor,
+    });
+
+    return isAuthor;
   } catch (error) {
     console.error('[permissions] canEditPost error:', error);
     return false;

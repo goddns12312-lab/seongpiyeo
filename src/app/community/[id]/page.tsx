@@ -91,6 +91,13 @@ export default async function DetailPage({ params }: { params: { id: string } })
   const { data: { user } } = await supabase.auth.getUser();
   const canDelete = user ? await canDeletePost(params.id) : false;
 
+  console.log('[community/[id]] 상세페이지 권한 정보:', {
+    userId: user?.id?.substring(0, 8),
+    postId: params.id.substring(0, 8),
+    postUserId: post?.user_id?.substring(0, 8),
+    canDelete,
+  });
+
   // Get related posts (same category, max 4, exclude current post)
   const { data: relatedPosts } = await supabase
     .from('posts')
