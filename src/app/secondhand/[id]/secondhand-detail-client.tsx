@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
@@ -20,15 +20,36 @@ export interface SecondhandItem {
 
 interface Props {
   item: SecondhandItem;
-  canDelete?: boolean;
+  listingId: string;
 }
 
-export function SecondhandDetailClient({ item, canDelete = false }: Props) {
+export function SecondhandDetailClient({ item, listingId }: Props) {
   const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [canDelete, setCanDelete] = useState(false);
+  const [isCheckingPermission, setIsCheckingPermission] = useState(true);
 
   const mainImage = item.main_image_url;
+
+  // 권한 확인
+  useEffect(() => {
+    async function checkPermission() {
+      try {
+        const response = await fetch(`/api/check-listing-permission/${listingId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setCanDelete(data.canDelete);
+        }
+      } catch (error) {
+        console.error('[SecondhandDetailClient] 권한 확인 오류:', error);
+      } finally {
+        setIsCheckingPermission(false);
+      }
+    }
+
+    checkPermission();
+  }, [listingId]);
 
   return (
     <div className="bg-bg-primary min-h-screen py-8 lg:py-12">
@@ -48,7 +69,7 @@ export function SecondhandDetailClient({ item, canDelete = false }: Props) {
               {/* 제목 */}
               <div className="flex items-start justify-between gap-4">
                 <h1 className="text-2xl lg:text-4xl font-bold text-text-primary leading-tight flex-1">{item.title}</h1>
-                {canDelete && (
+                {!isCheckingPermission && canDelete && (
                   <div className="flex gap-2 flex-shrink-0">
                     <Link href={`/secondhand/${item.id}/edit`}>
                       <Button variant="secondary" size="sm">수정</Button>
@@ -98,77 +119,36 @@ export function SecondhandDetailClient({ item, canDelete = false }: Props) {
             </div>
 
             {/* 상세 설명 */}
-            <div className="bg-bg-secondary border border-border-light rounded-xl p-6 space-y-4">
-              <h2 className="text-xl font-bold text-text-primary flex items-center gap-2">
-                <span className="w-1 h-6 bg-gold rounded-full"></span>
-                상품 설명
-              </h2>
-              <div className="text-text-primary whitespace-pre-wrap leading-relaxed text-base">
-                {item.description || '설명이 없습니다.'}
+            <div className="bg-bg-secondary border border-border-light rounded-xl p-6">
+              <h2 className="text-xl font-bold text-text-primary mb-4">상세정보</h2>
+              <div className="prose prose-invert max-w-none text-text-secondary">
+                {(item.description || '').split('\n').map((line, idx) => (
+                  <p key={idx} className="mb-2">{line || ' '}</p>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* 우측: 정보 카드 (1/3) */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-4">
-              {/* 가격 카드 */}
-              <div className="bg-bg-secondary border border-border-light rounded-xl p-6">
-                <p className="text-text-muted text-xs font-medium uppercase tracking-wide mb-2">가격</p>
-                <p className="text-4xl font-bold text-gold">{item.price.toLocaleString()}만원</p>
+          {/* 우측: 사이드바 (sticky) (1/3) */}
+          <div className="lg:sticky lg:top-8 lg:h-fit">
+            {/* 가격 카드 */}
+            <div className="bg-gradient-to-b from-gold/10 to-gold/5 border border-gold/30 rounded-xl p-6 space-y-4 mb-6">
+              <p className="text-text-muted text-sm font-medium">판매가격</p>
+              <p className="text-4xl font-bold text-gold">{(item.price || 0).toLocaleString()}만원</p>
+              <div className="space-y-3 pt-4 border-t border-gold/20">
+                <Button variant="primary" className="w-full" disabled={isDeleting}>
+                  구매 문의
+                </Button>
               </div>
+            </div>
 
-              {/* 정보 카드 */}
-              <div className="bg-bg-secondary border border-border-light rounded-xl p-6 space-y-4">
-                <h3 className="text-lg font-bold text-text-primary">상품 정보</h3>
-
-                <div className="space-y-3 pb-4 border-b border-border-light">
-                  <div>
-                    <p className="text-text-muted text-xs font-medium uppercase tracking-wide mb-1">지역</p>
-                    <p className="text-text-primary font-semibold">📍 {item.region}</p>
-                  </div>
-
-                  <div>
-                    <p className="text-text-muted text-xs font-medium uppercase tracking-wide mb-1">상태</p>
-                    <p className="text-text-primary font-semibold">
-                      {item.status === 'sold' ? '판매완료' : item.status === 'reserved' ? '예약중' : '판매중'}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-text-muted text-xs font-medium uppercase tracking-wide mb-1">게시일</p>
-                    <p className="text-text-primary font-semibold">{new Date(item.created_at).toLocaleDateString('ko-KR')}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* 액션 버튼 */}
-              <div className="space-y-3">
-                <button className="w-full bg-gold hover:bg-gold/90 text-bg-primary font-bold py-3 rounded-lg transition-colors">
-                  📞 판매자에게 문의
-                </button>
-
-                {canDelete && (
-                  <div className="flex gap-2">
-                    <Link href={`/secondhand/${item.id}/edit`} className="flex-1">
-                      <button className="w-full bg-bg-secondary border border-border-light hover:border-gold text-text-primary font-semibold py-2 rounded-lg transition-colors text-sm">
-                        수정
-                      </button>
-                    </Link>
-                    <DeleteSecondhandButton itemId={item.id} />
-                  </div>
-                )}
-
-                <Link href="/secondhand" className="block">
-                  <button className="w-full bg-bg-secondary border border-border-light hover:border-gold text-text-primary font-bold py-3 rounded-lg transition-colors">
-                    ← 목록으로
-                  </button>
-                </Link>
-              </div>
-
-              {/* 추가 정보 */}
-              <div className="text-center pt-4 border-t border-border-light text-text-muted text-xs">
-                <p>게시일: {new Date(item.created_at).toLocaleDateString('ko-KR')}</p>
+            {/* 판매자 정보 */}
+            <div className="bg-bg-secondary border border-border-light rounded-xl p-6 space-y-4">
+              <h3 className="font-bold text-text-primary">판매자 정보</h3>
+              <div className="space-y-3 text-sm text-text-secondary">
+                <p>이름: 미확인</p>
+                <p>지역: {item.region}</p>
+                <p>등록일: {new Date(item.created_at).toLocaleDateString('ko-KR')}</p>
               </div>
             </div>
           </div>
@@ -178,6 +158,7 @@ export function SecondhandDetailClient({ item, canDelete = false }: Props) {
   );
 }
 
+// DeleteSecondhandButton 컴포넌트
 function DeleteSecondhandButton({ itemId }: { itemId: string }) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -197,12 +178,13 @@ function DeleteSecondhandButton({ itemId }: { itemId: string }) {
   };
 
   return (
-    <button
-      onClick={handleDelete}
+    <Button
+      variant="danger"
+      size="sm"
       disabled={isDeleting}
-      className="flex-1 bg-red-600/20 border border-red-500/30 hover:bg-red-600/30 text-red-400 font-semibold py-2 rounded-lg transition-colors text-sm disabled:opacity-50"
+      onClick={handleDelete}
     >
       {isDeleting ? '삭제 중...' : '삭제'}
-    </button>
+    </Button>
   );
 }

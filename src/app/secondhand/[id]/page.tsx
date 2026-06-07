@@ -1,7 +1,6 @@
 import { Metadata, notFound } from 'next';
 import { createClient } from '@/lib/supabase/server';
 import { SITE_CONFIG } from '@/lib/site';
-import { canDeleteListing } from '@/lib/permissions';
 import { SecondhandDetailClient } from './secondhand-detail-client';
 
 interface Props {
@@ -145,18 +144,7 @@ export default async function SecondhandDetailPage({ params }: Props) {
       notFound();
     }
 
-    // 현재 로그인한 유저와 권한 확인
-    const { data: { user } } = await supabase.auth.getUser();
-    const canDelete = user ? await canDeleteListing(id) : false;
-
-    console.log('[secondhand/[id]] 상세페이지 권한 정보:', {
-      userId: user?.id?.substring(0, 8),
-      itemId: id.substring(0, 8),
-      itemUserId: item?.user_id?.substring(0, 8),
-      canDelete,
-    });
-
-    return <SecondhandDetailClient item={item} canDelete={canDelete} />;
+    return <SecondhandDetailClient item={item} listingId={id} />;
   } catch (err) {
     console.error('[SecondhandDetailPage] Exception:', err);
     notFound();

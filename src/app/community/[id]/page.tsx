@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
 import { createClient } from '@/lib/supabase/server';
-import { canDeletePost } from '@/lib/permissions';
-import DeletePostButton from '@/components/DeletePostButton';
+import CommunityDetailClient from './community-detail-client';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   try {
@@ -87,17 +86,6 @@ export default async function DetailPage({ params }: { params: { id: string } })
     notFound();
   }
 
-  // 현재 로그인한 유저와 권한 확인
-  const { data: { user } } = await supabase.auth.getUser();
-  const canDelete = user ? await canDeletePost(params.id) : false;
-
-  console.log('[community/[id]] 상세페이지 권한 정보:', {
-    userId: user?.id?.substring(0, 8),
-    postId: params.id.substring(0, 8),
-    postUserId: post?.user_id?.substring(0, 8),
-    canDelete,
-  });
-
   // Get related posts (same category, max 4, exclude current post)
   const { data: relatedPosts } = await supabase
     .from('posts')
@@ -119,14 +107,7 @@ export default async function DetailPage({ params }: { params: { id: string } })
         <article>
           <div className="flex items-start justify-between mb-4">
             <h1 className="text-4xl font-bold text-text-primary flex-1">{post.title}</h1>
-            {canDelete && (
-              <div className="flex gap-2 ml-4">
-                <Link href={`/community/${params.id}/edit`}>
-                  <Button variant="secondary" size="sm">수정</Button>
-                </Link>
-                <DeletePostButton postId={params.id} />
-              </div>
-            )}
+            <CommunityDetailClient postId={params.id} />
           </div>
 
           <div className="flex flex-wrap gap-4 text-text-secondary text-sm mb-8 pb-8 border-b border-border-light">
