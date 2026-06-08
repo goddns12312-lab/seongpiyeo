@@ -152,10 +152,10 @@ export default async function ListingDetailPage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
 
-  // Get listing
+  // Get listing (필요한 컬럼만 조회)
   const { data: listing } = await supabase
     .from('listings')
-    .select('*')
+    .select('id, title, region, district, description, monthly_rent, deposit, premium_price, main_image_url, thumbnail_url, area_sqm, pc_count, view_count, created_at, updated_at, status, user_id, price_type, price, contact, floor, available_date, business_type, size, facilities, permit_status, violation_history, idx, monthly_revenue, monthly_profit')
     .eq('id', id)
     .single();
 
@@ -163,10 +163,10 @@ export default async function ListingDetailPage({ params }: Props) {
     notFound();
   }
 
-  // Get images
+  // Get images (필요한 컬럼만 조회)
   const { data: images } = await supabase
     .from('listing_images')
-    .select('*')
+    .select('id, url, order_num, listing_id')
     .eq('listing_id', id)
     .order('order_num', { ascending: true });
 
@@ -203,25 +203,25 @@ export default async function ListingDetailPage({ params }: Props) {
     order_num: i.order_num
   })));
 
-  // Get seller info
+  // Get seller info (필요한 컬럼만 조회)
   const { data: seller } = await supabase
     .from('profiles')
-    .select('*')
+    .select('id, nickname, phone')
     .eq('id', listing.user_id)
     .single();
 
-  // Get sidebar banners
+  // Get sidebar banners (필요한 컬럼만 조회)
   const { data: banners } = await supabase
     .from('banners')
-    .select('*')
+    .select('id, image_url, link_url, title')
     .in('position', ['sidebar', 'listing-detail-sidebar'])
     .eq('is_active', true)
     .order('order_num', { ascending: true });
 
-  // Get listing comments
+  // Get listing comments (필요한 컬럼만 조회)
   const { data: comments } = await supabase
     .from('listing_comments')
-    .select('*')
+    .select('id, listing_id, user_id, content, created_at, updated_at, status')
     .eq('listing_id', id)
     .eq('status', 'active')
     .order('created_at', { ascending: true });
