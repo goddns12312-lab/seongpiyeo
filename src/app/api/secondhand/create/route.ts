@@ -109,9 +109,9 @@ export async function POST(request: Request) {
       imageCount: imageUrls.length,
     });
 
-    // listings 테이블에 저장 (필요한 id만 반환)
+    // secondhand_items 테이블에 저장
     const { data: item, error: itemError } = await supabase
-      .from('listings')
+      .from('secondhand_items')
       .insert([
         {
           user_id: userId,
@@ -121,7 +121,6 @@ export async function POST(request: Request) {
           region,
           main_image_url: imageUrls[0] || null,
           status: 'active',
-          listing_type: 'secondhand',
         },
       ])
       .select('id');
@@ -147,13 +146,13 @@ export async function POST(request: Request) {
     // 이미지 저장
     if (imageUrls.length > 0) {
       const imageData = imageUrls.map((url: string, index: number) => ({
-        listing_id: newItem.id,
-        image_url: url,
+        item_id: newItem.id,
+        url: url,
         order_num: index,
       }));
 
       const { error: imageError } = await supabase
-        .from('listing_images')
+        .from('secondhand_images')
         .insert(imageData);
 
       if (imageError) {

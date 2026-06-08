@@ -31,10 +31,9 @@ export default function SecondhandPage() {
       if (!supabase) throw new Error('Supabase client not initialized');
 
       const { data, error } = await supabase
-        .from('listings')
+        .from('secondhand_items')
         .select('id, title, description, price, region, status, created_at, main_image_url')
         .eq('status', 'active')
-        .eq('listing_type', 'secondhand')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
