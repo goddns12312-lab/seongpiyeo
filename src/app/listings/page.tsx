@@ -94,10 +94,11 @@ export default async function ListingsPage({ searchParams }: Props) {
   const countDuration = Date.now() - countStart;
 
   // 매물 조회를 위한 쿼리 빌더 (listing_images 분리)
+  // 임시 테스트: select('*')로 전체 컬럼 조회 - select 컬럼 최적화 문제인지 확인
   const buildQuery = () => {
     let q = supabase
       .from('listings')
-      .select('id, idx, title, price_type, price, region, district, area_sqm, pc_count, deposit, premium_price, monthly_rent, monthly_revenue, monthly_profit, view_count, created_at, thumbnail_url, main_image_url, status')
+      .select('*')
       .eq('status', 'active');
 
     if (search) {
