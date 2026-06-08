@@ -5,10 +5,15 @@ export async function POST(request: Request) {
   try {
     // pc_bang_session 쿠키에서 사용자 세션 추출
     const cookieHeader = request.headers.get('cookie');
-    console.log('[api/secondhand/create] 1. Cookie header 존재 여부:', !!cookieHeader);
-    if (cookieHeader) {
-      console.log('[api/secondhand/create] 1-1. Cookie header 내용:', cookieHeader.substring(0, 200) + '...');
-    }
+
+    console.log('='.repeat(80));
+    console.log('[api/secondhand/create] 📋 Cookie 디버깅 시작');
+    console.log('='.repeat(80));
+    console.log('[api/secondhand/create] 1️⃣ cookieHeader (raw):', {
+      exists: !!cookieHeader,
+      length: cookieHeader?.length || 0,
+      value: cookieHeader || 'null',
+    });
 
     let userId: string | null = null;
 
@@ -23,39 +28,65 @@ export async function POST(request: Request) {
         return acc;
       }, {} as Record<string, string>);
 
-      console.log('[api/secondhand/create] 2. 파싱된 cookies 키 목록:', Object.keys(cookies));
-      console.log('[api/secondhand/create] 2-1. pc_bang_session 존재:', !!cookies['pc_bang_session']);
+      console.log('[api/secondhand/create] 2️⃣ 파싱된 cookies:', {
+        keys: Object.keys(cookies),
+        cookieCount: Object.keys(cookies).length,
+      });
 
       const sessionCookie = cookies['pc_bang_session'];
+      console.log('[api/secondhand/create] 3️⃣ sessionCookie (raw):', {
+        exists: !!sessionCookie,
+        length: sessionCookie?.length || 0,
+        value: sessionCookie || 'null',
+      });
+
       if (sessionCookie) {
         try {
           const session = JSON.parse(sessionCookie);
+          console.log('[api/secondhand/create] 4️⃣ parsedSession (JSON parse 성공):', {
+            session: session,
+            id: session.id || 'undefined',
+            username: session.username || 'undefined',
+            nickname: session.nickname || 'undefined',
+            role: session.role || 'undefined',
+          });
+
           userId = session.id;
-          console.log('[api/secondhand/create] 3. Session 파싱 성공:', {
-            userId: userId?.substring(0, 8) + '...',
-            username: session.username,
-            hasId: !!session.id,
+          console.log('[api/secondhand/create] 5️⃣ userId (최종):', {
+            userId: userId || 'null',
+            type: typeof userId,
+            length: userId?.length || 0,
           });
         } catch (e) {
-          console.error('[api/secondhand/create] 3-1. Session 파싱 실패:', {
+          console.error('[api/secondhand/create] ❌ Session 파싱 실패:', {
             error: e instanceof Error ? e.message : String(e),
-            sessionCookie: sessionCookie?.substring(0, 100) || 'null',
+            stack: e instanceof Error ? e.stack : 'no stack',
+            sessionCookie: sessionCookie,
           });
         }
+      } else {
+        console.warn('[api/secondhand/create] ⚠️ pc_bang_session 쿠키 없음');
       }
+    } else {
+      console.warn('[api/secondhand/create] ⚠️ cookie header 자체가 없음');
     }
 
-    console.log('[api/secondhand/create] 4. 최종 userId:', { exists: !!userId, value: userId || 'null' });
+    console.log('[api/secondhand/create] 6️⃣ 최종 결과:', {
+      userIdExists: !!userId,
+      userId: userId || 'null',
+      willProceed: !!userId,
+    });
+    console.log('='.repeat(80));
 
     if (!userId) {
-      console.error('[api/secondhand/create] 5. userId 없음 - 401 반환');
+      console.error('[api/secondhand/create] ❌ userId 없음 - 401 반환');
       return Response.json(
         { error: '로그인이 필요합니다' },
         { status: 401 }
       );
     }
 
-    console.log('[api/secondhand/create] 6. userId 확인 통과 - 계속 진행');
+    console.log('[api/secondhand/create] ✅ userId 확인 통과 - 계속 진행');
 
     const supabase = await createClient();
 

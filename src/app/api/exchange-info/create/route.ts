@@ -6,7 +6,15 @@ export async function POST(request: Request) {
   try {
     // pc_bang_session 쿠키에서 사용자 세션 추출
     const cookieHeader = request.headers.get('cookie');
-    console.log('[api/exchange-info/create] Cookie header:', cookieHeader?.substring(0, 100) + '...');
+
+    console.log('='.repeat(80));
+    console.log('[api/exchange-info/create] 📋 Cookie 디버깅 시작');
+    console.log('='.repeat(80));
+    console.log('[api/exchange-info/create] 1️⃣ cookieHeader (raw):', {
+      exists: !!cookieHeader,
+      length: cookieHeader?.length || 0,
+      value: cookieHeader || 'null',
+    });
 
     let userId: string | null = null;
 
@@ -21,27 +29,53 @@ export async function POST(request: Request) {
         return acc;
       }, {} as Record<string, string>);
 
+      console.log('[api/exchange-info/create] 2️⃣ 파싱된 cookies:', {
+        keys: Object.keys(cookies),
+        cookieCount: Object.keys(cookies).length,
+      });
+
       const sessionCookie = cookies['pc_bang_session'];
+      console.log('[api/exchange-info/create] 3️⃣ sessionCookie (raw):', {
+        exists: !!sessionCookie,
+        length: sessionCookie?.length || 0,
+        value: sessionCookie || 'null',
+      });
+
       if (sessionCookie) {
         try {
           const session = JSON.parse(sessionCookie);
+          console.log('[api/exchange-info/create] 4️⃣ parsedSession (JSON parse 성공):', {
+            session: session,
+            id: session.id || 'undefined',
+            username: session.username || 'undefined',
+          });
+
           userId = session.id;
-          console.log('[api/exchange-info/create] Session found:', {
-            userId: userId?.substring(0, 8) + '...',
-            username: session.username,
-            hasId: !!session.id,
+          console.log('[api/exchange-info/create] 5️⃣ userId (최종):', {
+            userId: userId || 'null',
+            type: typeof userId,
           });
         } catch (e) {
-          console.error('[api/exchange-info/create] Failed to parse pc_bang_session:', {
+          console.error('[api/exchange-info/create] ❌ Session 파싱 실패:', {
             error: e instanceof Error ? e.message : String(e),
-            sessionCookie: sessionCookie?.substring(0, 100) || 'null',
+            sessionCookie: sessionCookie,
           });
         }
+      } else {
+        console.warn('[api/exchange-info/create] ⚠️ pc_bang_session 쿠키 없음');
       }
+    } else {
+      console.warn('[api/exchange-info/create] ⚠️ cookie header 자체가 없음');
     }
 
+    console.log('[api/exchange-info/create] 6️⃣ 최종 결과:', {
+      userIdExists: !!userId,
+      userId: userId || 'null',
+    });
+    console.log('='.repeat(80));
+
     if (!userId) {
-      console.error('[api/exchange-info/create] No valid session found');
+      console.error('[api/exchange-info/create] ❌ No valid session found');
       return Response.json(
         { error: '로그인이 필요합니다' },
         { status: 401 }
