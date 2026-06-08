@@ -39,13 +39,26 @@ export async function deleteZeroPriceListings() {
 }
 
 export async function createListing(data: any) {
+  console.log('[createListing] Server Action 실행 시작');
+  console.log('[createListing] 1. 받은 데이터:', {
+    hasUserIdInData: !!data.user_id,
+    userId: data.user_id || 'undefined',
+    title: data.title,
+    dataKeys: Object.keys(data).slice(0, 10),
+  });
+
   const supabase = await createClient();
 
   // pc_bang_session 쿠키 기반 user_id 확인
   const userId = data.user_id;
+  console.log('[createListing] 2. userId 확인:', { userId, exists: !!userId });
+
   if (!userId) {
+    console.error('[createListing] userId 없음 - 에러 반환');
     return { error: '로그인이 필요합니다' };
   }
+
+  console.log('[createListing] 3. userId 검증 통과:', { userId });
 
   // SEO 제목 자동 보정 적용
   const sanitized = sanitizeListingBeforeSave(data);
