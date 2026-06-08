@@ -14,8 +14,12 @@ export async function POST(request: Request) {
 
     if (cookieHeader) {
       const cookies = cookieHeader.split('; ').reduce((acc, cookie) => {
-        const [key, value] = cookie.split('=');
-        acc[key] = decodeURIComponent(value);
+        const eqIndex = cookie.indexOf('=');
+        if (eqIndex > -1) {
+          const key = cookie.substring(0, eqIndex);
+          const value = cookie.substring(eqIndex + 1);
+          acc[key] = decodeURIComponent(value);
+        }
         return acc;
       }, {} as Record<string, string>);
 
@@ -27,9 +31,16 @@ export async function POST(request: Request) {
         try {
           const session = JSON.parse(sessionCookie);
           userId = session.id;
-          console.log('[api/secondhand/create] 3. Session 파싱 성공:', { userId: userId?.substring(0, 8) + '...', username: session.username });
+          console.log('[api/secondhand/create] 3. Session 파싱 성공:', {
+            userId: userId?.substring(0, 8) + '...',
+            username: session.username,
+            hasId: !!session.id,
+          });
         } catch (e) {
-          console.error('[api/secondhand/create] 3-1. Session 파싱 실패:', e);
+          console.error('[api/secondhand/create] 3-1. Session 파싱 실패:', {
+            error: e instanceof Error ? e.message : String(e),
+            sessionCookie: sessionCookie?.substring(0, 100) || 'null',
+          });
         }
       }
     }

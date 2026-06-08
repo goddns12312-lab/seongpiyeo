@@ -17,11 +17,24 @@ export function saveSession(session: AuthSession) {
 
     // 쿠키에도 저장 (API 요청 시 credentials: 'include'로 전달되도록)
     const maxAge = 7 * 24 * 60 * 60; // 7일
-    document.cookie = `${SESSION_KEY}=${encodeURIComponent(JSON.stringify(session))}; max-age=${maxAge}; path=/; SameSite=Lax`;
+    const cookieValue = encodeURIComponent(JSON.stringify(session));
+
+    // production에서는 Secure 플래그 추가, localhost에서는 제외
+    const isProduction = typeof window !== 'undefined' &&
+                         window.location.hostname !== 'localhost' &&
+                         !window.location.hostname.startsWith('127.');
+
+    const secureFlag = isProduction ? '; Secure' : '';
+    const cookieString = `${SESSION_KEY}=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax${secureFlag}`;
+
+    document.cookie = cookieString;
 
     console.log('[Auth] ✓ 세션 저장됨 (localStorage + 쿠키):', {
       sessionKey: SESSION_KEY,
       userId: session.id,
+      cookieLength: cookieValue.length,
+      isProduction,
+      cookieSet: true,
     });
   }
 }

@@ -18,8 +18,15 @@ export default function LoginPage() {
       console.log('[로그인] ✓ localStorage에 세션이 이미 있습니다. 쿠키 설정...');
       const maxAge = 7 * 24 * 60 * 60; // 7일
       const cookieValue = encodeURIComponent(JSON.stringify(session));
-      document.cookie = `pc_bang_session=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax`;
-      console.log('[로그인] ✓ 쿠키 설정 완료');
+
+      const isProduction = typeof window !== 'undefined' &&
+                           window.location.hostname !== 'localhost' &&
+                           !window.location.hostname.startsWith('127.');
+      const secureFlag = isProduction ? '; Secure' : '';
+      const cookieString = `pc_bang_session=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax${secureFlag}`;
+
+      document.cookie = cookieString;
+      console.log('[로그인] ✓ 쿠키 설정 완료:', { cookieLength: cookieValue.length, isProduction });
     }
   }, []);
 
@@ -47,18 +54,24 @@ export default function LoginPage() {
       if (result.session) {
         const maxAge = 7 * 24 * 60 * 60; // 7일
         const cookieValue = encodeURIComponent(JSON.stringify(result.session));
-        const cookieString = `pc_bang_session=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax`;
+
+        const isProduction = typeof window !== 'undefined' &&
+                             window.location.hostname !== 'localhost' &&
+                             !window.location.hostname.startsWith('127.');
+        const secureFlag = isProduction ? '; Secure' : '';
+        const cookieString = `pc_bang_session=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax${secureFlag}`;
 
         document.cookie = cookieString;
         console.log('[Login] ✓ pc_bang_session 쿠키 설정 완료:', {
           userId: result.session.id,
           username: result.session.username,
           cookieLength: cookieValue.length,
+          isProduction,
         });
 
         // 확인: 쿠키가 실제로 설정되었는지 즉시 확인
         const checkCookie = document.cookie;
-        console.log('[Login] 🔍 설정된 쿠키 확인:', checkCookie.substring(0, 100) + '...');
+        console.log('[Login] 🔍 설정된 쿠키 확인:', checkCookie.substring(0, 150) + '...');
       }
 
       // ⭐ 3단계: 충분한 시간(1초) 후 페이지 새로고침
