@@ -161,8 +161,31 @@ export default async function ListingsPage({ searchParams }: Props) {
     favoriteCount: 0
   })) || [];
 
-  // 지역별 개수는 empty로 초기화 (나중에 필요시 로딩)
+  // 지역별 개수를 Promise.all 병렬 조회로 복구 (11개 지역 동시 요청)
+  const regionCountsStart = Date.now();
+  const regionCountPromises = REGIONS.map(region =>
+    supabase
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'active')
+      .eq('region', region)
+      .then(({ count }) => ({ region, count: count || 0 }))
+      .catch(() => ({ region, count: 0 })) // 실패 시 0 반환
+  );
+
+  const regionResults = await Promise.all(regionCountPromises);
   const regionCounts: Record<string, number> = {};
+  regionResults.forEach(({ region, count }) => {
+    regionCounts[region] = count;
+  });
+  const regionCountsDuration = Date.now() - regionCountsStart;
+
+  console.log('[Region Counts Performance]', {
+    totalRegions: REGIONS.length,
+    durationMs: regionCountsDuration,
+    counts: regionCounts,
+    timestamp: new Date().toISOString(),
+  });
 
   const filteredListings = listingsWithMeta || [];
   const totalPages = Math.ceil((totalCount || 0) / ITEMS_PER_PAGE);
