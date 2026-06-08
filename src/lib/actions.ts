@@ -110,12 +110,14 @@ export async function createListing(data: any) {
   );
 
   console.log('[createListing] dbData keys (final):', Object.keys(dbData));
+  console.log('[createListing] DB DATA KEYS', Object.keys(dbData));
   console.log('[createListing] dbData check:', {
     keys: Object.keys(dbData),
     hasSeoApplied: '_seoApplied' in dbData,
     hasSeoChanges: '_seoChanges' in dbData,
     hasSeoReason: '_seoReason' in dbData,
   });
+  console.log('[createListing] dbData full content:', JSON.stringify(dbData, null, 2));
 
   const { data: listing, error: listingError } = await supabase
     .from('listings')

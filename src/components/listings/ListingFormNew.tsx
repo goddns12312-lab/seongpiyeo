@@ -408,9 +408,12 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
           main_image_url: uploadedImages.length > 0 ? uploadedImages[0] : null,
           thumbnail_url: uploadedImages.length > 0 ? uploadedImages[0] : null,
         };
+        console.log('[ListingFormNew handleSubmit] 2. dataToSend keys:', Object.keys(dataToSend));
+        console.log('[ListingFormNew handleSubmit] 2. dataToSend 전체:', JSON.stringify(dataToSend, null, 2));
         console.log('[ListingFormNew handleSubmit] 2. createListing 호출 데이터:', {
           user_id: dataToSend.user_id,
           title: dataToSend.title,
+          keys: Object.keys(dataToSend),
         });
         const createResult = await createListing(dataToSend);
 
