@@ -117,14 +117,26 @@ export default async function ListingsPage({ searchParams }: Props) {
   // 페이지네이션 적용 데이터 조회
   const dataStart = Date.now();
   const dataQuery = buildQuery();
-  const { data: allListings } = await dataQuery.range(offset, offset + ITEMS_PER_PAGE - 1);
+  const { data: allListings, error: dataError } = await dataQuery.range(offset, offset + ITEMS_PER_PAGE - 1);
   const dataDuration = Date.now() - dataStart;
+
+  if (dataError) {
+    console.error('[Listings Page ERROR]', {
+      error: dataError.message,
+      code: dataError.code,
+      details: dataError.details,
+      hint: dataError.hint,
+    });
+  }
 
   console.log('[Listings Page Performance]', {
     region: region || 'all',
     page: currentPage,
+    offset,
+    range: `${offset} to ${offset + ITEMS_PER_PAGE - 1}`,
     totalCount,
     resultCount: allListings?.length || 0,
+    hasError: !!dataError,
     countQueryMs: countDuration,
     dataQueryMs: dataDuration,
     totalMs: countDuration + dataDuration,
@@ -137,6 +149,8 @@ export default async function ListingsPage({ searchParams }: Props) {
     allListings.slice(0, 5).forEach((l, i) => {
       console.log(`${i + 1}. idx=${l.idx} | title=${l.title.substring(0, 30)} | created_at=${l.created_at}`);
     });
+  } else {
+    console.warn('[Listings Query Result] 데이터 없음', { allListings, dataError });
   }
 
   // 리스팅에 메타데이터 추가 (댓글/좋아요 카운트는 0으로 설정 - 나중에 클라이언트에서 갱신 가능)
