@@ -37,6 +37,7 @@ export async function POST(request: Request) {
       );
     }
 
+    const supabase = await createClient();
     const data = await request.json();
 
     // SEO 제목 자동 보정 적용
