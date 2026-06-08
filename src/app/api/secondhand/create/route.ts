@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       imageCount: imageUrls.length,
     });
 
-    // listings 테이블에 저장
+    // listings 테이블에 저장 (필요한 id만 반환)
     const { data: item, error: itemError } = await supabase
       .from('listings')
       .insert([
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
           listing_type: 'secondhand',
         },
       ])
-      .select();
+      .select('id');
 
     if (itemError) {
       console.error('[api/secondhand/create] DB error:', itemError.message);

@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     const { data: post, error: postError } = await supabase
       .from('posts')
       .insert([finalData])
-      .select();
+      .select('id');
 
     if (postError) {
       console.error('[api/posts/create] DB error:', postError.message);
