@@ -151,24 +151,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ListingDetailPage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
+  const pageStart = Date.now();
+  const queryTimes: Record<string, number> = {};
 
   // Get listing (필요한 컬럼만 조회)
+  const listingStart = Date.now();
   const { data: listing } = await supabase
     .from('listings')
     .select('id, title, region, district, description, monthly_rent, deposit, premium_price, main_image_url, thumbnail_url, area_sqm, pc_count, view_count, created_at, updated_at, status, user_id, price_type, price, contact, floor, available_date, business_type, size, facilities, permit_status, violation_history, idx, monthly_revenue, monthly_profit')
     .eq('id', id)
     .single();
+  queryTimes['listing'] = Date.now() - listingStart;
 
   if (!listing || listing.status !== 'active') {
     notFound();
   }
 
   // Get images (필요한 컬럼만 조회)
+  const imagesStart = Date.now();
   const { data: images } = await supabase
     .from('listing_images')
     .select('id, url, order_num, listing_id')
     .eq('listing_id', id)
     .order('order_num', { ascending: true });
+  queryTimes['images'] = Date.now() - imagesStart;
 
   // listing_images에서 이미지 배열 사용 (최우선)
   let displayImages = images || [];
@@ -204,30 +210,36 @@ export default async function ListingDetailPage({ params }: Props) {
   })));
 
   // Get seller info (필요한 컬럼만 조회)
+  const sellerStart = Date.now();
   const { data: seller } = await supabase
     .from('profiles')
     .select('id, nickname, phone')
     .eq('id', listing.user_id)
     .single();
+  queryTimes['seller'] = Date.now() - sellerStart;
 
   // Get sidebar banners (필요한 컬럼만 조회)
+  const bannersStart = Date.now();
   const { data: banners } = await supabase
     .from('banners')
     .select('id, image_url, link_url, title')
     .in('position', ['sidebar', 'listing-detail-sidebar'])
     .eq('is_active', true)
     .order('order_num', { ascending: true });
+  queryTimes['banners'] = Date.now() - bannersStart;
 
   // Get listing comments (필요한 컬럼만 조회)
+  const commentsStart = Date.now();
   const { data: comments } = await supabase
     .from('listing_comments')
     .select('id, listing_id, user_id, content, created_at, updated_at, status')
     .eq('listing_id', id)
     .eq('status', 'active')
     .order('created_at', { ascending: true });
+  queryTimes['comments'] = Date.now() - commentsStart;
 
   // Get related listings: prefer district, fallback to region
-  // Step 1: Try to get same district listings
+  const relatedStart = Date.now();
   let relatedListings = [];
 
   if (listing.district) {
@@ -273,12 +285,15 @@ export default async function ListingDetailPage({ params }: Props) {
 
     relatedListings = regionListings || [];
   }
+  queryTimes['relatedListings'] = Date.now() - relatedStart;
 
   // Get region listing counts (for adjacent regions widget)
+  const regionCountsStart = Date.now();
   const { data: regionCounts } = await supabase
     .from('listings')
     .select('region')
     .eq('status', 'active');
+  queryTimes['regionCounts'] = Date.now() - regionCountsStart;
 
   const regionListingCounts: Record<string, number> = {};
   REGIONS.forEach(region => {
@@ -321,6 +336,17 @@ export default async function ListingDetailPage({ params }: Props) {
   });
 
   const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
+
+  const totalDuration = Date.now() - pageStart;
+  console.log('[Listing Detail Performance]', {
+    id,
+    imageCount: displayImages.length,
+    commentCount: comments?.length || 0,
+    relatedCount: relatedListings.length,
+    queryTimes,
+    totalMs: totalDuration,
+    timestamp: new Date().toISOString(),
+  });
 
   return (
     <div className="bg-bg-primary min-h-screen py-12">

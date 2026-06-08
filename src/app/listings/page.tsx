@@ -77,6 +77,7 @@ export default async function ListingsPage({ searchParams }: Props) {
   const supabase = await createClient();
 
   // 전체 개수 조회 (count 전용)
+  const countStart = Date.now();
   let countQ = supabase
     .from('listings')
     .select('id', { count: 'exact', head: true })
@@ -90,6 +91,7 @@ export default async function ListingsPage({ searchParams }: Props) {
   }
 
   const { count: totalCount } = await countQ;
+  const countDuration = Date.now() - countStart;
 
   // 매물 조회를 위한 쿼리 빌더 (listing_images 분리)
   const buildQuery = () => {
@@ -112,18 +114,22 @@ export default async function ListingsPage({ searchParams }: Props) {
     return q;
   };
 
-  console.log('[Listings Page Debug]', {
-    search,
-    region,
-    page: currentPage,
-    totalCount,
-    offset,
-    itemsPerPage: ITEMS_PER_PAGE,
-  });
-
   // 페이지네이션 적용 데이터 조회
+  const dataStart = Date.now();
   const dataQuery = buildQuery();
   const { data: allListings } = await dataQuery.range(offset, offset + ITEMS_PER_PAGE - 1);
+  const dataDuration = Date.now() - dataStart;
+
+  console.log('[Listings Page Performance]', {
+    region: region || 'all',
+    page: currentPage,
+    totalCount,
+    resultCount: allListings?.length || 0,
+    countQueryMs: countDuration,
+    dataQueryMs: dataDuration,
+    totalMs: countDuration + dataDuration,
+    timestamp: new Date().toISOString(),
+  });
 
   // ✅ 서버에서 반환된 데이터 로깅 (첫 5개만)
   if (allListings && allListings.length > 0) {
