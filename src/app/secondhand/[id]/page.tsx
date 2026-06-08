@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   try {
     const { data: items, error } = await supabase
-      .from('listings')
+      .from('secondhand_items')
       .select('id, title, description, price, region, status, created_at, main_image_url')
       .eq('id', id)
       .eq('status', 'active')
@@ -126,8 +126,8 @@ export default async function SecondhandDetailPage({ params }: Props) {
 
   try {
     const { data: items, error } = await supabase
-      .from('listings')
-      .select('id, title, description, price, region, status, created_at, main_image_url, view_count, deposit, monthly_rent, price_type, district, address, floor, facilities, available_date, business_license, administrative_record')
+      .from('secondhand_items')
+      .select('id, title, description, price, region, status, created_at, main_image_url, user_id, updated_at')
       .eq('id', id)
       .eq('status', 'active')
       .limit(1);

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { deleteSecondhandItem } from '@/lib/actions';
 import { createClient } from '@/lib/supabase/client';
+import { getSession } from '@/lib/auth';
 
 export interface SecondhandItem {
   id: string;
@@ -37,15 +38,17 @@ export function SecondhandDetailClient({ item, listingId }: Props) {
   useEffect(() => {
     async function checkPermission() {
       try {
-        const supabase = createClient();
-        const { data: { session } } = await supabase.auth.getSession();
+        const session = getSession();
 
         const headers: HeadersInit = {};
-        if (session?.access_token) {
-          headers['Authorization'] = `Bearer ${session.access_token}`;
+        if (session?.id) {
+          headers['X-User-ID'] = session.id;
         }
 
-        const response = await fetch(`/api/check-listing-permission/${listingId}`, { headers });
+        const response = await fetch(`/api/check-listing-permission/${listingId}`, {
+          headers,
+          credentials: 'include',
+        });
         if (response.ok) {
           const data = await response.json();
           setCanDelete(data.canDelete);
