@@ -1,3 +1,5 @@
+'use client';
+
 import { ListingCard } from './ListingCard';
 import { Listing, ListingImage } from '@/types';
 
