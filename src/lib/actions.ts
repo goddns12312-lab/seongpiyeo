@@ -63,25 +63,28 @@ export async function createListing(data: any) {
   // SEO 제목 자동 보정 적용
   const sanitized = sanitizeListingBeforeSave(data);
 
-  // listings 테이블에 없는 컬럼 제거 (_seoApplied, _seoChanges)
-  const { _seoApplied, _seoChanges, ...listingData } = sanitized;
+  // 내부용 필드 제거 (_ 로 시작하는 모든 필드: _seoApplied, _seoChanges, _seoReason 등)
+  const cleanListingData = Object.fromEntries(
+    Object.entries(sanitized).filter(([key]) => !key.startsWith('_'))
+  );
 
   // SEO Description 자동 생성 (formData에 없으면 자동 생성)
   const seoDescription = data.seo_description || buildListingSeoDescription({
-    region: listingData.region,
-    district: listingData.district,
-    location: listingData.address,
-    premium_price: listingData.premium_price,
-    deposit: listingData.deposit,
-    monthly_rent: listingData.monthly_rent,
-    area_sqm: listingData.area_sqm,
-    pc_count: listingData.pc_count,
+    region: cleanListingData.region,
+    district: cleanListingData.district,
+    location: cleanListingData.address,
+    premium_price: cleanListingData.premium_price,
+    deposit: cleanListingData.deposit,
+    monthly_rent: cleanListingData.monthly_rent,
+    area_sqm: cleanListingData.area_sqm,
+    pc_count: cleanListingData.pc_count,
   });
 
   const finalData = {
-    ...listingData,
+    ...cleanListingData,
     seo_description: seoDescription,
     user_id: userId,
+    status: 'active',
   };
 
   console.log('[SEO] Listing SEO applied:', {
@@ -216,15 +219,17 @@ export async function createCommunityPost(data: any) {
     applied: sanitized._seoApplied,
   });
 
-  // posts 테이블에 없는 컬럼 제거
-  const { _seoApplied, _seoChanges, ...postData } = sanitized;
+  // 내부용 필드 제거 (_ 로 시작하는 모든 필드)
+  const cleanPostData = Object.fromEntries(
+    Object.entries(sanitized).filter(([key]) => !key.startsWith('_'))
+  );
 
   // user_id 추가
-  postData.user_id = user.id;
+  cleanPostData.user_id = user.id;
 
   const { data: post, error: postError } = await supabase
     .from('posts')
-    .insert([postData])
+    .insert([cleanPostData])
     .select();
 
   if (postError) {
@@ -268,15 +273,17 @@ export async function createSecondhandItem(data: any) {
     applied: sanitized._seoApplied,
   });
 
-  // secondhand_items 테이블에 없는 컬럼 제거
-  const { _seoApplied, _seoChanges, ...itemData } = sanitized;
+  // 내부용 필드 제거 (_ 로 시작하는 모든 필드)
+  const cleanItemData = Object.fromEntries(
+    Object.entries(sanitized).filter(([key]) => !key.startsWith('_'))
+  );
 
   // user_id 추가
-  itemData.user_id = user.id;
+  cleanItemData.user_id = user.id;
 
   const { data: item, error: itemError } = await supabase
     .from('secondhand_items')
-    .insert([itemData])
+    .insert([cleanItemData])
     .select();
 
   if (itemError) {
@@ -321,15 +328,17 @@ export async function createExchangeInfoPost(data: any) {
     applied: sanitized._seoApplied,
   });
 
-  // posts 테이블에 없는 컬럼 제거
-  const { _seoApplied, _seoChanges, ...postData } = sanitized;
+  // 내부용 필드 제거 (_ 로 시작하는 모든 필드)
+  const cleanPostData = Object.fromEntries(
+    Object.entries(sanitized).filter(([key]) => !key.startsWith('_'))
+  );
 
   // user_id 추가
-  postData.user_id = user.id;
+  cleanPostData.user_id = user.id;
 
   const { data: post, error: postError } = await supabase
     .from('posts')
-    .insert([postData])
+    .insert([cleanPostData])
     .select();
 
   if (postError) {
