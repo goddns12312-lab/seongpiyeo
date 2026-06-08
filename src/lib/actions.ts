@@ -94,6 +94,16 @@ export async function createListing(data: any) {
     hasDescription: !!seoDescription,
   });
 
+  console.log('[createListing] finalData keys:', Object.keys(finalData));
+  console.log('[createListing] finalData before insert:', {
+    keys: Object.keys(finalData),
+    hasSeoApplied: '_seoApplied' in finalData,
+    hasSeoChanges: '_seoChanges' in finalData,
+    hasSeoReason: '_seoReason' in finalData,
+    hasSeoAppliedValue: finalData._seoApplied,
+    hasSeoReasonValue: finalData._seoReason,
+  });
+
   const { data: listing, error: listingError } = await supabase
     .from('listings')
     .insert([finalData])
