@@ -94,15 +94,7 @@ export async function createListing(data: any) {
     hasDescription: !!seoDescription,
   });
 
-  console.log('[createListing] finalData keys:', Object.keys(finalData));
-  console.log('[createListing] finalData before insert:', {
-    keys: Object.keys(finalData),
-    hasSeoApplied: '_seoApplied' in finalData,
-    hasSeoChanges: '_seoChanges' in finalData,
-    hasSeoReason: '_seoReason' in finalData,
-    hasSeoAppliedValue: finalData._seoApplied,
-    hasSeoReasonValue: finalData._seoReason,
-  });
+  console.log('[createListing] finalData keys (before whitelist):', Object.keys(finalData));
 
   // Insert 직전 최종 방어: 1) _ 로 시작하는 필드 제거
   let dbData = Object.fromEntries(
@@ -112,30 +104,35 @@ export async function createListing(data: any) {
   console.log('[createListing] dbData keys (after _ removal):', Object.keys(dbData));
   console.log('[createListing] DB DATA KEYS (before whitelist)', Object.keys(dbData));
 
-  // 2) Whitelist 방식: listings 테이블에 존재하는 컬럼만 포함
+  // 2) Whitelist 방식: listings 테이블 실제 컬럼만 포함 (자동/크롤링용 제외)
   const allowedColumns = [
+    'user_id',
     'title',
     'description',
+    'price_type',
+    'price',
+    'deposit',
+    'monthly_rent',
     'region',
     'district',
     'address',
-    'price',
-    'price_type',
-    'deposit',
-    'monthly_rent',
+    'area_sqm',
+    'pc_count',
     'monthly_revenue',
     'monthly_profit',
-    'pc_count',
-    'area_sqm',
+    'status',
     'floor',
+    'facilities',
     'available_date',
     'business_license',
     'administrative_record',
+    'premium_price',
+    'contact',
     'thumbnail_url',
+    'location',
     'main_image_url',
-    'status',
-    'user_id',
-    'seo_description',
+    'area',
+    'move_in_date',
   ];
 
   dbData = Object.fromEntries(
