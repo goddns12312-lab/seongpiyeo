@@ -123,7 +123,15 @@ export async function POST(request: Request) {
           status: 'active',
         },
       ])
-      .select('id');
+      .select();
+
+    console.log('[api/secondhand/create] INSERT RESULT:', {
+      data: item,
+      error: itemError,
+      dataType: typeof item,
+      dataLength: item?.length,
+      firstItem: item?.[0],
+    });
 
     if (itemError) {
       console.error('[api/secondhand/create] DB error:', itemError.message);
@@ -142,6 +150,10 @@ export async function POST(request: Request) {
     }
 
     const newItem = item[0];
+    console.log('[api/secondhand/create] NEW ITEM ID:', {
+      itemId: newItem.id,
+      redirectUrl: `/secondhand/${newItem.id}`,
+    });
 
     // 이미지 저장
     if (imageUrls.length > 0) {

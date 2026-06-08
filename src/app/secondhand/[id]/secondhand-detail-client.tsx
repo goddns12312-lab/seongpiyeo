@@ -32,6 +32,12 @@ export function SecondhandDetailClient({ item, listingId }: Props) {
   const [canDelete, setCanDelete] = useState(false);
   const [isCheckingPermission, setIsCheckingPermission] = useState(true);
 
+  console.log('[DETAIL CLIENT] Props:', {
+    item,
+    listingId,
+    itemKeys: Object.keys(item),
+  });
+
   const mainImage = item.main_image_url;
 
   // 권한 확인

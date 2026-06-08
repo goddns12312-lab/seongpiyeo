@@ -41,6 +41,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = SITE_CONFIG.url;
   const supabase = await createClient();
 
+  console.log('[SECONDHAND METADATA] id=', id);
+
   try {
     const { data: items, error } = await supabase
       .from('secondhand_items')
@@ -48,6 +50,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       .eq('id', id)
       .eq('status', 'active')
       .limit(1);
+
+    console.log('[SECONDHAND METADATA QUERY]', {
+      data: items,
+      error: error?.message,
+      itemsLength: items?.length,
+    });
 
     if (error) {
       console.error('[generateMetadata] Supabase error:', error);
@@ -124,6 +132,8 @@ export default async function SecondhandDetailPage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
 
+  console.log('[SECONDHAND DETAIL PAGE] id=', id);
+
   try {
     const { data: items, error } = await supabase
       .from('secondhand_items')
@@ -131,6 +141,13 @@ export default async function SecondhandDetailPage({ params }: Props) {
       .eq('id', id)
       .eq('status', 'active')
       .limit(1);
+
+    console.log('[SECONDHAND DETAIL QUERY]', {
+      data: items,
+      error: error?.message,
+      itemsLength: items?.length,
+      firstItem: items?.[0],
+    });
 
     if (error) {
       console.error('[SecondhandDetailPage] Supabase error:', error);
