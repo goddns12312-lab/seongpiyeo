@@ -158,7 +158,7 @@ export default async function ListingDetailPage({ params }: Props) {
   const listingStart = Date.now();
   const { data: listing } = await supabase
     .from('listings')
-    .select('id, title, region, district, description, monthly_rent, deposit, premium_price, main_image_url, thumbnail_url, area_sqm, pc_count, view_count, created_at, updated_at, status, user_id, price_type, price, contact, floor, available_date, business_type, size, facilities, permit_status, violation_history, idx, monthly_revenue, monthly_profit')
+    .select('id, title, region, district, description, monthly_rent, deposit, premium_price, main_image_url, thumbnail_url, area_sqm, pc_count, view_count, created_at, updated_at, status, user_id, price_type, price, contact, floor, available_date, facilities, idx, monthly_revenue, monthly_profit, address, location, administrative_record, area, business_license, move_in_date')
     .eq('id', id)
     .single();
   queryTimes['listing'] = Date.now() - listingStart;
