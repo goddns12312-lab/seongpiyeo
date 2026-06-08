@@ -46,3 +46,5 @@ Thumbs.db
 /scripts/output/
 /scripts/logs/
 scripts/playwright-auth.json
+
+.vercel
