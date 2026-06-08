@@ -133,54 +133,15 @@ export default async function ListingsPage({ searchParams }: Props) {
     });
   }
 
-  // 각 listing의 댓글 개수와 좋아요 개수 조회
-  const listingIds = allListings?.map(l => l.id) || [];
-
-  let commentCounts: Record<string, number> = {};
-  let favoriteCounts: Record<string, number> = {};
-
-  if (listingIds.length > 0) {
-    // 댓글 개수 (RLS의 .in() 호환성 문제로 전체 조회 후 필터링)
-    const { data: allComments } = await supabase
-      .from('listing_comments')
-      .select('listing_id')
-      .eq('status', 'active');
-
-    allComments?.forEach(c => {
-      if (listingIds.includes(c.listing_id)) {
-        commentCounts[c.listing_id] = (commentCounts[c.listing_id] || 0) + 1;
-      }
-    });
-
-    // 좋아요 개수
-    const { data: allFavorites } = await supabase
-      .from('favorites')
-      .select('listing_id');
-
-    allFavorites?.forEach(f => {
-      if (listingIds.includes(f.listing_id)) {
-        favoriteCounts[f.listing_id] = (favoriteCounts[f.listing_id] || 0) + 1;
-      }
-    });
-  }
-
-  // 리스팅에 메타데이터 추가
+  // 리스팅에 메타데이터 추가 (댓글/좋아요 카운트는 0으로 설정 - 나중에 클라이언트에서 갱신 가능)
   const listingsWithMeta = allListings?.map(listing => ({
     ...listing,
-    commentCount: commentCounts[listing.id] || 0,
-    favoriteCount: favoriteCounts[listing.id] || 0
+    commentCount: 0,
+    favoriteCount: 0
   })) || [];
 
-  // 지역별 개수 조회 (캐시됨)
+  // 지역별 개수는 empty로 초기화 (나중에 필요시 로딩)
   const regionCounts: Record<string, number> = {};
-  for (const r of REGIONS) {
-    const { count } = await supabase
-      .from('listings')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'active')
-      .eq('region', r);
-    regionCounts[r] = count || 0;
-  }
 
   const filteredListings = listingsWithMeta || [];
   const totalPages = Math.ceil((totalCount || 0) / ITEMS_PER_PAGE);

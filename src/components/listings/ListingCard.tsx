@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { formatPrice, formatDate } from '@/lib/utils';
 import { Listing, ListingImage } from '@/types';
 
@@ -11,7 +11,7 @@ interface ListingCardProps {
   images?: ListingImage[];
 }
 
-export function ListingCard({ listing, images = [] }: ListingCardProps) {
+function ListingCardComponent({ listing, images = [] }: ListingCardProps) {
   const [imageIndex, setImageIndex] = useState(0);
 
   // 이미지 배열 정렬 (order_num 기준)
@@ -183,3 +183,5 @@ export function ListingCard({ listing, images = [] }: ListingCardProps) {
     </Link>
   );
 }
+
+export const ListingCard = memo(ListingCardComponent);
