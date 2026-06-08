@@ -11,8 +11,8 @@ import { buildListingsMetadata, addRobotsToMetadata } from '@/lib/seo-metadata';
 import { buildCollectionPageSchema } from '@/lib/seo-schema';
 import { createCanonicalUrl } from '@/lib/url-utils';
 
-// 1시간마다 재생성 (ISR 캐싱)
-export const revalidate = 3600;
+// 2분마다 재생성 (ISR 캐싱) - Cold Start 최소화
+export const revalidate = 120;
 
 export async function generateMetadata(
   { searchParams }: Props,
