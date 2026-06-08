@@ -63,20 +63,23 @@ export async function createListing(data: any) {
   // SEO 제목 자동 보정 적용
   const sanitized = sanitizeListingBeforeSave(data);
 
+  // listings 테이블에 없는 컬럼 제거 (_seoApplied, _seoChanges)
+  const { _seoApplied, _seoChanges, ...listingData } = sanitized;
+
   // SEO Description 자동 생성 (formData에 없으면 자동 생성)
   const seoDescription = data.seo_description || buildListingSeoDescription({
-    region: sanitized.region,
-    district: sanitized.district,
-    location: sanitized.address,
-    premium_price: sanitized.premium_price,
-    deposit: sanitized.deposit,
-    monthly_rent: sanitized.monthly_rent,
-    area_sqm: sanitized.area_sqm,
-    pc_count: sanitized.pc_count,
+    region: listingData.region,
+    district: listingData.district,
+    location: listingData.address,
+    premium_price: listingData.premium_price,
+    deposit: listingData.deposit,
+    monthly_rent: listingData.monthly_rent,
+    area_sqm: listingData.area_sqm,
+    pc_count: listingData.pc_count,
   });
 
   const finalData = {
-    ...sanitized,
+    ...listingData,
     seo_description: seoDescription,
     user_id: userId,
   };
