@@ -34,6 +34,7 @@ export default function SecondhandPage() {
         .from('listings')
         .select('id, title, description, price, region, status, created_at, main_image_url')
         .eq('status', 'active')
+        .eq('listing_type', 'secondhand')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
