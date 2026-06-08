@@ -104,9 +104,22 @@ export async function createListing(data: any) {
     hasSeoReasonValue: finalData._seoReason,
   });
 
+  // Insert 직전 최종 방어: _ 로 시작하는 필드 제거
+  const dbData = Object.fromEntries(
+    Object.entries(finalData).filter(([key]) => !key.startsWith('_'))
+  );
+
+  console.log('[createListing] dbData keys (final):', Object.keys(dbData));
+  console.log('[createListing] dbData check:', {
+    keys: Object.keys(dbData),
+    hasSeoApplied: '_seoApplied' in dbData,
+    hasSeoChanges: '_seoChanges' in dbData,
+    hasSeoReason: '_seoReason' in dbData,
+  });
+
   const { data: listing, error: listingError } = await supabase
     .from('listings')
-    .insert([finalData])
+    .insert([dbData])
     .select();
 
   if (listingError) {
