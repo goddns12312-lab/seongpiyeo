@@ -41,9 +41,9 @@ export async function deleteZeroPriceListings() {
 export async function createListing(data: any) {
   const supabase = await createClient();
 
-  // 현재 로그인한 사용자 확인
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
+  // pc_bang_session 쿠키 기반 user_id 확인
+  const userId = data.user_id;
+  if (!userId) {
     return { error: '로그인이 필요합니다' };
   }
 
@@ -65,7 +65,7 @@ export async function createListing(data: any) {
   const finalData = {
     ...sanitized,
     seo_description: seoDescription,
-    user_id: user.id,
+    user_id: userId,
   };
 
   console.log('[SEO] Listing SEO applied:', {

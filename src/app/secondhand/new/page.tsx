@@ -1,9 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { createClient } from '@/lib/supabase/client';
+import { getSession } from '@/lib/auth';
 
 const REGIONS = ['서울', '경기', '인천', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];
 
@@ -75,10 +76,9 @@ export default function SecondhandNewPage() {
     setSubmitting(true);
 
     try {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (!session?.access_token) {
+      // pc_bang_session 쿠키 확인 (Supabase auth 아님)
+      const session = getSession();
+      if (!session) {
         setError('로그인이 필요합니다');
         setSubmitting(false);
         return;
@@ -95,8 +95,9 @@ export default function SecondhandNewPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
+          'X-User-ID': session.id,
         },
+        credentials: 'include',
         body: JSON.stringify({
           title: formData.title,
           description: formData.description,
