@@ -4,32 +4,33 @@ import { revalidatePath } from 'next/cache';
 
 export async function POST(request: Request) {
   try {
-    // Authorization 헤더에서 토큰 추출
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '');
+    // pc_bang_session 쿠키에서 사용자 세션 추출
+    const cookieHeader = request.headers.get('cookie');
+    console.log('[api/posts/create] Cookie header:', cookieHeader?.substring(0, 100) + '...');
 
-    if (!token) {
-      console.error('[api/posts/create] No authorization token provided');
-      return Response.json(
-        { error: '로그인이 필요합니다' },
-        { status: 401 }
-      );
+    let userId: string | null = null;
+
+    if (cookieHeader) {
+      const cookies = cookieHeader.split('; ').reduce((acc, cookie) => {
+        const [key, value] = cookie.split('=');
+        acc[key] = decodeURIComponent(value);
+        return acc;
+      }, {} as Record<string, string>);
+
+      const sessionCookie = cookies['pc_bang_session'];
+      if (sessionCookie) {
+        try {
+          const session = JSON.parse(sessionCookie);
+          userId = session.id;
+          console.log('[api/posts/create] Session found:', { userId: userId?.substring(0, 8) + '...', username: session.username });
+        } catch (e) {
+          console.error('[api/posts/create] Failed to parse pc_bang_session:', e);
+        }
+      }
     }
 
-    const supabase = await createClient();
-
-    // 토큰을 사용하여 사용자 확인
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    console.log('[api/posts/create] Auth check:', {
-      token: token.substring(0, 20) + '...',
-      user: user ? { id: user.id.substring(0, 8) + '...', email: user.email } : null,
-      error: authError?.message,
-      timestamp: new Date().toISOString(),
-    });
-
-    if (!user) {
-      console.error('[api/posts/create] User is null - login required', { error: authError?.message });
+    if (!userId) {
+      console.error('[api/posts/create] No valid session found');
       return Response.json(
         { error: '로그인이 필요합니다' },
         { status: 401 }
@@ -51,12 +52,12 @@ export async function POST(request: Request) {
     // user_id 추가
     const finalData = {
       ...postData,
-      user_id: user.id,
+      user_id: userId,
     };
 
     console.log('[api/posts/create] Saving post:', {
       title: finalData.title,
-      user_id: user.id.substring(0, 8) + '...',
+      user_id: userId.substring(0, 8) + '...',
       category: finalData.category,
     });
 

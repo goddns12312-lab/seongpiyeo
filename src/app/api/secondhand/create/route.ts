@@ -3,12 +3,33 @@ import { revalidatePath } from 'next/cache';
 
 export async function POST(request: Request) {
   try {
-    // Authorization 헤더에서 토큰 추출
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '');
+    // pc_bang_session 쿠키에서 사용자 세션 추출
+    const cookieHeader = request.headers.get('cookie');
+    console.log('[api/secondhand/create] Cookie header:', cookieHeader?.substring(0, 100) + '...');
 
-    if (!token) {
-      console.error('[api/secondhand/create] No authorization token provided');
+    let userId: string | null = null;
+
+    if (cookieHeader) {
+      const cookies = cookieHeader.split('; ').reduce((acc, cookie) => {
+        const [key, value] = cookie.split('=');
+        acc[key] = decodeURIComponent(value);
+        return acc;
+      }, {} as Record<string, string>);
+
+      const sessionCookie = cookies['pc_bang_session'];
+      if (sessionCookie) {
+        try {
+          const session = JSON.parse(sessionCookie);
+          userId = session.id;
+          console.log('[api/secondhand/create] Session found:', { userId: userId?.substring(0, 8) + '...', username: session.username });
+        } catch (e) {
+          console.error('[api/secondhand/create] Failed to parse pc_bang_session:', e);
+        }
+      }
+    }
+
+    if (!userId) {
+      console.error('[api/secondhand/create] No valid session found');
       return Response.json(
         { error: '로그인이 필요합니다' },
         { status: 401 }
@@ -16,24 +37,6 @@ export async function POST(request: Request) {
     }
 
     const supabase = await createClient();
-
-    // 토큰을 사용하여 사용자 확인
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    console.log('[api/secondhand/create] Auth check:', {
-      token: token.substring(0, 20) + '...',
-      user: user ? { id: user.id.substring(0, 8) + '...', email: user.email } : null,
-      error: authError?.message,
-      timestamp: new Date().toISOString(),
-    });
-
-    if (!user) {
-      console.error('[api/secondhand/create] User is null - login required', { error: authError?.message });
-      return Response.json(
-        { error: '로그인이 필요합니다' },
-        { status: 401 }
-      );
-    }
 
     const data = await request.json();
     const { title, description, price, region, imageUrls = [] } = data;
@@ -48,7 +51,7 @@ export async function POST(request: Request) {
 
     console.log('[api/secondhand/create] Saving item:', {
       title,
-      user_id: user.id.substring(0, 8) + '...',
+      user_id: userId.substring(0, 8) + '...',
       region,
       price,
       imageCount: imageUrls.length,
@@ -59,7 +62,7 @@ export async function POST(request: Request) {
       .from('listings')
       .insert([
         {
-          user_id: user.id,
+          user_id: userId,
           title,
           description: description || '',
           price: parseInt(price),

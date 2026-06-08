@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { createClient } from '@/lib/supabase/client';
+import { getSession } from '@/lib/auth';
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -80,10 +80,9 @@ export default function NewPostPage() {
     }
 
     try {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (!session?.access_token) {
+      // pc_bang_session 쿠키 확인 (Supabase auth 아님)
+      const session = getSession();
+      if (!session) {
         setError('로그인이 필요합니다');
         setIsSubmitting(false);
         return;
@@ -100,8 +99,9 @@ export default function NewPostPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
+          'X-User-ID': session.id,
         },
+        credentials: 'include',
         body: JSON.stringify(postData),
       });
 
