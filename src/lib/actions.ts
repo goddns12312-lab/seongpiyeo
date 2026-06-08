@@ -104,20 +104,52 @@ export async function createListing(data: any) {
     hasSeoReasonValue: finalData._seoReason,
   });
 
-  // Insert 직전 최종 방어: _ 로 시작하는 필드 제거
-  const dbData = Object.fromEntries(
+  // Insert 직전 최종 방어: 1) _ 로 시작하는 필드 제거
+  let dbData = Object.fromEntries(
     Object.entries(finalData).filter(([key]) => !key.startsWith('_'))
   );
 
-  console.log('[createListing] dbData keys (final):', Object.keys(dbData));
-  console.log('[createListing] DB DATA KEYS', Object.keys(dbData));
+  console.log('[createListing] dbData keys (after _ removal):', Object.keys(dbData));
+  console.log('[createListing] DB DATA KEYS (before whitelist)', Object.keys(dbData));
+
+  // 2) Whitelist 방식: listings 테이블에 존재하는 컬럼만 포함
+  const allowedColumns = [
+    'title',
+    'description',
+    'region',
+    'district',
+    'address',
+    'price',
+    'price_type',
+    'deposit',
+    'monthly_rent',
+    'monthly_revenue',
+    'monthly_profit',
+    'pc_count',
+    'area_sqm',
+    'floor',
+    'available_date',
+    'business_license',
+    'administrative_record',
+    'thumbnail_url',
+    'main_image_url',
+    'status',
+    'user_id',
+    'seo_description',
+  ];
+
+  dbData = Object.fromEntries(
+    Object.entries(dbData).filter(([key]) => allowedColumns.includes(key))
+  );
+
+  console.log('[createListing] dbData keys (after whitelist):', Object.keys(dbData));
+  console.log('[createListing] removed fields:',
+    Object.keys(finalData).filter(k => !k.startsWith('_') && !allowedColumns.includes(k))
+  );
   console.log('[createListing] dbData check:', {
     keys: Object.keys(dbData),
-    hasSeoApplied: '_seoApplied' in dbData,
-    hasSeoChanges: '_seoChanges' in dbData,
-    hasSeoReason: '_seoReason' in dbData,
+    count: Object.keys(dbData).length,
   });
-  console.log('[createListing] dbData full content:', JSON.stringify(dbData, null, 2));
 
   const { data: listing, error: listingError } = await supabase
     .from('listings')
