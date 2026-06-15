@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import { getSession } from '@/lib/auth';
+import { ensureAdminClient } from '@/lib/admin-client';
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
@@ -15,45 +14,33 @@ export default function AdminDashboard() {
   });
 
   useEffect(() => {
-    const checkAdmin = async () => {
-      const session = getSession();
-
-      if (!session) {
-        window.location.href = '/login';
+    const load = async () => {
+      const { supabase, ok } = await ensureAdminClient();
+      if (!ok) {
+        setLoading(false);
         return;
       }
 
-      const supabase = createClient();
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.id)
-        .single();
-
-      if (profile?.role !== 'admin') {
-        window.location.href = '/';
-        return;
-      }
-
-      const { count: pendingCount } = await supabase
-        .from('listings')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'pending');
-
-      const { count: activeListings } = await supabase
-        .from('listings')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'active');
-
-      const { count: totalUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
-
-      const { count: totalPosts } = await supabase
-        .from('posts')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'active');
+      const [
+        { count: pendingCount },
+        { count: activeListings },
+        { count: totalUsers },
+        { count: totalPosts },
+      ] = await Promise.all([
+        supabase
+          .from('listings')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'pending'),
+        supabase
+          .from('listings')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'active'),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }),
+        supabase
+          .from('posts')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'active'),
+      ]);
 
       setStats({
         pendingCount: pendingCount || 0,
@@ -65,7 +52,7 @@ export default function AdminDashboard() {
       setLoading(false);
     };
 
-    checkAdmin();
+    load();
   }, []);
 
   if (loading) {

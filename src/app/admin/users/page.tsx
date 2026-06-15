@@ -1,59 +1,44 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { getSession } from '@/lib/auth';
+import { ensureAdminClient } from '@/lib/admin-client';
+import { ADMIN_USER_SELECT } from '@/lib/account-queries';
 import { Badge } from '@/components/ui/Badge';
 import { formatDate } from '@/lib/utils';
 import { Profile } from '@/types';
+
+const ADMIN_USERS_LIMIT = 500;
 
 export default function AdminUsersPage() {
   const router = useRouter();
   const [users, setUsers] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchUsers = useCallback(async () => {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from('profiles')
+      .select(ADMIN_USER_SELECT)
+      .order('created_at', { ascending: false })
+      .limit(ADMIN_USERS_LIMIT);
+
+    setUsers((data || []) as Profile[]);
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
-    const checkAdmin = async () => {
-      const session = getSession();
-
-      if (!session) {
-        router.push('/login');
+    const init = async () => {
+      const { ok } = await ensureAdminClient({ router });
+      if (!ok) {
+        setLoading(false);
         return;
       }
-
-      const supabase = createClient();
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.id)
-        .single();
-
-      if (profile?.role !== 'admin') {
-        router.push('/');
-        return;
-      }
-
       await fetchUsers();
     };
-
-    checkAdmin();
-  }, [router]);
-
-  const fetchUsers = async () => {
-    try {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      setUsers(data || []);
-    } finally {
-      setLoading(false);
-    }
-  };
+    init();
+  }, [router, fetchUsers]);
 
   if (loading) {
     return <div className="text-center py-12">로딩 중...</div>;

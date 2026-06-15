@@ -3,7 +3,9 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { createBanner, updateBanner, deleteBanner } from '@/lib/actions';
-import { getSession } from '@/lib/auth';
+import { ensureAdminClient } from '@/lib/admin-client';
+import { ADMIN_BANNER_SELECT } from '@/lib/account-queries';
+import { uploadFilesToStorage } from '@/lib/image-upload';
 import { Button } from '@/components/ui/Button';
 
 interface Banner {
@@ -40,22 +42,17 @@ export default function BannersPage() {
   });
 
   useEffect(() => {
-    setTimeout(() => {
-      const session = getSession();
-      if (!session) {
+    const init = async () => {
+      const { ok } = await ensureAdminClient();
+      if (!ok) {
         setIsAdmin(false);
         setLoading(false);
         return;
       }
-
-      if (session.role === 'admin') {
-        setIsAdmin(true);
-        loadBanners();
-      } else {
-        setIsAdmin(false);
-        setLoading(false);
-      }
-    }, 100);
+      setIsAdmin(true);
+      await loadBanners();
+    };
+    init();
   }, []);
 
   const loadBanners = async () => {
@@ -63,7 +60,7 @@ export default function BannersPage() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from('banners')
-        .select('*')
+        .select(ADMIN_BANNER_SELECT)
         .order('order_num', { ascending: true });
 
       if (error) {
@@ -147,33 +144,19 @@ export default function BannersPage() {
 
     try {
       const supabase = createClient();
-      const ext = file.name.split('.').pop() || 'jpg';
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+      const [url] = await uploadFilesToStorage(supabase, 'listings', [file], 'banners');
 
-      const { data, error } = await supabase.storage
-        .from('listings')
-        .upload(`banners/${fileName}`, file);
-
-      if (error) {
-        alert('이미지 업로드 실패: ' + error.message);
-        console.error('Upload error:', error);
+      if (!url) {
+        alert('이미지 업로드 실패');
         return;
       }
 
-      if (data) {
-        const { data: urlData } = supabase.storage
-          .from('listings')
-          .getPublicUrl(`banners/${fileName}`);
-
-        setFormData((prev) => ({
-          ...prev,
-          image_url: urlData.publicUrl,
-        }));
-        alert('이미지 업로드 완료!');
-      }
-    } catch (err) {
+      setFormData((prev) => ({
+        ...prev,
+        image_url: url,
+      }));
+    } catch {
       alert('이미지 업로드 중 오류가 발생했습니다.');
-      console.error('Upload error:', err);
     } finally {
       setUploading(false);
       e.target.value = '';

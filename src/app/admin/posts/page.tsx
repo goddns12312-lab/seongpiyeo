@@ -1,68 +1,49 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { getSession } from '@/lib/auth';
+import { ensureAdminClient } from '@/lib/admin-client';
+import { ADMIN_POST_SELECT } from '@/lib/account-queries';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { formatDate } from '@/lib/utils';
 import { Post, CATEGORY_LABELS } from '@/types';
+
+const ADMIN_POSTS_LIMIT = 200;
 
 export default function AdminPostsPage() {
   const router = useRouter();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchPosts = useCallback(async () => {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from('posts')
+      .select(ADMIN_POST_SELECT)
+      .order('created_at', { ascending: false })
+      .limit(ADMIN_POSTS_LIMIT);
+
+    setPosts((data || []) as Post[]);
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
-    const checkAdmin = async () => {
-      const session = getSession();
-
-      if (!session) {
-        router.push('/login');
+    const init = async () => {
+      const { ok } = await ensureAdminClient({ router });
+      if (!ok) {
+        setLoading(false);
         return;
       }
-
-      const supabase = createClient();
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.id)
-        .single();
-
-      if (profile?.role !== 'admin') {
-        router.push('/');
-        return;
-      }
-
       await fetchPosts();
     };
-
-    checkAdmin();
-  }, [router]);
-
-  const fetchPosts = async () => {
-    try {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from('posts')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      setPosts(data || []);
-    } finally {
-      setLoading(false);
-    }
-  };
+    init();
+  }, [router, fetchPosts]);
 
   const handleHide = async (id: string) => {
     const supabase = createClient();
-    await supabase
-      .from('posts')
-      .update({ status: 'hidden' })
-      .eq('id', id);
-
+    await supabase.from('posts').update({ status: 'hidden' }).eq('id', id);
     fetchPosts();
   };
 
@@ -105,11 +86,7 @@ export default function AdminPostsPage() {
                   </td>
                   <td className="px-6 py-3">
                     {post.status === 'active' && (
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleHide(post.id)}
-                      >
+                      <Button variant="danger" size="sm" onClick={() => handleHide(post.id)}>
                         숨김
                       </Button>
                     )}

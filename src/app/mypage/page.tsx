@@ -9,6 +9,11 @@ import { Button } from '@/components/ui/Button';
 import { ListingCard } from '@/components/listings/ListingCard';
 import { PostCard } from '@/components/community/PostCard';
 import { Listing, Post, Profile, AuthSession } from '@/types';
+import { LISTING_LIST_SELECT } from '@/lib/listing-queries';
+import { MY_PROFILE_SELECT, MY_POST_SELECT } from '@/lib/account-queries';
+
+const MY_LISTINGS_LIMIT = 50;
+const LIKED_LISTINGS_LIMIT = 30;
 
 export default function MyPage() {
   const router = useRouter();
@@ -27,65 +32,69 @@ export default function MyPage() {
     }
 
     setUser(session);
-    fetchData(session.id);
+    fetchData(session.id, session.nickname);
   }, [router]);
 
-  const fetchData = async (userId: string) => {
+  const fetchData = async (userId: string, nickname: string) => {
     try {
       const supabase = createClient();
 
-      // Get profile
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (profileData) {
-        setProfile(profileData);
-      }
-
-      // Get user listings
-      const { data: listingsData } = await supabase
-        .from('listings')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
-
-      if (listingsData) {
-        setListings(listingsData);
-      }
-
-      // Get liked listings
-      const { data: favoritesData } = await supabase
-        .from('favorites')
-        .select('listing_id')
-        .eq('user_id', userId);
-
-      if (favoritesData && favoritesData.length > 0) {
-        const likedListingIds = favoritesData.map(f => f.listing_id);
-        const { data: likedListingsData } = await supabase
+      const [profileRes, listingsRes, favoritesRes, postsRes] = await Promise.all([
+        supabase.from('profiles').select(MY_PROFILE_SELECT).eq('id', userId).single(),
+        supabase
           .from('listings')
-          .select('*')
-          .in('id', likedListingIds)
-          .eq('status', 'active')
-          .order('created_at', { ascending: false });
+          .select(LISTING_LIST_SELECT)
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false })
+          .limit(MY_LISTINGS_LIMIT),
+        supabase
+          .from('favorites')
+          .select(`created_at, listings!inner(${LISTING_LIST_SELECT})`)
+          .eq('user_id', userId)
+          .eq('listings.status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(LIKED_LISTINGS_LIMIT),
+        supabase
+          .from('posts')
+          .select(MY_POST_SELECT)
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false })
+          .limit(5),
+      ]);
 
-        if (likedListingsData) {
-          setLikedListings(likedListingsData);
-        }
+      if (profileRes.data) {
+        setProfile(profileRes.data as Profile);
       }
 
-      // Get user posts
-      const { data: postsData } = await supabase
-        .from('posts')
-        .select('*, profiles(nickname)')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(5);
+      if (listingsRes.data) {
+        setListings(
+          listingsRes.data.map((listing) => ({
+            ...listing,
+            commentCount: 0,
+            favoriteCount: 0,
+          })) as Listing[]
+        );
+      }
 
-      if (postsData) {
-        setPosts(postsData);
+      if (favoritesRes.data) {
+        const liked = favoritesRes.data
+          .map((row: { listings: Listing }) => row.listings)
+          .filter(Boolean)
+          .map((listing) => ({
+            ...listing,
+            commentCount: 0,
+            favoriteCount: 0,
+          }));
+        setLikedListings(liked as Listing[]);
+      }
+
+      if (postsRes.data) {
+        setPosts(
+          postsRes.data.map((post) => ({
+            ...post,
+            profiles: { nickname },
+          })) as (Post & { profiles?: { nickname: string } })[]
+        );
       }
     } finally {
       setLoading(false);
@@ -118,7 +127,7 @@ export default function MyPage() {
                 <h1 className="text-2xl font-bold text-text-primary mb-1">
                   {profile.nickname}
                 </h1>
-                <p className="text-text-secondary text-sm">@{profile.username}</p>
+                <p className="text-text-secondary text-sm">@{user.username}</p>
                 {profile.phone && (
                   <p className="text-text-secondary text-sm">{profile.phone}</p>
                 )}
@@ -161,7 +170,7 @@ export default function MyPage() {
             </Link>
           </div>
 
-          {listings && listings.length > 0 ? (
+          {listings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {listings.map((listing) => (
                 <ListingCard key={listing.id} listing={listing} />
@@ -181,7 +190,7 @@ export default function MyPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-text-primary mb-6">좋아요한 매물</h2>
 
-          {likedListings && likedListings.length > 0 ? (
+          {likedListings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {likedListings.map((listing) => (
                 <ListingCard key={listing.id} listing={listing} />
@@ -206,7 +215,7 @@ export default function MyPage() {
             </Link>
           </div>
 
-          {posts && posts.length > 0 ? (
+          {posts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {posts.map((post) => (
                 <PostCard key={post.id} post={post} />

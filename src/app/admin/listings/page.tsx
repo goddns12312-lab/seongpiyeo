@@ -1,84 +1,56 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { getSession } from '@/lib/auth';
+import { ensureAdminClient } from '@/lib/admin-client';
+import { ADMIN_LISTING_SELECT } from '@/lib/account-queries';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { formatPrice, formatDate } from '@/lib/utils';
 import { Listing } from '@/types';
+
+const ADMIN_LISTINGS_LIMIT = 500;
 
 export default function AdminListingsPage() {
   const router = useRouter();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchListings = useCallback(async () => {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from('listings')
+      .select(ADMIN_LISTING_SELECT)
+      .order('created_at', { ascending: false })
+      .limit(ADMIN_LISTINGS_LIMIT);
+
+    setListings((data || []) as Listing[]);
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
-    const checkAdmin = async () => {
-      const session = getSession();
-
-      if (!session) {
-        router.push('/login');
+    const init = async () => {
+      const { ok } = await ensureAdminClient({ router });
+      if (!ok) {
+        setLoading(false);
         return;
       }
-
-      const supabase = createClient();
-
-      // Check if admin
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.id)
-        .single();
-
-      if (profile?.role !== 'admin') {
-        router.push('/');
-        return;
-      }
-
       await fetchListings();
     };
-
-    checkAdmin();
-  }, [router]);
-
-  const fetchListings = async () => {
-    try {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from('listings')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      setListings(data || []);
-    } finally {
-      setLoading(false);
-    }
-  };
+    init();
+  }, [router, fetchListings]);
 
   const handleApprove = async (id: string) => {
     const supabase = createClient();
-    const { error } = await supabase
-      .from('listings')
-      .update({ status: 'active' })
-      .eq('id', id);
-
-    if (!error) {
-      fetchListings();
-    }
+    const { error } = await supabase.from('listings').update({ status: 'active' }).eq('id', id);
+    if (!error) fetchListings();
   };
 
   const handleReject = async (id: string) => {
     const supabase = createClient();
-    const { error } = await supabase
-      .from('listings')
-      .update({ status: 'hidden' })
-      .eq('id', id);
-
-    if (!error) {
-      fetchListings();
-    }
+    const { error } = await supabase.from('listings').update({ status: 'hidden' }).eq('id', id);
+    if (!error) fetchListings();
   };
 
   if (loading) {
@@ -128,28 +100,16 @@ export default function AdminListingsPage() {
                   <td className="px-6 py-3 space-x-2">
                     {listing.status === 'pending' && (
                       <>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => handleApprove(listing.id)}
-                        >
+                        <Button variant="primary" size="sm" onClick={() => handleApprove(listing.id)}>
                           승인
                         </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => handleReject(listing.id)}
-                        >
+                        <Button variant="danger" size="sm" onClick={() => handleReject(listing.id)}>
                           거절
                         </Button>
                       </>
                     )}
                     {listing.status !== 'pending' && (
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleReject(listing.id)}
-                      >
+                      <Button variant="danger" size="sm" onClick={() => handleReject(listing.id)}>
                         숨김
                       </Button>
                     )}
