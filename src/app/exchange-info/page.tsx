@@ -17,8 +17,6 @@ export default async function ExchangeInfoPage() {
       .order('created_at', { ascending: false })
       .limit(20);
 
-    console.log('[ExchangeInfo] Posts query result:', { count: posts?.length, error: error?.message, posts: posts });
-
     if (error) {
       console.error('Failed to fetch exchange-info posts:', error);
       postsWithAuthor = [];

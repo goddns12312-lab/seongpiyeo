@@ -79,7 +79,7 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
       locale: 'ko_KR',
       images: [
         {
-          url: `${SITE_CONFIG.url}/og-image.png`,
+          url: `${SITE_CONFIG.url}/423432.png`,
           width: 1200,
           height: 630,
           alt: title,
@@ -91,7 +91,7 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
       card: 'summary_large_image',
       title,
       description,
-      images: [`${SITE_CONFIG.url}/og-image.png`],
+      images: [`${SITE_CONFIG.url}/423432.png`],
     },
   };
 }

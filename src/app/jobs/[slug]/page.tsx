@@ -62,7 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         locale: 'ko_KR',
         images: [
           {
-            url: `${SITE_CONFIG.url}/og-image.png`,
+            url: `${SITE_CONFIG.url}/423432.png`,
             width: 1200,
             height: 630,
             alt: `${job.title} - ${job.region || '전국'} PC방 구인`,
@@ -74,7 +74,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         card: 'summary_large_image',
         title: metaWithRobots.ogTitle,
         description: metaWithRobots.ogDescription,
-        images: [`${SITE_CONFIG.url}/og-image.png`],
+        images: [`${SITE_CONFIG.url}/423432.png`],
       },
     };
   } catch (err) {

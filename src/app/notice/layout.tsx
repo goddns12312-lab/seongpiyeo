@@ -1,6 +1,11 @@
 import { Metadata } from 'next';
+import Script from 'next/script';
 import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
+import { getOgImageUrl } from '@/lib/seo-assets';
+import { buildWebPageSchema } from '@/lib/seo-schema';
+
+const ogImage = getOgImageUrl();
 
 export const metadata: Metadata = {
   title: 'PC방 창업 공지사항 | 성인PC 최신 뉴스',
@@ -26,21 +31,13 @@ export const metadata: Metadata = {
     url: `${SITE_CONFIG.url}/notice`,
     siteName: SITE_CONFIG.businessName,
     locale: 'ko_KR',
-    images: [
-      {
-        url: `${SITE_CONFIG.url}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: '성피요 공지사항',
-        type: 'image/png',
-      },
-    ],
+    images: [{ url: ogImage, width: 1200, height: 630, alt: '성피요 공지사항', type: 'image/png' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '공지사항',
     description: '성피요 뉴스와 공지사항',
-    images: [`${SITE_CONFIG.url}/og-image.png`],
+    images: [ogImage],
   },
 };
 
@@ -49,5 +46,20 @@ export default function NoticeLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  const webPageSchema = buildWebPageSchema(
+    '공지사항',
+    '성인PC 창업자를 위한 최신 소식과 업데이트 안내',
+    `${SITE_CONFIG.url}/notice`
+  );
+
+  return (
+    <>
+      <Script
+        id="notice-webpage-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      {children}
+    </>
+  );
 }

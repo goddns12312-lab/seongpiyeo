@@ -13,11 +13,9 @@ export default async function CommunityPage() {
       .from('posts')
       .select('id, title, created_at, status, category')
       .eq('status', 'active')
-      .eq('category', 'free')
+      .neq('category', 'exchange')
       .order('created_at', { ascending: false })
       .limit(6);
-
-    console.log('[Community] Posts query result:', { count: posts?.length, error: error?.message });
 
     if (error) {
       console.error('Failed to fetch posts:', error);

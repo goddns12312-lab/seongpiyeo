@@ -1,6 +1,11 @@
 import { Metadata } from 'next';
+import Script from 'next/script';
 import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
+import { getOgImageUrl } from '@/lib/seo-assets';
+import { buildCollectionPageSchema } from '@/lib/seo-schema';
+
+const ogImage = getOgImageUrl();
 
 export const metadata: Metadata = {
   title: 'PC방 중고장터 | 성인피씨 중고물품 거래',
@@ -26,21 +31,13 @@ export const metadata: Metadata = {
     url: `${SITE_CONFIG.url}/secondhand`,
     siteName: SITE_CONFIG.businessName,
     locale: 'ko_KR',
-    images: [
-      {
-        url: `${SITE_CONFIG.url}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: '성피요 PC방 중고장터',
-        type: 'image/png',
-      },
-    ],
+    images: [{ url: ogImage, width: 1200, height: 630, alt: '성피요 PC방 중고장터', type: 'image/png' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'PC방 중고장터',
     description: 'PC방 관련 중고물품 거래',
-    images: [`${SITE_CONFIG.url}/og-image.png`],
+    images: [ogImage],
   },
 };
 
@@ -49,5 +46,20 @@ export default function SecondhandLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  const collectionSchema = buildCollectionPageSchema(
+    'PC방 중고장터',
+    [],
+    `${SITE_CONFIG.url}/secondhand`
+  );
+
+  return (
+    <>
+      <Script
+        id="secondhand-collection-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
+      {children}
+    </>
+  );
 }

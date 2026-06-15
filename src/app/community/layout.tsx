@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import { SITE_CONFIG } from '@/lib/site';
+import { getOgImageUrl } from '@/lib/seo-assets';
+
+const ogImage = getOgImageUrl();
 
 export const metadata: Metadata = {
   title: 'PC방 커뮤니티 | 성인피씨 정보공유',
@@ -22,7 +25,7 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     images: [
       {
-        url: `${SITE_CONFIG.url}/og-community.png`,
+        url: ogImage,
         width: 1200,
         height: 630,
         alt: 'PC방 커뮤니티',
@@ -34,7 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PC방 커뮤니티 | 성인PC 정보공유',
     description: '성인PC방 창업 정보, 인테리어, 장비 정보를 공유하는 커뮤니티.',
-    images: [`${SITE_CONFIG.url}/og-community.png`],
+    images: [ogImage],
   },
 };
 

@@ -1,6 +1,11 @@
 import { Metadata } from 'next';
+import Script from 'next/script';
 import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
+import { getOgImageUrl } from '@/lib/seo-assets';
+import { buildWebPageSchema } from '@/lib/seo-schema';
+
+const ogImage = getOgImageUrl();
 
 export const metadata: Metadata = {
   title: '고객 지원 | 문의하기',
@@ -26,21 +31,13 @@ export const metadata: Metadata = {
     url: `${SITE_CONFIG.url}/support`,
     siteName: SITE_CONFIG.businessName,
     locale: 'ko_KR',
-    images: [
-      {
-        url: `${SITE_CONFIG.url}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: '성피요 고객 지원',
-        type: 'image/png',
-      },
-    ],
+    images: [{ url: ogImage, width: 1200, height: 630, alt: '성피요 고객 지원', type: 'image/png' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '고객 지원',
     description: '성피요 고객 지원',
-    images: [`${SITE_CONFIG.url}/og-image.png`],
+    images: [ogImage],
   },
 };
 
@@ -49,5 +46,20 @@ export default function SupportLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  const webPageSchema = buildWebPageSchema(
+    '고객 지원',
+    '성피요 고객 지원 및 문의',
+    `${SITE_CONFIG.url}/support`
+  );
+
+  return (
+    <>
+      <Script
+        id="support-webpage-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      {children}
+    </>
+  );
 }

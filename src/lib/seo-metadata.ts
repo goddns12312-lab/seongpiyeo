@@ -249,17 +249,17 @@ export function buildPageMetadata(
 ): SEOMetadataOptions {
   const pageConfig = {
     guide: {
-      ogImage: `${SITE_CONFIG.url}/og-guide.png`,
+      ogImage: getOgImageUrl(),
       baseUrl: '/guide',
       keyword: 'PC방 창업 가이드',
     },
     faq: {
-      ogImage: `${SITE_CONFIG.url}/og-faq.png`,
+      ogImage: getOgImageUrl(),
       baseUrl: '/faq',
       keyword: 'PC방 자주묻는질문',
     },
     notice: {
-      ogImage: `${SITE_CONFIG.url}/og-notice.png`,
+      ogImage: getOgImageUrl(),
       baseUrl: '/notice',
       keyword: '성인PC 소식',
     },
@@ -311,17 +311,10 @@ export function addRobotsToMetadata(
  */
 export function resolveOgImage(
   customImage?: string,
-  fallbackType: 'listing' | 'secondhand' | 'community' = 'listing'
+  _fallbackType: 'listing' | 'secondhand' | 'community' = 'listing'
 ): string {
   if (customImage) return customImage;
-
-  const defaults = {
-    listing: `${SITE_CONFIG.url}/og-listings.png`,
-    secondhand: `${SITE_CONFIG.url}/og-secondhand.png`,
-    community: `${SITE_CONFIG.url}/og-community.png`,
-  };
-
-  return defaults[fallbackType];
+  return getOgImageUrl();
 }
 
 /**
@@ -331,6 +324,7 @@ export function resolveOgImage(
  */
 
 import { autoFixTitleByType, ContentMetadata } from './seo-title-auto-fix';
+import { getOgImageUrl } from './seo-assets';
 
 /**
  * 제목 길이에 따라 자동 보정된 SEO 제목 생성

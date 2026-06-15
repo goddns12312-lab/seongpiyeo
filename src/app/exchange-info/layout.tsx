@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     images: [
       {
-        url: `${SITE_CONFIG.url}/og-image.png`,
+        url: `${SITE_CONFIG.url}/423432.png`,
         width: 1200,
         height: 630,
         alt: '환수 및 정보게시판',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '환수 및 정보게시판 | 성인PC 운영정보',
     description: '성인PC 환수율 및 운영정보를 공유하는 게시판',
-    images: [`${SITE_CONFIG.url}/og-image.png`],
+    images: [`${SITE_CONFIG.url}/423432.png`],
   },
 };
 

@@ -1,13 +1,11 @@
 import { SITE_CONFIG } from './site';
+import { getOgImageUrl } from './seo-assets';
 
 /**
  * JSON-LD 구조화된 데이터 생성 함수 모음
  * schema.org 표준을 준수하여 구글 검색 및 AI 검색 최적화
  */
 
-/**
- * 웹사이트 기본 스키마
- */
 export function buildWebsiteSchema() {
   return {
     '@context': 'https://schema.org',
@@ -15,6 +13,7 @@ export function buildWebsiteSchema() {
     name: SITE_CONFIG.businessName,
     url: SITE_CONFIG.url,
     description: SITE_CONFIG.description,
+    inLanguage: 'ko-KR',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
@@ -26,15 +25,16 @@ export function buildWebsiteSchema() {
   };
 }
 
-/**
- * 조직 스키마
- */
 export function buildOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: SITE_CONFIG.businessName,
     url: SITE_CONFIG.url,
+    logo: {
+      '@type': 'ImageObject',
+      url: getOgImageUrl(),
+    },
     description: SITE_CONFIG.description,
     telephone: SITE_CONFIG.phone,
     email: SITE_CONFIG.email,
@@ -43,15 +43,9 @@ export function buildOrganizationSchema() {
       addressRegion: SITE_CONFIG.region,
       addressCountry: 'KR',
     },
-    sameAs: [
-      // 소셜 미디어 링크 추가 가능
-    ],
   };
 }
 
-/**
- * 브레드크럼 스키마 생성
- */
 export function buildBreadcrumbSchema(
   items: Array<{ name: string; url: string }>
 ): object {
@@ -67,42 +61,63 @@ export function buildBreadcrumbSchema(
   };
 }
 
+function resolveListingOfferPrice(listing: Record<string, unknown>): number {
+  const premium = Number(listing.premium_price) || 0;
+  const deposit = Number(listing.deposit) || 0;
+  const monthly = Number(listing.monthly_rent) || 0;
+  const price = Number(listing.price) || 0;
+  if (premium > 0) return premium;
+  if (deposit > 0) return deposit;
+  if (monthly > 0) return monthly;
+  return price;
+}
+
 /**
- * 매물 상세 스키마 (Product)
+ * 매물 상세 스키마 (RealEstateListing + Offer)
  */
-export function buildListingProductSchema(listing: any): object {
+export function buildListingProductSchema(listing: Record<string, unknown>): object {
   const {
     title,
     description,
-    price,
     region,
     district,
     area_sqm,
     pc_count,
     deposit,
     monthly_rent,
+    premium_price,
     monthly_profit,
     main_image_url,
+    thumbnail_url,
     id,
     created_at,
+    price_type,
   } = listing;
 
-  const location = district ? `${region} ${district}` : region;
+  const location = district ? `${region} ${district}` : String(region || '');
+  const offerPrice = resolveListingOfferPrice(listing);
+  const imageUrl = main_image_url || thumbnail_url || getOgImageUrl();
 
   return {
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'RealEstateListing',
     name: title,
     description: description || location,
-    image: main_image_url || `${SITE_CONFIG.url}/og-listings.png`,
+    image: imageUrl,
     url: `${SITE_CONFIG.url}/listings/${id}`,
-    priceCurrency: 'KRW',
-    price: price?.toString() || '0',
+    datePosted: created_at,
+    address: {
+      '@type': 'PostalAddress',
+      addressRegion: region,
+      addressLocality: district || region,
+      addressCountry: 'KR',
+    },
     offers: {
       '@type': 'Offer',
-      price: price?.toString() || '0',
+      price: offerPrice,
       priceCurrency: 'KRW',
       availability: 'https://schema.org/InStock',
+      businessFunction: price_type === 'sale' ? 'http://purl.org/goodrelations/v1#Sell' : 'http://purl.org/goodrelations/v1#LeaseOut',
     },
     additionalProperty: [
       area_sqm && {
@@ -114,6 +129,11 @@ export function buildListingProductSchema(listing: any): object {
         '@type': 'PropertyValue',
         name: 'PC 대수',
         value: `${pc_count}대`,
+      },
+      premium_price && {
+        '@type': 'PropertyValue',
+        name: '권리금',
+        value: `${premium_price}만원`,
       },
       deposit && {
         '@type': 'PropertyValue',
@@ -130,20 +150,11 @@ export function buildListingProductSchema(listing: any): object {
         name: '월 순익',
         value: `${monthly_profit}만원`,
       },
-      {
-        '@type': 'PropertyValue',
-        name: '지역',
-        value: location,
-      },
     ].filter(Boolean),
-    datePublished: created_at,
   };
 }
 
-/**
- * 중고 물품 스키마 (Product)
- */
-export function buildSecondhandProductSchema(item: any): object {
+export function buildSecondhandProductSchema(item: Record<string, unknown>): object {
   const { title, description, price, region, main_image_url, id, created_at, status } = item;
 
   return {
@@ -151,13 +162,11 @@ export function buildSecondhandProductSchema(item: any): object {
     '@type': 'Product',
     name: title,
     description: description || `${region}의 중고 물품`,
-    image: main_image_url || `${SITE_CONFIG.url}/og-secondhand.png`,
+    image: main_image_url || getOgImageUrl(),
     url: `${SITE_CONFIG.url}/secondhand/${id}`,
-    priceCurrency: 'KRW',
-    price: price?.toString() || '0',
     offers: {
       '@type': 'Offer',
-      price: price?.toString() || '0',
+      price: Number(price) || 0,
       priceCurrency: 'KRW',
       availability: status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
     },
@@ -167,26 +176,19 @@ export function buildSecondhandProductSchema(item: any): object {
         name: '지역',
         value: region,
       },
-      {
-        '@type': 'PropertyValue',
-        name: '상태',
-        value: status === 'active' ? '판매중' : status === 'reserved' ? '예약중' : '판매완료',
-      },
     ],
     datePublished: created_at,
   };
 }
 
-/**
- * 일자리 공고 스키마 (JobPosting)
- */
-export function buildJobPostingSchema(job: any): object {
-  const { title, description, region, salary, employment_type, id, created_at } = job;
+export function buildJobPostingSchema(job: Record<string, unknown>): object {
+  const { title, description, region, salary, employment_type, slug, created_at } = job;
+  const jobSlug = slug || job.id;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'JobPosting',
-    title: title,
+    title,
     description: description || title,
     jobLocation: {
       '@type': 'Place',
@@ -201,9 +203,9 @@ export function buildJobPostingSchema(job: any): object {
       priceCurrency: 'KRW',
       price: salary,
     },
-    employmentType: employment_type || 'TEMPORARY',
+    employmentType: employment_type || 'OTHER',
     datePosted: created_at,
-    url: `${SITE_CONFIG.url}/jobs/${id}`,
+    url: `${SITE_CONFIG.url}/jobs/${encodeURIComponent(String(jobSlug))}`,
     hiringOrganization: {
       '@type': 'Organization',
       name: SITE_CONFIG.businessName,
@@ -212,30 +214,55 @@ export function buildJobPostingSchema(job: any): object {
   };
 }
 
-/**
- * 기사/게시글 스키마 (NewsArticle)
- */
-export function buildNewsArticleSchema(post: any): object {
-  const { title, content, id, created_at, user_profile_name } = post;
+export function buildArticleSchema(post: {
+  title: string;
+  content?: string;
+  id: string;
+  created_at?: string;
+  url: string;
+  authorName?: string;
+}): object {
+  const plain = (post.content || '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
   return {
     '@context': 'https://schema.org',
-    '@type': 'NewsArticle',
-    headline: title,
-    articleBody: content?.slice(0, 500) || title,
-    datePublished: created_at,
+    '@type': 'Article',
+    headline: post.title,
+    articleBody: plain.slice(0, 5000) || post.title,
+    datePublished: post.created_at,
     author: {
       '@type': 'Person',
-      name: user_profile_name || SITE_CONFIG.businessName,
+      name: post.authorName || SITE_CONFIG.businessName,
     },
-    url: `${SITE_CONFIG.url}/community/${id}`,
-    image: `${SITE_CONFIG.url}/og-community.png`,
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.businessName,
+      logo: {
+        '@type': 'ImageObject',
+        url: getOgImageUrl(),
+      },
+    },
+    url: post.url,
+    image: getOgImageUrl(),
+    mainEntityOfPage: post.url,
   };
 }
 
-/**
- * FAQ 페이지 스키마
- */
+/** @deprecated use buildArticleSchema */
+export function buildNewsArticleSchema(post: Record<string, unknown>): object {
+  return buildArticleSchema({
+    title: String(post.title || ''),
+    content: String(post.content || ''),
+    id: String(post.id || ''),
+    created_at: post.created_at as string | undefined,
+    url: `${SITE_CONFIG.url}/community/${post.id}`,
+    authorName: post.user_profile_name as string | undefined,
+  });
+}
+
 export function buildFAQPageSchema(
   faqs: Array<{ question: string; answer: string }>
 ): object {
@@ -253,9 +280,6 @@ export function buildFAQPageSchema(
   };
 }
 
-/**
- * 컬렉션 페이지 스키마 (매물 목록 등)
- */
 export function buildCollectionPageSchema(
   title: string,
   items: Array<{ name: string; url: string; description?: string }>,
@@ -280,42 +304,72 @@ export function buildCollectionPageSchema(
   };
 }
 
-/**
- * 로컬 비즈니스 스키마
- */
-export function buildLocalBusinessSchema() {
+export function buildLocalBusinessSchema(region?: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: SITE_CONFIG.businessName,
+    name: `${SITE_CONFIG.businessName} - ${region || SITE_CONFIG.region}`,
     url: SITE_CONFIG.url,
-    image: `${SITE_CONFIG.url}/og-listings.png`,
+    image: getOgImageUrl(),
     description: SITE_CONFIG.description,
     telephone: SITE_CONFIG.phone,
     email: SITE_CONFIG.email,
     address: {
       '@type': 'PostalAddress',
-      addressRegion: SITE_CONFIG.region,
+      addressRegion: region || SITE_CONFIG.region,
       addressCountry: 'KR',
     },
   };
 }
 
-/**
- * Person 스키마 (사용자/작성자)
- */
+export function buildWebPageSchema(name: string, description: string, url: string): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name,
+    description,
+    url,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: SITE_CONFIG.businessName,
+      url: SITE_CONFIG.url,
+    },
+  };
+}
+
+export function buildGuideArticleSchema(): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'PC방 창업 완벽 가이드',
+    description: '성인PC 창업자를 위한 법규, 소방기준, 장비 선택, 수익화 전략 가이드',
+    url: `${SITE_CONFIG.url}/guide`,
+    author: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.businessName,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.businessName,
+      logo: {
+        '@type': 'ImageObject',
+        url: getOgImageUrl(),
+      },
+    },
+    image: getOgImageUrl(),
+    inLanguage: 'ko-KR',
+  };
+}
+
 export function buildPersonSchema(name: string, url?: string): object {
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: name,
+    name,
     url: url || SITE_CONFIG.url,
   };
 }
 
-/**
- * 검색 결과 스키마를 JSON-LD 스크립트 태그 HTML로 변환
- */
 export function schemaToScript(schema: object): string {
   return JSON.stringify(schema);
 }

@@ -1,8 +1,11 @@
 import { Metadata } from 'next';
+import Script from 'next/script';
 import { createClient } from '@/lib/supabase/server';
 import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 import { buildSecondhandMetadata, addRobotsToMetadata, buildOptimizedSecondhandTitle } from '@/lib/seo-metadata';
+import { buildSecondhandProductSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
+import { getOgImageUrl } from '@/lib/seo-assets';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -28,9 +31,9 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
 
   const itemMeta = buildSecondhandMetadata(item);
   const metaWithRobots = addRobotsToMetadata(itemMeta);
-
-  // 최적화된 제목 생성 (짧은 제목 자동 확장)
   const optimizedTitle = buildOptimizedSecondhandTitle(item);
+  const fallbackOg = getOgImageUrl();
+  const ogImage = itemMeta.ogImage || item.main_image_url || fallbackOg;
 
   return {
     title: optimizedTitle,
@@ -49,7 +52,7 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
       locale: 'ko_KR',
       images: [
         {
-          url: itemMeta.ogImage || `${SITE_CONFIG.url}/og-image.png`,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: itemMeta.ogTitle || '중고 물품',
@@ -61,11 +64,46 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
       card: 'summary_large_image',
       title: itemMeta.ogTitle || metaWithRobots.title,
       description: itemMeta.ogDescription || metaWithRobots.description,
-      images: [itemMeta.ogImage || `${SITE_CONFIG.url}/og-image.png`],
+      images: [ogImage],
     },
   };
 }
 
-export default function SecondhandDetailLayout({ children }: Props) {
-  return children;
+export default async function SecondhandDetailLayout({ params, children }: Props) {
+  const { id } = await params;
+  const supabase = await createClient();
+
+  const { data: item } = await supabase
+    .from('secondhand_items')
+    .select('id, title, description, price, region, status, created_at, main_image_url')
+    .eq('id', id)
+    .eq('status', 'active')
+    .single();
+
+  if (!item) {
+    return children;
+  }
+
+  const productSchema = buildSecondhandProductSchema(item);
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: '홈', url: SITE_CONFIG.url },
+    { name: '중고장터', url: `${SITE_CONFIG.url}/secondhand` },
+    { name: String(item.title), url: `${SITE_CONFIG.url}/secondhand/${id}` },
+  ]);
+
+  return (
+    <>
+      <Script
+        id={`secondhand-product-schema-${id}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <Script
+        id={`secondhand-breadcrumb-schema-${id}`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      {children}
+    </>
+  );
 }

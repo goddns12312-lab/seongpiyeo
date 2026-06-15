@@ -2,6 +2,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { SITE_CONFIG } from '@/lib/site';
 import { REGIONS } from '@/types';
+import { COMMUNITY_CATEGORIES } from '@/lib/community-categories';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
@@ -12,23 +13,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .select('id, region, price_type, updated_at')
     .eq('status', 'active');
 
-  // 모든 활성 커뮤니티 글 조회
+  // 커뮤니티 글 (exchange 제외 → /community/{id})
   const { data: posts } = await supabase
     .from('posts')
-    .select('id, updated_at')
-    .eq('status', 'active');
+    .select('id, updated_at, category')
+    .eq('status', 'active')
+    .neq('category', 'exchange');
 
   // 모든 활성 구인공고 조회 (soft delete 제외)
   const { data: jobs } = await supabase
     .from('jobs')
-    .select('slug, updated_at')
+    .select('slug, updated_at, region')
     .eq('status', 'active')
     .is('deleted_at', null);
 
   // 모든 활성 중고물품 조회
   const { data: secondhand } = await supabase
     .from('secondhand_items')
-    .select('id, updated_at')
+    .select('id, updated_at, region')
     .eq('status', 'active');
 
   // 모든 활성 환전정보 글 조회
@@ -125,6 +127,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
     priority: cat.priority,
+  }));
+
+  // 커뮤니티 카테고리 페이지
+  const communityCategoryEntries = Object.keys(COMMUNITY_CATEGORIES).map((category) => ({
+    url: `${SITE_CONFIG.url}/community/category/${category}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.65,
   }));
 
   // 지역별 매물 페이지 (5개 이상 매물이 있는 지역만 - Thin Content 정책)
@@ -260,6 +270,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily' as const,
       priority: 0.7,
     },
+    {
+      url: `${SITE_CONFIG.url}/support`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    },
+    {
+      url: `${SITE_CONFIG.url}/community/recruitment`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.65,
+    },
     // 지역별 페이지 (5개 이상 콘텐츠만 포함)
     ...listingsRegionEntries,
     ...jobsRegionEntries,
@@ -276,5 +298,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...listingCategoryEntries,
     ...jobCategoryEntries,
     ...secondhandCategoryEntries,
+    ...communityCategoryEntries,
   ];
 }

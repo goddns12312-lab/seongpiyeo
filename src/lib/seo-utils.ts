@@ -1,4 +1,4 @@
-import { SITE_CONFIG } from './site';
+import { getOgImageUrl } from './seo-assets';
 
 /**
  * SEO 유틸리티 함수 모음
@@ -190,15 +190,8 @@ export function isExternalImage(url?: string): boolean {
 /**
  * 페이지 유형별 기본 OG 이미지 반환
  */
-export function getDefaultOgImage(pageType: 'listing' | 'secondhand' | 'community' | 'guide' = 'listing'): string {
-  const images = {
-    listing: `${SITE_CONFIG.url}/og-listings.png`,
-    secondhand: `${SITE_CONFIG.url}/og-secondhand.png`,
-    community: `${SITE_CONFIG.url}/og-community.png`,
-    guide: `${SITE_CONFIG.url}/og-guide.png`,
-  };
-
-  return images[pageType];
+export function getDefaultOgImage(_pageType: 'listing' | 'secondhand' | 'community' | 'guide' = 'listing'): string {
+  return getOgImageUrl();
 }
 
 /**

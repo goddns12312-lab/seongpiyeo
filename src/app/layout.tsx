@@ -5,6 +5,7 @@ import { Footer } from '@/components/layout/Footer';
 import { SITE_CONFIG } from '@/lib/site';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { buildWebsiteSchema, buildOrganizationSchema } from '@/lib/seo-schema';
+import { getOgImageUrl } from '@/lib/seo-assets';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -52,7 +53,7 @@ export const metadata: Metadata = {
     description: SITE_CONFIG.description,
     images: [
       {
-        url: `${SITE_CONFIG.url}/og-image.png`,
+        url: getOgImageUrl(),
         width: 1200,
         height: 630,
         alt: `${SITE_CONFIG.businessName} - PC방 매물 거래 플랫폼`,
@@ -64,12 +65,12 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `성인PC 성인피씨 성인피시 창업 | ${SITE_CONFIG.businessName}`,
     description: SITE_CONFIG.description,
-    images: [`${SITE_CONFIG.url}/twitter-image.png`],
+    images: [getOgImageUrl()],
   },
   alternates: {
+    canonical: SITE_CONFIG.url,
     languages: {
-      'ko': `${SITE_CONFIG.url}`,
-      'en': `${SITE_CONFIG.url}/en`,
+      'ko-KR': SITE_CONFIG.url,
       'x-default': SITE_CONFIG.url,
     },
   },
@@ -79,65 +80,9 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   icons: {
-    icon: [
-      {
-        url: '/favicon.png',
-        type: 'image/png',
-      }
-    ],
-    apple: [
-      {
-        url: '/apple-touch-icon.png',
-        type: 'image/png',
-        sizes: '180x180',
-      }
-    ],
+    icon: [{ url: '/423432.png', type: 'image/png' }],
+    apple: [{ url: '/423432.png', type: 'image/png', sizes: '180x180' }],
   },
-};
-
-export const schemaOrganization = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  '@id': SITE_CONFIG.url,
-  name: SITE_CONFIG.businessName,
-  url: SITE_CONFIG.url,
-  logo: {
-    '@type': 'ImageObject',
-    url: `${SITE_CONFIG.url}/423432.png`,
-    width: 200,
-    height: 200,
-  },
-  image: `${SITE_CONFIG.url}/og-image.png`,
-  description: SITE_CONFIG.description,
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'Customer Service',
-    telephone: SITE_CONFIG.phone,
-    email: SITE_CONFIG.email,
-    url: SITE_CONFIG.url,
-  },
-  address: {
-    '@type': 'PostalAddress',
-    addressRegion: SITE_CONFIG.region,
-    addressCountry: 'KR',
-  },
-  founder: {
-    '@type': 'Person',
-    name: SITE_CONFIG.managerName,
-  },
-  sameAs: [
-    // Add actual social media profiles when available
-    // 'https://www.facebook.com/yourpage',
-    // 'https://www.instagram.com/yourprofile',
-    // 'https://www.youtube.com/@yourchannel',
-  ],
-  knowsAbout: [
-    'PC방 매물',
-    '성인PC',
-    '피시방 창업',
-    'PC방 거래',
-    '매물 정보',
-  ],
 };
 
 export default function RootLayout({
@@ -163,24 +108,10 @@ export default function RootLayout({
           }}
         />
         <meta charSet="utf-8" />
-        <meta name="description" content={SITE_CONFIG.description} />
-        <meta name="keywords" content={SITE_CONFIG.keywords} />
         <meta name="theme-color" content="#c8a96b" />
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-        <meta name="googlebot" content="index, follow, max-image-preview:large" />
-        <meta name="bingbot" content="index, follow, max-image-preview:large" />
-        <meta name="author" content={SITE_CONFIG.managerName} />
-        <meta name="copyright" content={SITE_CONFIG.businessName} />
-        <meta name="revisit-after" content="7 days" />
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="language" content="Korean" />
-        <meta name="distribution" content="global" />
-        <meta property="og:locale" content="ko_KR" />
         <meta name="format-detection" content="telephone=yes" />
-        <meta name="application-name" content={SITE_CONFIG.businessName} />
-        <meta name="msapplication-TileColor" content="#c8a96b" />
-        <link rel="alternate" hrefLang="ko" href={SITE_CONFIG.url} />
-        {/* Preconnect for performance optimization */}
+        <link rel="alternate" hrefLang="ko-KR" href={SITE_CONFIG.url} />
+        <link rel="alternate" hrefLang="x-default" href={SITE_CONFIG.url} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://supabase.co" />
@@ -206,48 +137,6 @@ export default function RootLayout({
           }}
         />
 
-        {/* JSON-LD Structured Data - Breadcrumb Navigation */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'BreadcrumbList',
-              itemListElement: [
-                {
-                  '@type': 'ListItem',
-                  position: 1,
-                  name: '홈',
-                  item: SITE_CONFIG.url,
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 2,
-                  name: '성인PC 매물',
-                  item: `${SITE_CONFIG.url}/listings`,
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 3,
-                  name: '구인구직',
-                  item: `${SITE_CONFIG.url}/jobs`,
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 4,
-                  name: '중고장터',
-                  item: `${SITE_CONFIG.url}/secondhand`,
-                },
-                {
-                  '@type': 'ListItem',
-                  position: 5,
-                  name: '커뮤니티',
-                  item: `${SITE_CONFIG.url}/community`,
-                },
-              ],
-            }),
-          }}
-        />
       </head>
       <body className="bg-bg-primary">
         <ThemeProvider>

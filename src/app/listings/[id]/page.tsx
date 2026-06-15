@@ -319,17 +319,6 @@ export default async function ListingDetailPage({ params }: Props) {
 
   const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
 
-  const totalDuration = Date.now() - pageStart;
-  console.log('[Listing Detail Performance]', {
-    id,
-    imageCount: displayImages.length,
-    commentCount: comments?.length || 0,
-    relatedCount: relatedListings.length,
-    queryTimes,
-    totalMs: totalDuration,
-    timestamp: new Date().toISOString(),
-  });
-
   return (
     <div className="bg-bg-primary min-h-screen py-12">
       {/* JSON-LD Scripts */}
@@ -356,16 +345,6 @@ export default async function ListingDetailPage({ params }: Props) {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Images */}
-            {/* DEBUG: ImageGallery에 전달되는 images 배열 확인 */}
-            {console.log('[DETAIL IMAGES - FINAL]', {
-              uuid: listing.id,
-              count: displayImages.length,
-              images: displayImages.map((i: any) => ({
-                id: i.id,
-                order_num: i.order_num,
-                filename: i.url?.split('/').pop()
-              }))
-            })}
             <ImageGallery images={displayImages} title={listing.title} listing={listing} />
 
             {/* Title Section */}
