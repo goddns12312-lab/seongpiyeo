@@ -63,7 +63,7 @@ export function Header() {
   const isActive = (path: string) => pathname === path || pathname.startsWith(path + '/');
 
   return (
-    <header className="bg-gradient-to-r from-bg-secondary via-bg-secondary to-bg-tertiary border-b border-border-light/50 sticky top-0 z-50">
+    <header className="sticky top-0 z-50 border-b border-border-light/60 bg-bg-secondary/85 backdrop-blur-md supports-[backdrop-filter]:bg-bg-secondary/75 shadow-sm shadow-black/5 dark:shadow-black/20">
       <div className="max-w-full mx-auto px-4 lg:px-8 py-2">
         <div className="flex justify-between items-center gap-8">
           {/* Logo */}

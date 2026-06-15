@@ -144,3 +144,182 @@ button {
 .dark .hover-lift:hover {
   box-shadow: 0 20px 40px rgba(200, 169, 107, 0.2);
 }
+
+/* ── Premium page design system (light + dark via CSS vars) ── */
+@layer components {
+  .page-shell {
+    @apply bg-bg-primary min-h-screen;
+  }
+
+  .page-hero {
+    @apply relative border-b border-border-light overflow-hidden;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--color-bg-secondary) / 0.95) 0%,
+      rgb(var(--color-bg-primary)) 55%,
+      rgb(var(--color-bg-primary)) 100%
+    );
+  }
+
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 70% 60% at 50% -10%,
+      rgb(var(--color-gold) / 0.14),
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  .page-hero-inner {
+    @apply relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14;
+  }
+
+  .page-hero-inner-wide {
+    @apply relative max-w-full mx-auto px-4 lg:px-8 py-8 md:py-10;
+  }
+
+  .page-container {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .page-container-narrow {
+    @apply max-w-4xl mx-auto px-4 sm:px-6;
+  }
+
+  .page-container-wide {
+    @apply max-w-full mx-auto px-4 lg:px-8;
+  }
+
+  .page-body {
+    @apply page-container py-10 md:py-12;
+  }
+
+  .breadcrumb {
+    @apply flex items-center gap-2 text-sm text-text-muted mb-6;
+  }
+
+  .breadcrumb a {
+    @apply hover:text-gold transition-colors;
+  }
+
+  .breadcrumb-sep {
+    @apply text-border-light select-none;
+  }
+
+  .surface-card {
+    @apply bg-bg-secondary/80 backdrop-blur-sm border border-border-light rounded-2xl;
+  }
+
+  .surface-card-hover {
+    @apply surface-card transition-all duration-300 hover:border-gold/35 hover:shadow-lg;
+  }
+
+  .surface-card-hover:hover {
+    box-shadow: 0 12px 32px rgb(var(--color-gold) / 0.08);
+  }
+
+  .stat-card {
+    @apply surface-card p-5 md:p-6 relative overflow-hidden transition-all duration-300 hover:border-gold/30;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgb(var(--color-gold) / 0.06), transparent 60%);
+    pointer-events: none;
+  }
+
+  .stat-value {
+    @apply text-2xl md:text-3xl font-bold text-gold tabular-nums relative;
+  }
+
+  .stat-label {
+    @apply text-text-muted text-xs font-medium uppercase tracking-wider relative;
+  }
+
+  .section-heading {
+    @apply text-2xl md:text-3xl font-bold text-text-primary tracking-tight;
+  }
+
+  .section-subheading {
+    @apply text-text-secondary text-sm md:text-base mt-2 leading-relaxed;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2.5 bg-bg-primary/60 border border-border-light rounded-xl text-text-primary text-sm placeholder:text-text-muted focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/20 transition-all;
+  }
+
+  .filter-pill {
+    @apply px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all text-text-secondary hover:text-text-primary hover:bg-bg-tertiary;
+  }
+
+  .filter-pill-active {
+    @apply bg-gold text-bg-primary shadow-sm hover:text-bg-primary;
+  }
+
+  .cta-banner {
+    @apply surface-card p-8 md:p-10 text-center border-gold/25;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--color-bg-secondary)) 0%,
+      rgb(var(--color-gold) / 0.06) 100%
+    );
+  }
+
+  .auth-card {
+    @apply surface-card p-8 md:p-10 w-full max-w-md shadow-xl;
+    box-shadow: 0 24px 48px rgb(var(--color-gold) / 0.06);
+  }
+
+  .dark .auth-card {
+    box-shadow: 0 24px 48px rgb(0 0 0 / 0.35);
+  }
+
+  .empty-state {
+    @apply surface-card p-10 md:p-12 text-center;
+  }
+
+  .table-shell {
+    @apply surface-card overflow-hidden;
+  }
+
+  .table-shell thead tr {
+    @apply bg-bg-tertiary/60 border-b border-border-light;
+  }
+
+  .table-shell th {
+    @apply px-5 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider;
+  }
+
+  .table-shell tbody tr {
+    @apply border-b border-border-light/60 transition-colors hover:bg-bg-tertiary/40 last:border-b-0;
+  }
+
+  .table-shell td {
+    @apply px-5 py-4;
+  }
+
+  .home-section {
+    @apply max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-border-light/60;
+  }
+
+  .home-section-inner {
+    @apply max-w-6xl mx-auto;
+  }
+
+  .home-card {
+    @apply surface-card-hover p-4 md:p-5;
+  }
+
+  .pagination-btn {
+    @apply px-4 py-2 rounded-xl text-sm font-medium transition-all bg-bg-secondary border border-border-light text-text-primary hover:bg-bg-tertiary hover:border-gold/30;
+  }
+
+  .pagination-btn-active {
+    @apply bg-gold text-bg-primary border-gold font-semibold shadow-sm;
+  }
+}
