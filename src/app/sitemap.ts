@@ -36,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .from('posts')
     .select('id, updated_at')
     .eq('category', 'exchange')
-    .eq('status', 'published');
+    .eq('status', 'active');
 
   // 매물이 있는 지역만 필터링
   const activeRegionSet = new Set<string>();

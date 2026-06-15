@@ -1,10 +1,5 @@
-import { deleteZeroPriceListings } from '@/lib/actions';
+import { disabledRouteResponse } from '@/lib/disabled-route';
 
 export async function POST() {
-  try {
-    const result = await deleteZeroPriceListings();
-    return Response.json(result);
-  } catch (error) {
-    return Response.json({ error: String(error) }, { status: 500 });
-  }
+  return disabledRouteResponse();
 }

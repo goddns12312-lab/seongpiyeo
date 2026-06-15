@@ -46,5 +46,9 @@ Thumbs.db
 /scripts/output/
 /scripts/logs/
 scripts/playwright-auth.json
+crawlers-test/auth/playwright-auth.json
+crawlers-test/logs/
+crawlers-test/output/
+crawlers-test/node_modules/
 
 .vercel

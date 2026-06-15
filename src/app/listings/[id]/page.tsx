@@ -197,18 +197,6 @@ export default async function ListingDetailPage({ params }: Props) {
     ];
   }
 
-  // DEBUG: 렌더링 직전 데이터 상태 확인
-  console.log('[SERVER] Listing Detail Page - UUID:', id);
-  console.log('[SERVER] premium_price:', (listing as any).premium_price);
-  console.log('[SERVER] main_image_url:', (listing as any).main_image_url);
-  console.log('[SERVER] displayImages count:', displayImages.length);
-  console.log('[SERVER] displayImages[0]:', displayImages[0]?.url?.split('/').pop());
-  console.log('[SERVER] displayImages full:', displayImages.map((i: any) => ({
-    id: i.id,
-    url: i.url?.split('/').pop(),
-    order_num: i.order_num
-  })));
-
   // Get seller info (필요한 컬럼만 조회)
   const sellerStart = Date.now();
   const { data: seller } = await supabase
@@ -306,12 +294,6 @@ export default async function ListingDetailPage({ params }: Props) {
   });
 
   const currentRegionCount = regionListingCounts[listing.region] || 0;
-
-  // Increment view count
-  await supabase
-    .from('listings')
-    .update({ view_count: listing.view_count + 1 })
-    .eq('id', id);
 
   // JSON-LD Product Schema (SEO 스키마 빌더 사용)
   const productSchema = buildListingProductSchema(listing);
@@ -468,7 +450,7 @@ export default async function ListingDetailPage({ params }: Props) {
 
             {/* Meta Information */}
             <div className="flex justify-between items-center text-text-secondary text-sm mb-6">
-              <p>조회 {listing.view_count + 1}</p>
+              <p>조회 {listing.view_count}</p>
               <p>{formatDate(listing.created_at)}</p>
             </div>
 
