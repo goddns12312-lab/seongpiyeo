@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { LISTING_LIST_SELECT } from '@/lib/listing-queries';
 
 const LISTING_CATEGORIES = {
   rent: { label: '임대', color: 'text-blue-500' },
@@ -36,10 +37,11 @@ export default function ListingCategoryPage({ params }: { params: { category: st
 
       const { data, error } = await supabase
         .from('listings')
-        .select('id, title, region, premium_price, monthly_rent, deposit, created_at, view_count, main_image_url')
+        .select(LISTING_LIST_SELECT, { count: 'exact' })
         .eq('status', 'active')
         .gt(priceType, 0)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(100);
 
       if (error) throw error;
       setListings(data || []);

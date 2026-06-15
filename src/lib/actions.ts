@@ -39,28 +39,13 @@ export async function deleteZeroPriceListings() {
 }
 
 export async function createListing(data: any) {
-  console.log('[createListing] Server Action 실행 시작');
-  console.log('[createListing] 1. 받은 데이터:', {
-    hasUserIdInData: !!data.user_id,
-    userId: data.user_id || 'undefined',
-    title: data.title,
-    dataKeys: Object.keys(data).slice(0, 10),
-  });
-
   const supabase = await createClient();
 
-  // pc_bang_session 쿠키 기반 user_id 확인
   const userId = data.user_id;
-  console.log('[createListing] 2. userId 확인:', { userId, exists: !!userId });
-
   if (!userId) {
-    console.error('[createListing] userId 없음 - 에러 반환');
     return { error: '로그인이 필요합니다' };
   }
 
-  console.log('[createListing] 3. userId 검증 통과:', { userId });
-
-  // SEO 제목 자동 보정 적용
   const sanitized = sanitizeListingBeforeSave(data);
 
   // 내부용 필드 제거 (_ 로 시작하는 모든 필드: _seoApplied, _seoChanges, _seoReason 등)
@@ -87,24 +72,10 @@ export async function createListing(data: any) {
     status: 'active',
   };
 
-  console.log('[SEO] Listing SEO applied:', {
-    title: finalData.title,
-    region: finalData.region,
-    district: finalData.district,
-    hasDescription: !!seoDescription,
-  });
-
-  console.log('[createListing] finalData keys (before whitelist):', Object.keys(finalData));
-
-  // Insert 직전 최종 방어: 1) _ 로 시작하는 필드 제거
   let dbData = Object.fromEntries(
     Object.entries(finalData).filter(([key]) => !key.startsWith('_'))
   );
 
-  console.log('[createListing] dbData keys (after _ removal):', Object.keys(dbData));
-  console.log('[createListing] DB DATA KEYS (before whitelist)', Object.keys(dbData));
-
-  // 2) Whitelist 방식: listings 테이블 실제 컬럼만 포함 (자동/크롤링용 제외)
   const allowedColumns = [
     'user_id',
     'title',
@@ -138,15 +109,6 @@ export async function createListing(data: any) {
   dbData = Object.fromEntries(
     Object.entries(dbData).filter(([key]) => allowedColumns.includes(key))
   );
-
-  console.log('[createListing] dbData keys (after whitelist):', Object.keys(dbData));
-  console.log('[createListing] removed fields:',
-    Object.keys(finalData).filter(k => !k.startsWith('_') && !allowedColumns.includes(k))
-  );
-  console.log('[createListing] dbData check:', {
-    keys: Object.keys(dbData),
-    count: Object.keys(dbData).length,
-  });
 
   const { data: listing, error: listingError } = await supabase
     .from('listings')

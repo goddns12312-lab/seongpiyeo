@@ -9,6 +9,7 @@ import { getSession, AuthSession } from '@/lib/auth';
 import { REGIONS, EMPLOYMENT_TYPE_LABELS } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { showToast, Toast } from '@/components/ui/Toast';
+import { compressImageFile } from '@/lib/image-upload';
 
 export default function NewJobPage() {
   const router = useRouter();
@@ -101,76 +102,43 @@ export default function NewJobPage() {
   };
 
   const uploadImages = async (files: File[], userId: string): Promise<Array<{ url: string; order: number; is_primary: boolean }>> => {
-    const uploadedImages = [];
-
-    // userId 검증
     if (!userId || typeof userId !== 'string' || userId.trim() === '') {
-      console.error('[이미지 업로드] ❌ userId 없음:', { userId, type: typeof userId });
       showToast('사용자 ID가 없습니다. 다시 로그인해주세요.', 'error');
       return [];
     }
 
-    console.log('[이미지 업로드] ✓ 사용자 확인됨:', { userId });
+    const results = await Promise.all(
+      files.map(async (file, i) => {
+        try {
+          const compressed = await compressImageFile(file);
+          const formData = new FormData();
+          formData.append('file', compressed);
 
-    for (let i = 0; i < files.length; i++) {
-      try {
-        const file = files[i];
-
-        console.log(`[이미지 ${i + 1}] 업로드 시작`, {
-          name: file.name,
-          size: `${(file.size / 1024 / 1024).toFixed(2)}MB`,
-          type: file.type,
-        });
-
-        // FormData로 파일을 API에 전송
-        const formData = new FormData();
-        formData.append('file', file);
-
-        console.log(`[이미지 ${i + 1}] API 요청: POST /api/upload-job-image (쿠키 포함)`);
-
-        const response = await fetch('/api/upload-job-image', {
-          method: 'POST',
-          body: formData,
-          credentials: 'include', // 쿠키 전달 필수
-        });
-
-        console.log(`[이미지 ${i + 1}] API 응답 상태:`, response.status);
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          console.error(`[이미지 ${i + 1}] ❌ API 업로드 실패:`, {
-            status: response.status,
-            statusText: response.statusText,
-            error: result.error,
-            details: result.details,
+          const response = await fetch('/api/upload-job-image', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
           });
 
-          throw new Error(`API 업로드 실패 (${response.status}): ${result.error}`);
+          const result = await response.json();
+          if (!response.ok) {
+            throw new Error(result.error || `HTTP ${response.status}`);
+          }
+
+          return {
+            url: result.url,
+            order: i,
+            is_primary: i === 0,
+          };
+        } catch (err: unknown) {
+          const errorMsg = err instanceof Error ? err.message : '알 수 없는 오류';
+          showToast(`이미지 ${i + 1} 업로드 실패: ${errorMsg}`, 'error');
+          return null;
         }
+      })
+    );
 
-        console.log(`[이미지 ${i + 1}] ✓ API 업로드 성공:`, {
-          url: result.url,
-          path: result.path,
-        });
-
-        uploadedImages.push({
-          url: result.url,
-          order: i,
-          is_primary: i === 0,
-        });
-      } catch (err: any) {
-        const errorMsg = err?.message || JSON.stringify(err) || '알 수 없는 오류';
-        console.error(`[이미지 ${i + 1}] ❌ 업로드 실패:`, {
-          message: err?.message,
-          stack: err?.stack,
-        });
-
-        showToast(`이미지 ${i + 1} 업로드 실패: ${errorMsg}`, 'error');
-      }
-    }
-
-    return uploadedImages;
+    return results.filter((item): item is { url: string; order: number; is_primary: boolean } => item !== null);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

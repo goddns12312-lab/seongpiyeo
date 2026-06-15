@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { memo } from 'react';
 import { Job } from '@/types';
 import { EMPLOYMENT_TYPE_LABELS } from '@/types';
 
@@ -15,7 +16,7 @@ function getPrimaryImage(job: Job): string | null {
   return primary?.url || job.images[0]?.url || null;
 }
 
-export function JobCard({ job }: JobCardProps) {
+function JobCardComponent({ job }: JobCardProps) {
   const isRecruitement = job.category === 'recruitment';
   const relativeTime = getRelativeTime(new Date(job.created_at));
 
@@ -87,6 +88,8 @@ export function JobCard({ job }: JobCardProps) {
     </Link>
   );
 }
+
+export const JobCard = memo(JobCardComponent);
 
 function getRelativeTime(date: Date): string {
   const now = new Date();

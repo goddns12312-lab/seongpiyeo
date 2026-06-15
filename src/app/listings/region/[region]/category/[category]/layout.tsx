@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
 
 interface Props {
   params: Promise<{ region: string; category: string }>;
@@ -38,11 +38,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { region, category } = await params;
   const decodedRegion = decodeURIComponent(region);
   const decodedCategory = decodeURIComponent(category);
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { count } = await supabase
     .from('listings')
-    .select('*', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
     .eq('region', decodedRegion)
     .eq('price_type', decodedCategory)
     .eq('status', 'active');

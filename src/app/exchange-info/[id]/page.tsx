@@ -67,7 +67,7 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
 
   const { data: post, error } = await supabase
     .from('posts')
-    .select('*')
+    .select('id, title, content, category, created_at, updated_at, status, view_count, user_id')
     .eq('id', id)
     .eq('category', 'exchange')
     .single();

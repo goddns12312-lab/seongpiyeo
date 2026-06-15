@@ -2,6 +2,8 @@
 const nextConfig = {
   // 이미지 최적화
   images: {
+    // Vercel 이미지 최적화 402 방지 + Supabase URL 직접 로드
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

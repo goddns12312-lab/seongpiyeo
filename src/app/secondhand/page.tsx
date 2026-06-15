@@ -34,7 +34,8 @@ export default function SecondhandPage() {
         .from('secondhand_items')
         .select('id, title, description, price, region, status, created_at, main_image_url')
         .eq('status', 'active')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(150);
 
       if (error) throw error;
       setItems(data || []);

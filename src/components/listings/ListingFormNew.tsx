@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { REGIONS } from '@/types';
 import { createListing, createListingImages, updateListing, deleteListingImages } from '@/lib/actions';
 import { buildListingSeoTitle, buildListingSeoDescription, buildListingImageAlt } from '@/lib/seo-metadata';
+import { uploadFilesToStorage } from '@/lib/image-upload';
 
 interface ListingFormNewProps {
   initialData?: any;
@@ -55,6 +56,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState('');
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -228,26 +230,16 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
 
     try {
       const supabase = createClient();
-      const uploadedUrls: string[] = [];
+      const uploadedUrls = await uploadFilesToStorage(
+        supabase,
+        'listings',
+        filesToUpload,
+        'images',
+        (done, total) => setUploadProgress(`${done}/${total}`)
+      );
 
-      for (const file of filesToUpload) {
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}-${file.name}`;
-
-        const { data, error } = await supabase.storage
-          .from('listings')
-          .upload(`images/${fileName}`, file);
-
-        if (error) {
-          console.error('Upload error:', error);
-          continue;
-        }
-
-        if (data) {
-          const { data: urlData } = supabase.storage
-            .from('listings')
-            .getPublicUrl(`images/${fileName}`);
-          uploadedUrls.push(urlData.publicUrl);
-        }
+      if (uploadedUrls.length === 0 && filesToUpload.length > 0) {
+        setError('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
       }
 
       setUploadedImages((prev) => [...prev, ...uploadedUrls]);
@@ -257,6 +249,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
       setError('이미지 업로드 중 오류가 발생했습니다.');
     } finally {
       setUploadingImages(false);
+      setUploadProgress('');
     }
   };
 
@@ -485,7 +478,11 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
                   document.getElementById('image-upload')?.click();
                 }}
               >
-                {uploadingImages ? '업로드 중...' : '사진 추가'}
+                {uploadingImages
+                  ? uploadProgress
+                    ? `업로드 중 (${uploadProgress})...`
+                    : '업로드 중...'
+                  : '사진 추가'}
               </Button>
             </label>
           </div>

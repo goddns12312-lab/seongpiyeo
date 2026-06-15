@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
 
 interface Props {
   params: Promise<{ region: string }>;
@@ -28,11 +28,11 @@ function buildRegionKeywords(region: string): string {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { region } = await params;
   const decodedRegion = decodeURIComponent(region);
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { count } = await supabase
     .from('secondhand_items')
-    .select('*', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
     .eq('region', decodedRegion)
     .eq('status', 'active');
 

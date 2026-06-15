@@ -76,19 +76,19 @@ export default async function HomePage() {
   ] = await Promise.all([
     supabase
       .from('banners')
-      .select('*')
+      .select('id, title, image_url, link_url, order_num')
       .eq('is_active', true)
       .eq('position', 'top')
       .order('order_num', { ascending: true }),
     supabase
       .from('banners')
-      .select('*')
+      .select('id, title, image_url, link_url, order_num')
       .eq('is_active', true)
       .eq('position', 'bottom')
       .order('order_num', { ascending: true }),
     supabase
       .from('listings')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .eq('status', 'active')
       .not('main_image_url', 'is', null),
     supabase

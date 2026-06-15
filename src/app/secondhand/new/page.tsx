@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { createClient } from '@/lib/supabase/client';
 import { getSession } from '@/lib/auth';
+import { uploadFilesToStorage } from '@/lib/image-upload';
 
 const REGIONS = ['서울', '경기', '인천', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];
 
@@ -49,19 +50,7 @@ export default function SecondhandNewPage() {
 
   const uploadImages = async () => {
     const supabase = createClient();
-    const urls: string[] = [];
-
-    for (const file of images) {
-      const path = `secondhand/${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name}`;
-      const { error } = await supabase.storage.from('listings').upload(path, file);
-
-      if (!error) {
-        const { data } = supabase.storage.from('listings').getPublicUrl(path);
-        urls.push(data.publicUrl);
-      }
-    }
-
-    return urls;
+    return uploadFilesToStorage(supabase, 'listings', images, 'secondhand');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

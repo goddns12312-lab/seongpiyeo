@@ -26,10 +26,11 @@ export default function CategoryPage({ params }: { params: { category: string } 
 
       const { data, error } = await supabase
         .from('posts')
-        .select('*')
+        .select('id, title, content, category, view_count, created_at, status')
         .eq('category', params.category)
         .eq('status', 'active')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(50);
 
       if (error) throw error;
       setPosts(data || []);
