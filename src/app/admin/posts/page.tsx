@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { ensureAdminClient } from '@/lib/admin-client';
 import { ADMIN_POST_SELECT } from '@/lib/account-queries';
@@ -12,22 +13,31 @@ import { Post, CATEGORY_LABELS } from '@/types';
 
 const ADMIN_POSTS_LIMIT = 200;
 
-export default function AdminPostsPage() {
+function AdminPostsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const userIdFilter = searchParams.get('user');
+  const nicknameFilter = searchParams.get('nickname');
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchPosts = useCallback(async () => {
     const supabase = createClient();
-    const { data } = await supabase
+    let query = supabase
       .from('posts')
       .select(ADMIN_POST_SELECT)
       .order('created_at', { ascending: false })
       .limit(ADMIN_POSTS_LIMIT);
 
+    if (userIdFilter) {
+      query = query.eq('user_id', userIdFilter);
+    }
+
+    const { data } = await query;
     setPosts((data || []) as Post[]);
     setLoading(false);
-  }, []);
+  }, [userIdFilter]);
 
   useEffect(() => {
     const init = async () => {
@@ -54,7 +64,25 @@ export default function AdminPostsPage() {
   return (
     <div className="bg-bg-primary min-h-screen py-12">
       <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-text-primary mb-8">게시글 관리</h1>
+        <Link href="/admin" className="text-gold hover:text-gold/80 text-sm mb-4 inline-block">
+          ← 관리자 홈
+        </Link>
+
+        <h1 className="text-3xl font-bold text-text-primary mb-2">게시글 관리</h1>
+        {userIdFilter && (
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <p className="text-text-secondary text-sm">
+              <span className="text-gold font-medium">{nicknameFilter || '회원'}</span> 회원 게시글만
+              표시 중 ({posts.length}건)
+            </p>
+            <Link href="/admin/posts" className="text-xs text-text-muted hover:text-gold underline">
+              전체 게시글 보기
+            </Link>
+            <Link href="/admin/users" className="text-xs text-text-muted hover:text-gold underline">
+              회원 관리로
+            </Link>
+          </div>
+        )}
 
         <div className="overflow-x-auto bg-bg-secondary border border-border-light rounded-lg">
           <table className="w-full text-sm">
@@ -104,5 +132,13 @@ export default function AdminPostsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function AdminPostsPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-12">로딩 중...</div>}>
+      <AdminPostsContent />
+    </Suspense>
   );
 }

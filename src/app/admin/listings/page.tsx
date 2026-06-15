@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { ensureAdminClient } from '@/lib/admin-client';
 import { ADMIN_LISTING_SELECT } from '@/lib/account-queries';
@@ -12,22 +13,31 @@ import { Listing } from '@/types';
 
 const ADMIN_LISTINGS_LIMIT = 500;
 
-export default function AdminListingsPage() {
+function AdminListingsContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const userIdFilter = searchParams.get('user');
+  const nicknameFilter = searchParams.get('nickname');
+
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchListings = useCallback(async () => {
     const supabase = createClient();
-    const { data } = await supabase
+    let query = supabase
       .from('listings')
       .select(ADMIN_LISTING_SELECT)
       .order('created_at', { ascending: false })
       .limit(ADMIN_LISTINGS_LIMIT);
 
+    if (userIdFilter) {
+      query = query.eq('user_id', userIdFilter);
+    }
+
+    const { data } = await query;
     setListings((data || []) as Listing[]);
     setLoading(false);
-  }, []);
+  }, [userIdFilter]);
 
   useEffect(() => {
     const init = async () => {
@@ -60,7 +70,31 @@ export default function AdminListingsPage() {
   return (
     <div className="bg-bg-primary min-h-screen py-12">
       <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-text-primary mb-8">매물 관리</h1>
+        <Link href="/admin" className="text-gold hover:text-gold/80 text-sm mb-4 inline-block">
+          ← 관리자 홈
+        </Link>
+
+        <h1 className="text-3xl font-bold text-text-primary mb-2">매물 관리</h1>
+        {userIdFilter && (
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <p className="text-text-secondary text-sm">
+              <span className="text-gold font-medium">{nicknameFilter || '회원'}</span> 회원 매물만
+              표시 중 ({listings.length}건)
+            </p>
+            <Link
+              href="/admin/listings"
+              className="text-xs text-text-muted hover:text-gold underline"
+            >
+              전체 매물 보기
+            </Link>
+            <Link
+              href="/admin/users"
+              className="text-xs text-text-muted hover:text-gold underline"
+            >
+              회원 관리로
+            </Link>
+          </div>
+        )}
 
         <div className="overflow-x-auto bg-bg-secondary border border-border-light rounded-lg">
           <table className="w-full text-sm">
@@ -127,5 +161,13 @@ export default function AdminListingsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function AdminListingsPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-12">로딩 중...</div>}>
+      <AdminListingsContent />
+    </Suspense>
   );
 }

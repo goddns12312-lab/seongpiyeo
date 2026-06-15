@@ -265,6 +265,14 @@ export async function loginUser(username: string, password: string) {
       return { success: false, error: '아이디 또는 비밀번호가 잘못되었습니다' };
     }
 
+    const accountStatus = user.account_status as string | undefined;
+    if (accountStatus === 'suspended') {
+      return { success: false, error: '정지된 계정입니다. 관리자에게 문의하세요.' };
+    }
+    if (accountStatus === 'deleted') {
+      return { success: false, error: '탈퇴 처리된 계정입니다.' };
+    }
+
     console.log('[loginUser] 비밀번호 검증 성공, 세션 저장 중...');
     // 세션 저장
     const session: AuthSession = {
