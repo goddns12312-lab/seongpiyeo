@@ -176,21 +176,20 @@ export default async function HomePage() {
                 <Link
                   key={banner.id}
                   href={banner.link_url || '#'}
-                  className="relative rounded-lg overflow-hidden block"
+                  className="block rounded-lg overflow-hidden bg-bg-tertiary"
                   aria-label={banner.title || '프로모션 배너'}
                 >
-                  <div className="relative w-full aspect-[7/2] bg-bg-tertiary">
-                    <Image
-                      src={getBannerImageUrl(banner.image_url)}
-                      alt=""
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover object-center"
-                      quality={70}
-                      priority={index === 0}
-                      loading={index === 0 ? 'eager' : 'lazy'}
-                    />
-                  </div>
+                  <Image
+                    src={getBannerImageUrl(banner.image_url)}
+                    alt=""
+                    width={1509}
+                    height={430}
+                    className="w-full h-auto"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    quality={75}
+                    priority={index === 0}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
                 </Link>
               ))}
             </div>
@@ -279,13 +278,12 @@ export default async function HomePage() {
                   key={listing.id}
                   href={`/listings/${listing.id}`}
                   className="group relative rounded-2xl overflow-hidden surface-card-hover hover-lift"
-                  aria-label={`${listing.title} 매물 상세보기`}
                 >
                   <div className="relative w-full aspect-[4/3] bg-bg-secondary">
                     {listing.main_image_url || listing.thumbnail_url ? (
                       <Image
                         src={getOptimizedImageUrl(listing.main_image_url || listing.thumbnail_url, 320, 70)}
-                        alt=""
+                        alt={listing.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
@@ -431,20 +429,19 @@ export default async function HomePage() {
                 <Link
                   key={banner.id}
                   href={banner.link_url || '#'}
-                  className="relative rounded-lg overflow-hidden block"
+                  className="block rounded-lg overflow-hidden bg-bg-tertiary"
                   aria-label={banner.title || '하단 배너'}
                 >
-                  <div className="relative w-full aspect-[7/2] bg-bg-tertiary">
-                    <Image
-                      src={getBannerImageUrl(banner.image_url)}
-                      alt=""
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover object-center"
-                      quality={70}
-                      loading="lazy"
-                    />
-                  </div>
+                  <Image
+                    src={getBannerImageUrl(banner.image_url)}
+                    alt=""
+                    width={1509}
+                    height={430}
+                    className="w-full h-auto"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    quality={75}
+                    loading="lazy"
+                  />
                 </Link>
               ))}
             </div>
