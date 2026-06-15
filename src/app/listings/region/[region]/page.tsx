@@ -2,7 +2,9 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import Script from 'next/script';
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
+import { LISTING_LIST_SELECT, getRegionListingCount } from '@/lib/listing-queries';
+import { getOgImageUrl } from '@/lib/seo-assets';
 import { ListingGrid } from '@/components/listings/ListingGrid';
 import { Button } from '@/components/ui/Button';
 import { REGIONS } from '@/types';
@@ -50,7 +52,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const { region } = await params;
   const { search } = await searchParams;
   const decodedRegion = decodeURIComponent(region);
-  const supabase = await createClient();
+  const listingCount = await getRegionListingCount(decodedRegion);
 
   // 검색 결과 페이지는 noindex 처리
   if (search) {
@@ -61,14 +63,6 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
       },
     };
   }
-
-  const { count } = await supabase
-    .from('listings')
-    .select('*', { count: 'exact', head: true })
-    .eq('region', decodedRegion)
-    .eq('status', 'active');
-
-  const listingCount = count || 0;
 
   // Thin Content 정책 적용
   // 0개: noindex + nofollow
@@ -102,6 +96,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const description = buildRegionDescription(decodedRegion, listingCount);
   const keywords = buildRegionKeywords(decodedRegion);
 
+  const ogImage = getOgImageUrl();
+
   return {
     title,
     description,
@@ -128,7 +124,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
       siteName: SITE_CONFIG.businessName,
       images: [
         {
-          url: `${SITE_CONFIG.url}/og-listings.png`,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: `${decodedRegion} PC방 매물 - 성피요`,
@@ -139,7 +135,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
       card: 'summary_large_image',
       title,
       description,
-      images: [`${SITE_CONFIG.url}/og-listings.png`],
+      images: [ogImage],
     },
   };
 }
@@ -157,84 +153,33 @@ export default async function RegionListingsPage({ params, searchParams }: Props
   const currentPage = Math.max(1, parseInt(page || '1', 10));
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
-  // 전체 개수 조회 (count 전용)
-  let countQ = supabase
+  let dataQuery = supabase
     .from('listings')
-    .select('id', { count: 'exact', head: true })
+    .select(LISTING_LIST_SELECT, { count: 'exact' })
     .eq('status', 'active')
     .eq('region', decodedRegion);
 
   if (search) {
-    countQ = countQ.ilike('title', `%${search}%`);
+    dataQuery = dataQuery.ilike('title', `%${search}%`);
   }
 
-  const { count: totalCount } = await countQ;
+  const { data: allListings, count: totalCount } = await dataQuery
+    .order('created_at', { ascending: false })
+    .range(offset, offset + ITEMS_PER_PAGE - 1);
 
-  // 매물 조회를 위한 쿼리 빌더
-  const buildQuery = () => {
-    let q = supabase
-      .from('listings')
-      .select('id, title, price_type, price, region, district, area_sqm, pc_count, deposit, premium_price, monthly_rent, monthly_revenue, monthly_profit, view_count, created_at, thumbnail_url, main_image_url, status, listing_images(id, url, order_num)')
-      .eq('status', 'active')
-      .eq('region', decodedRegion);
+  const listingsWithMeta =
+    allListings?.map((listing) => ({
+      ...listing,
+      commentCount: 0,
+      favoriteCount: 0,
+    })) || [];
 
-    if (search) {
-      q = q.ilike('title', `%${search}%`);
-    }
-
-    q = q.order('created_at', { ascending: false });
-    return q;
-  };
-
-  // 페이지네이션 적용 데이터 조회
-  const dataQuery = buildQuery();
-  const { data: allListings } = await dataQuery.range(offset, offset + ITEMS_PER_PAGE - 1);
-
-  // 각 listing의 댓글 개수와 좋아요 개수 조회
-  const listingIds = allListings?.map(l => l.id) || [];
-
-  let commentCounts: Record<string, number> = {};
-  let favoriteCounts: Record<string, number> = {};
-
-  if (listingIds.length > 0) {
-    // 댓글 개수
-    const { data: allComments } = await supabase
-      .from('listing_comments')
-      .select('listing_id')
-      .eq('status', 'active');
-
-    allComments?.forEach(c => {
-      if (listingIds.includes(c.listing_id)) {
-        commentCounts[c.listing_id] = (commentCounts[c.listing_id] || 0) + 1;
-      }
-    });
-
-    // 좋아요 개수
-    const { data: allFavorites } = await supabase
-      .from('favorites')
-      .select('listing_id');
-
-    allFavorites?.forEach(f => {
-      if (listingIds.includes(f.listing_id)) {
-        favoriteCounts[f.listing_id] = (favoriteCounts[f.listing_id] || 0) + 1;
-      }
-    });
-  }
-
-  // 콘텐츠 0개인 경우 404 반환 (Thin Content 방지)
   const listingCount = totalCount || 0;
   if (listingCount === 0) {
     notFound();
   }
-
-  // 리스팅에 메타데이터 추가
-  const listingsWithMeta = allListings?.map(listing => ({
-    ...listing,
-    commentCount: commentCounts[listing.id] || 0,
-    favoriteCount: favoriteCounts[listing.id] || 0
-  })) || [];
 
   const totalPages = Math.ceil(listingCount / ITEMS_PER_PAGE);
   const filteredListings = listingsWithMeta;

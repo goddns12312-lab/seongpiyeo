@@ -1,11 +1,11 @@
 ﻿import { MetadataRoute } from 'next';
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
 import { SITE_CONFIG } from '@/lib/site';
 import { REGIONS } from '@/types';
 import { COMMUNITY_CATEGORIES } from '@/lib/community-categories';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   // 모든 활성 매물 조회 (price_type 포함)
   const { data: listings } = await supabase

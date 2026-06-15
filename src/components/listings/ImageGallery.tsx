@@ -20,18 +20,6 @@ export function ImageGallery({ images, title, listing }: ImageGalleryProps) {
   };
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  // DEBUG: 클라이언트에서 받은 images 배열 확인
-  console.log('[CLIENT IMAGE GALLERY] props received', {
-    imagesCount: images?.length || 0,
-    imagesArray: images?.map(i => ({
-      id: i.id,
-      filename: i.url?.split('/').pop(),
-      fullUrl: i.url
-    })),
-    firstImage: images?.[0]?.url?.split('/').pop(),
-    firstImageFull: images?.[0]?.url
-  });
-
   if (!images || images.length === 0) {
     return (
       <div className="bg-bg-secondary border border-border-light rounded-lg overflow-hidden mb-4">
@@ -55,10 +43,6 @@ export function ImageGallery({ images, title, listing }: ImageGalleryProps) {
           tabIndex={0}
           aria-label="갤러리 보기"
         >
-          {console.log('[CLIENT MAIN IMAGE] rendering', {
-            src: images[0]?.url,
-            filename: images[0]?.url?.split('/').pop()
-          })}
           <img
             src={images[0].url}
             alt={getImageAlt()}
@@ -71,10 +55,6 @@ export function ImageGallery({ images, title, listing }: ImageGalleryProps) {
         {/* Thumbnail Gallery */}
         {images.length > 1 && (
           <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-1 sm:gap-2 p-3 sm:p-4">
-            {console.log('[CLIENT THUMBNAILS] rendering', {
-              count: images.slice(0, 8).length,
-              thumbnails: images.slice(0, 8).map(i => i.url?.split('/').pop())
-            })}
             {images.slice(0, 8).map((image, index) => (
               <button
                 key={image.id}

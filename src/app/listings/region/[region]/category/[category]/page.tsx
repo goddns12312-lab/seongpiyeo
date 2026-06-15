@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Script from 'next/script';
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
+import { LISTING_LIST_SELECT } from '@/lib/listing-queries';
 import { ListingGrid } from '@/components/listings/ListingGrid';
 import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
@@ -36,15 +37,16 @@ export default async function ListingsRegionCategoryPage({ params }: Props) {
   const decodedRegion = decodeURIComponent(region);
   const decodedCategory = decodeURIComponent(category);
 
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
-  // 전체 개수 조회
-  const { count: totalCount } = await supabase
+  const { data: allListings, count: totalCount } = await supabase
     .from('listings')
-    .select('id', { count: 'exact', head: true })
+    .select(LISTING_LIST_SELECT, { count: 'exact' })
     .eq('status', 'active')
     .eq('region', decodedRegion)
-    .eq('price_type', decodedCategory);
+    .eq('price_type', decodedCategory)
+    .order('created_at', { ascending: false })
+    .range(0, ITEMS_PER_PAGE - 1);
 
   const listingCount = totalCount || 0;
 
@@ -53,51 +55,12 @@ export default async function ListingsRegionCategoryPage({ params }: Props) {
     notFound();
   }
 
-  // 데이터 조회
-  const { data: allListings } = await supabase
-    .from('listings')
-    .select('id, title, price_type, price, region, district, area_sqm, pc_count, deposit, premium_price, monthly_rent, monthly_revenue, monthly_profit, view_count, created_at, thumbnail_url, main_image_url, status, listing_images(id, url, order_num)')
-    .eq('status', 'active')
-    .eq('region', decodedRegion)
-    .eq('price_type', decodedCategory)
-    .order('created_at', { ascending: false })
-    .range(0, ITEMS_PER_PAGE - 1);
-
-  // 각 listing의 댓글 개수와 좋아요 개수 조회
-  const listingIds = allListings?.map(l => l.id) || [];
-
-  let commentCounts: Record<string, number> = {};
-  let favoriteCounts: Record<string, number> = {};
-
-  if (listingIds.length > 0) {
-    const { data: allComments } = await supabase
-      .from('listing_comments')
-      .select('listing_id')
-      .eq('status', 'active');
-
-    allComments?.forEach(c => {
-      if (listingIds.includes(c.listing_id)) {
-        commentCounts[c.listing_id] = (commentCounts[c.listing_id] || 0) + 1;
-      }
-    });
-
-    const { data: allFavorites } = await supabase
-      .from('favorites')
-      .select('listing_id');
-
-    allFavorites?.forEach(f => {
-      if (listingIds.includes(f.listing_id)) {
-        favoriteCounts[f.listing_id] = (favoriteCounts[f.listing_id] || 0) + 1;
-      }
-    });
-  }
-
-  // 리스팅에 메타데이터 추가
-  const listingsWithMeta = allListings?.map(listing => ({
-    ...listing,
-    commentCount: commentCounts[listing.id] || 0,
-    favoriteCount: favoriteCounts[listing.id] || 0
-  })) || [];
+  const listingsWithMeta =
+    allListings?.map((listing) => ({
+      ...listing,
+      commentCount: 0,
+      favoriteCount: 0,
+    })) || [];
 
   const categoryLabel = PRICE_TYPE_LABELS[decodedCategory] || decodedCategory;
   const title = buildRegionCategoryTitle(decodedRegion, decodedCategory, listingCount);

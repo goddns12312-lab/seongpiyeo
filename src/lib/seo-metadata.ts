@@ -1,5 +1,7 @@
 import { SITE_CONFIG } from './site';
 import { createCanonicalUrl, createCanonicalUrlWithSegment } from './url-utils';
+import { getOgImageUrl } from './seo-assets';
+import { autoFixTitleByType, ContentMetadata } from './seo-title-auto-fix';
 
 /**
  * SEO 메타데이터 생성 함수 모음
@@ -67,7 +69,7 @@ export function buildListingMetadata(listing: any): SEOMetadataOptions {
     ],
     ogTitle: seoTitle,
     ogDescription: seoDescription,
-    ogImage: listing.main_image_url || listing.thumbnail_url || `${SITE_CONFIG.url}/og-listings.png`,
+    ogImage: listing.main_image_url || listing.thumbnail_url || getOgImageUrl(),
     canonicalUrl: createCanonicalUrl(`/listings/${id}`),
     noindex: !isIndexable,
     alternates: {
@@ -101,7 +103,7 @@ export function buildRegionListingMetadata(region: string, count: number): SEOMe
     ],
     ogTitle: seoTitle,
     ogDescription: seoDescription,
-    ogImage: `${SITE_CONFIG.url}/og-listings.png`,
+    ogImage: getOgImageUrl(),
     canonicalUrl: createCanonicalUrlWithSegment('/listings/region', region),
     noindex,
     alternates: {
@@ -170,7 +172,7 @@ export function buildListingsMetadata(region?: string, count?: number): SEOMetad
     ],
     ogTitle: seoTitle,
     ogDescription: seoDescription,
-    ogImage: `${SITE_CONFIG.url}/og-listings.png`,
+    ogImage: getOgImageUrl(),
     canonicalUrl: createCanonicalUrl('/listings'),
   };
 }
@@ -322,9 +324,6 @@ export function resolveOgImage(
  * 통합 제목 생성 함수 (generateMetadata에서 활용)
  * ============================================================
  */
-
-import { autoFixTitleByType, ContentMetadata } from './seo-title-auto-fix';
-import { getOgImageUrl } from './seo-assets';
 
 /**
  * 제목 길이에 따라 자동 보정된 SEO 제목 생성

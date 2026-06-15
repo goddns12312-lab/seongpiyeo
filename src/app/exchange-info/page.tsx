@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
 
 export default async function ExchangeInfoPage() {
   let postsWithAuthor: any[] = [];
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     // 환수정보 게시글 조회
     const { data: posts, error } = await supabase

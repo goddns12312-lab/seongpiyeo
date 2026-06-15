@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Script from 'next/script';
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
+import { getSecondhandById } from '@/lib/secondhand-queries';
 import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 import { buildSecondhandMetadata, addRobotsToMetadata, buildOptimizedSecondhandTitle } from '@/lib/seo-metadata';
@@ -14,13 +15,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Omit<Props, 'children'>): Promise<Metadata> {
   const { id } = await params;
-  const supabase = await createClient();
-
-  const { data: item } = await supabase
-    .from('secondhand_items')
-    .select('*, secondhand_images(url, order_num)')
-    .eq('id', id)
-    .single();
+  const item = await getSecondhandById(id);
 
   if (!item || item.status !== 'active') {
     return {
@@ -71,16 +66,9 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
 
 export default async function SecondhandDetailLayout({ params, children }: Props) {
   const { id } = await params;
-  const supabase = await createClient();
+  const item = await getSecondhandById(id);
 
-  const { data: item } = await supabase
-    .from('secondhand_items')
-    .select('id, title, description, price, region, status, created_at, main_image_url')
-    .eq('id', id)
-    .eq('status', 'active')
-    .single();
-
-  if (!item) {
+  if (!item || item.status !== 'active') {
     return children;
   }
 

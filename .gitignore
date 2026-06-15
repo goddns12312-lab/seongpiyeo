@@ -46,9 +46,31 @@ Thumbs.db
 /scripts/output/
 /scripts/logs/
 scripts/playwright-auth.json
+scripts/login-debug.json
+scripts/site-member-analysis.json
+scripts/network-capture.har
+auth_state.json
 crawlers-test/auth/playwright-auth.json
 crawlers-test/logs/
 crawlers-test/output/
 crawlers-test/node_modules/
+crawlers-test/
+
+# Local dev / test scripts (do not commit)
+/test-*.js
+/verify-*.js
+/analyze-*.js
+/check-*.js
+/final-*.js
+/debug-*.js
+*.log
+build-output.txt
+build.log
+dev-server.log
+server.err
+server-start.log
+vercel-logs.txt
+debug-page-source.html
+UsersBDesktopaassimage-comparison.png
 
 .vercel

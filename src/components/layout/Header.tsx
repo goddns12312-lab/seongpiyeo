@@ -53,7 +53,6 @@ export function Header() {
   }, [pathname]);
 
   const handleLogout = () => {
-    console.log('[Header] 로그아웃 시작');
     logout();
     setUser(null);
     setIsMenuOpen(false);

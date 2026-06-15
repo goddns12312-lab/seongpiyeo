@@ -46,12 +46,14 @@ function JobsContent() {
   }, []);
 
   const fetchJobs = useCallback(async () => {
-    console.log('[fetchJobs] Executing with filters:', { selectedCategory, selectedRegion, selectedTypes, searchQuery });
     setLoading(true);
     try {
       let query = supabase
         .from('jobs')
-        .select('*', { count: 'exact' })
+        .select(
+          'id, category, slug, title, company_name, region, employment_type, salary, images, view_count, status, created_at',
+          { count: 'exact' }
+        )
         .eq('status', 'active')
         .eq('category', selectedCategory)
         .order('created_at', { ascending: false });

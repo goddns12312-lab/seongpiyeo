@@ -61,22 +61,15 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      console.log('[Register] 회원가입 시작:', { username, nickname });
       const result = await registerUser(username, password, nickname, phone);
 
-      console.log('[Register] 회원가입 결과:', result);
-
       if (!result.success) {
-        console.error('[Register] 회원가입 실패:', result.error);
         setError(result.error || '회원가입 중 오류가 발생했습니다');
         return;
       }
 
-      console.log('[Register] 회원가입 성공, localStorage 세션 저장됨');
-      // 전체 페이지 새로고침으로 Header 상태 즉시 업데이트
       window.location.href = '/';
     } catch (err) {
-      console.error('[Register] 예기치 않은 오류:', err);
       const errorMessage = err instanceof Error ? err.message : String(err);
       setError('회원가입 중 오류가 발생했습니다: ' + errorMessage);
     } finally {

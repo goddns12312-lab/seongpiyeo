@@ -78,11 +78,6 @@ export default function SecondhandNewPage() {
     try {
       // pc_bang_session 쿠키 확인 (Supabase auth 아님)
       const session = getSession();
-      console.log('[secondhand/new handleSubmit] 1. getSession() 결과:', {
-        sessionExists: !!session,
-        sessionId: session?.id || 'null',
-        sessionAll: session,
-      });
 
       if (!session) {
         setError('로그인이 필요합니다');
@@ -97,13 +92,6 @@ export default function SecondhandNewPage() {
       }
 
       // API route로 물품 등록
-      console.log('[secondhand/new handleSubmit] 2. /api/secondhand/create 호출:', {
-        userId: session.id,
-        title: formData.title,
-        region: formData.region,
-        hasImages: uploadedImages.length > 0,
-      });
-
       const response = await fetch('/api/secondhand/create', {
         method: 'POST',
         headers: {

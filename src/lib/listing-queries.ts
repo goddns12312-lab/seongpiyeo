@@ -7,6 +7,17 @@ import { createPublicClient } from '@/lib/supabase/public';
 export const LISTING_LIST_SELECT =
   'id, idx, title, price_type, deposit, monthly_rent, premium_price, region, district, area_sqm, pc_count, floor, available_date, main_image_url, thumbnail_url, view_count, created_at, status';
 
+export const getRegionListingCount = cache(async (region: string): Promise<number> => {
+  const supabase = createPublicClient();
+  const { count } = await supabase
+    .from('listings')
+    .select('id', { count: 'exact', head: true })
+    .eq('region', region)
+    .eq('status', 'active');
+
+  return count || 0;
+});
+
 export const LISTING_DETAIL_SELECT =
   'id, title, region, district, description, monthly_rent, deposit, premium_price, main_image_url, thumbnail_url, area_sqm, pc_count, view_count, created_at, updated_at, status, user_id, price_type, price, contact, floor, available_date, facilities, idx, monthly_revenue, monthly_profit, address, location, administrative_record, area, business_license, move_in_date';
 

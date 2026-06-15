@@ -5,28 +5,27 @@ import Link from 'next/link';
 import { loginUser, getSession } from '@/lib/auth';
 import { Button } from '@/components/ui/Button';
 
+function setSessionCookie(session: object) {
+  const maxAge = 7 * 24 * 60 * 60;
+  const cookieValue = encodeURIComponent(JSON.stringify(session));
+  const isProduction =
+    typeof window !== 'undefined' &&
+    window.location.hostname !== 'localhost' &&
+    !window.location.hostname.startsWith('127.');
+  const secureFlag = isProduction ? '; Secure' : '';
+  document.cookie = `pc_bang_session=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax${secureFlag}`;
+}
+
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // ⭐ useEffect: 페이지 로드 시 localStorage 세션이 있으면 쿠키도 설정
   useEffect(() => {
     const session = getSession();
     if (session) {
-      console.log('[로그인] ✓ localStorage에 세션이 이미 있습니다. 쿠키 설정...');
-      const maxAge = 7 * 24 * 60 * 60; // 7일
-      const cookieValue = encodeURIComponent(JSON.stringify(session));
-
-      const isProduction = typeof window !== 'undefined' &&
-                           window.location.hostname !== 'localhost' &&
-                           !window.location.hostname.startsWith('127.');
-      const secureFlag = isProduction ? '; Secure' : '';
-      const cookieString = `pc_bang_session=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax${secureFlag}`;
-
-      document.cookie = cookieString;
-      console.log('[로그인] ✓ 쿠키 설정 완료:', { cookieLength: cookieValue.length, isProduction });
+      setSessionCookie(session);
     }
   }, []);
 
@@ -36,52 +35,21 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      console.log('[Login] 로그인 시작:', { username });
       const result = await loginUser(username, password);
 
-      console.log('[Login] 로그인 결과:', result);
-
       if (!result.success) {
-        console.error('[Login] 로그인 실패:', result.error);
         setError(result.error || '로그인 중 오류가 발생했습니다');
         return;
       }
 
-      console.log('[Login] 로그인 성공, 쿠키 설정 중...');
-
-      // ⭐ 1단계: saveSession() 호출로 이미 세션이 저장됨 (auth.ts 참조)
-      // ⭐ 2단계: 추가 확인차 명시적으로 다시 쿠키 설정
       if (result.session) {
-        const maxAge = 7 * 24 * 60 * 60; // 7일
-        const cookieValue = encodeURIComponent(JSON.stringify(result.session));
-
-        const isProduction = typeof window !== 'undefined' &&
-                             window.location.hostname !== 'localhost' &&
-                             !window.location.hostname.startsWith('127.');
-        const secureFlag = isProduction ? '; Secure' : '';
-        const cookieString = `pc_bang_session=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax${secureFlag}`;
-
-        document.cookie = cookieString;
-        console.log('[Login] ✓ pc_bang_session 쿠키 설정 완료:', {
-          userId: result.session.id,
-          username: result.session.username,
-          cookieLength: cookieValue.length,
-          isProduction,
-        });
-
-        // 확인: 쿠키가 실제로 설정되었는지 즉시 확인
-        const checkCookie = document.cookie;
-        console.log('[Login] 🔍 설정된 쿠키 확인:', checkCookie.substring(0, 150) + '...');
+        setSessionCookie(result.session);
       }
 
-      // ⭐ 3단계: 충분한 시간(1초) 후 페이지 새로고침
-      // (쿠키가 확실히 설정될 시간 제공)
       setTimeout(() => {
-        console.log('[Login] 페이지 새로고침...');
         window.location.href = '/';
       }, 1000);
     } catch (err) {
-      console.error('[Login] 예기치 않은 오류:', err);
       const errorMessage = err instanceof Error ? err.message : String(err);
       setError('로그인 중 오류가 발생했습니다: ' + errorMessage);
     } finally {

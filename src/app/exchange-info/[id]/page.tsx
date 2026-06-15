@@ -4,7 +4,7 @@ import Script from 'next/script';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
 import { buildArticleSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
 import { getOgImageUrl } from '@/lib/seo-assets';
 import ExchangeDetailClient from './exchange-detail-client';
@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data: post } = await supabase
       .from('posts')
       .select('id, title, content, category, created_at, status')
@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function DetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data: post, error } = await supabase
     .from('posts')

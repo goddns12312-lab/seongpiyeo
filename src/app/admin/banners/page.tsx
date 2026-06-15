@@ -42,8 +42,6 @@ export default function BannersPage() {
   useEffect(() => {
     setTimeout(() => {
       const session = getSession();
-      console.log('Session:', session);
-
       if (!session) {
         setIsAdmin(false);
         setLoading(false);

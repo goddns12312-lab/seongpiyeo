@@ -107,7 +107,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: SITE_CONFIG.businessName,
       images: [
         {
-          url: `${SITE_CONFIG.url}/og-listings.png`,
+          url: `${SITE_CONFIG.url}/423432.png`,
           width: 1200,
           height: 630,
           alt: `${decodedRegion} PC방 ${PRICE_TYPE_LABELS[decodedCategory]} - 성피요`,
@@ -118,7 +118,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title,
       description,
-      images: [`${SITE_CONFIG.url}/og-listings.png`],
+      images: [`${SITE_CONFIG.url}/423432.png`],
     },
   };
 }

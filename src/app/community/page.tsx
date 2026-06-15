@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { createClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/public';
 
 export default async function CommunityPage() {
   let postsWithAuthor: any[] = [];
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     // 모든 active 게시글 조회
     const { data: posts, error } = await supabase
