@@ -3,17 +3,31 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getSession } from '@/lib/auth';
+import { getSession, AuthSession } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
 import { ListingCard } from '@/components/listings/ListingCard';
 import { PostCard } from '@/components/community/PostCard';
-import { Listing, Post, Profile, AuthSession } from '@/types';
-import { LISTING_LIST_SELECT } from '@/lib/listing-queries';
-import { MY_PROFILE_SELECT, MY_POST_SELECT } from '@/lib/account-queries';
+import { Listing, Post, Profile } from '@/types';
+
+/** mypage 전용 — 존재하지 않을 수 있는 컬럼(idx 등) 제외 */
+const MY_LISTING_SELECT =
+  'id, title, price_type, price, deposit, monthly_rent, premium_price, region, district, area_sqm, pc_count, main_image_url, thumbnail_url, view_count, created_at, status';
+
+const MY_POST_SELECT = 'id, title, category, view_count, status, created_at, user_id';
 
 const MY_LISTINGS_LIMIT = 50;
 const LIKED_LISTINGS_LIMIT = 30;
+
+function profileFromSession(session: AuthSession): Profile {
+  return {
+    id: session.id,
+    email: '',
+    nickname: session.nickname,
+    role: session.role as Profile['role'],
+    created_at: new Date().toISOString(),
+  };
+}
 
 export default function MyPage() {
   const router = useRouter();
@@ -25,43 +39,50 @@ export default function MyPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const session = getSession();
-    if (!session) {
-      router.push('/login');
-      return;
-    }
+    let cancelled = false;
 
-    setUser(session);
-    fetchData(session.id, session.nickname, session.role);
-  }, [router]);
+    async function load() {
+      const session = getSession();
+      if (!session) {
+        router.push('/login');
+        setLoading(false);
+        return;
+      }
 
-  const fetchData = async (userId: string, nickname: string, role: AuthSession['role']) => {
-    try {
+      if (cancelled) return;
+
+      setUser(session);
+      setProfile(profileFromSession(session));
+
       const supabase = createClient();
 
-      const profileRes = await supabase
+      // 프로필 추가 정보 (username 기준 — 로그인과 동일)
+      const { data: profileRow } = await supabase
         .from('profiles')
-        .select(MY_PROFILE_SELECT)
-        .eq('id', userId)
-        .single();
+        .select('id, nickname, phone, role')
+        .eq('username', session.username)
+        .maybeSingle();
 
-      if (profileRes.data) {
-        setProfile(profileRes.data as Profile);
-      } else if (profileRes.error) {
-        // profiles 조회 실패 시 세션 정보로 최소 프로필 구성
-        setProfile({
-          id: userId,
-          email: '',
-          nickname,
-          role,
-          created_at: new Date().toISOString(),
-        });
+      if (!cancelled && profileRow) {
+        setProfile((prev) =>
+          prev
+            ? {
+                ...prev,
+                id: profileRow.id || prev.id,
+                nickname: profileRow.nickname || prev.nickname,
+                phone: profileRow.phone ?? prev.phone,
+                role: (profileRow.role as Profile['role']) || prev.role,
+              }
+            : profileFromSession(session)
+        );
       }
+
+      const userId = profileRow?.id || session.id;
 
       const [listingsRes, postsRes] = await Promise.all([
         supabase
           .from('listings')
-          .select(LISTING_LIST_SELECT)
+          .select(MY_LISTING_SELECT)
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
           .limit(MY_LISTINGS_LIMIT),
@@ -73,7 +94,7 @@ export default function MyPage() {
           .limit(5),
       ]);
 
-      if (listingsRes.data) {
+      if (!cancelled && listingsRes.data) {
         setListings(
           listingsRes.data.map((listing) => ({
             ...listing,
@@ -83,30 +104,29 @@ export default function MyPage() {
         );
       }
 
-      if (postsRes.data) {
+      if (!cancelled && postsRes.data) {
         setPosts(
           postsRes.data.map((post) => ({
             ...post,
-            profiles: { nickname },
+            profiles: { nickname: session.nickname },
           })) as (Post & { profiles?: { nickname: string } })[]
         );
       }
 
-      // 좋아요 매물: JOIN 대신 2단계 조회 (RLS/스키마 호환)
-      const { data: favoritesData } = await supabase
+      // favorites 테이블 없을 수 있음 — 실패해도 무시
+      const { data: favoritesData, error: favoritesError } = await supabase
         .from('favorites')
         .select('listing_id')
         .eq('user_id', userId)
         .limit(LIKED_LISTINGS_LIMIT);
 
-      if (favoritesData && favoritesData.length > 0) {
+      if (!cancelled && !favoritesError && favoritesData && favoritesData.length > 0) {
         const likedIds = favoritesData.map((f) => f.listing_id);
         const { data: likedListingsData } = await supabase
           .from('listings')
-          .select(LISTING_LIST_SELECT)
+          .select(MY_LISTING_SELECT)
           .in('id', likedIds)
-          .eq('status', 'active')
-          .order('created_at', { ascending: false });
+          .eq('status', 'active');
 
         if (likedListingsData) {
           setLikedListings(
@@ -118,12 +138,17 @@ export default function MyPage() {
           );
         }
       }
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  if (loading || !user) {
+      if (!cancelled) setLoading(false);
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
+
+  if (loading || !user || !profile) {
     return (
       <div className="bg-bg-primary min-h-screen py-12">
         <div className="max-w-5xl mx-auto px-4 text-center">
@@ -133,18 +158,9 @@ export default function MyPage() {
     );
   }
 
-  const displayProfile = profile ?? {
-    id: user.id,
-    email: '',
-    nickname: user.nickname,
-    role: user.role,
-    created_at: new Date().toISOString(),
-  };
-
   return (
     <div className="bg-bg-primary min-h-screen py-12">
       <div className="max-w-5xl mx-auto px-4">
-        {/* Profile Header */}
         <div className="bg-bg-secondary border border-border-light rounded-lg p-6 md:p-8 mb-8">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-start gap-4">
@@ -154,17 +170,13 @@ export default function MyPage() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-text-primary mb-1">
-                  {displayProfile.nickname}
-                </h1>
+                <h1 className="text-2xl font-bold text-text-primary mb-1">{profile.nickname}</h1>
                 <p className="text-text-secondary text-sm">@{user.username}</p>
-                {displayProfile.phone && (
-                  <p className="text-text-secondary text-sm">{displayProfile.phone}</p>
-                )}
+                {profile.phone && <p className="text-text-secondary text-sm">{profile.phone}</p>}
               </div>
             </div>
 
-            {displayProfile.role === 'admin' && (
+            {profile.role === 'admin' && (
               <Link href="/admin">
                 <Button variant="primary" size="sm">
                   관리자 페이지
@@ -191,7 +203,6 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* My Listings */}
         <section className="mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-text-primary">내 매물</h2>
@@ -216,7 +227,6 @@ export default function MyPage() {
           )}
         </section>
 
-        {/* Liked Listings */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-text-primary mb-6">좋아요한 매물</h2>
 
@@ -236,7 +246,6 @@ export default function MyPage() {
           )}
         </section>
 
-        {/* My Posts */}
         <section className="mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-text-primary">최근 게시글</h2>
