@@ -28,14 +28,6 @@ export function saveSession(session: AuthSession) {
     const cookieString = `${SESSION_KEY}=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax${secureFlag}`;
 
     document.cookie = cookieString;
-
-    console.log('[Auth] ✓ 세션 저장됨 (localStorage + 쿠키):', {
-      sessionKey: SESSION_KEY,
-      userId: session.id,
-      cookieLength: cookieValue.length,
-      isProduction,
-      cookieSet: true,
-    });
   }
 }
 

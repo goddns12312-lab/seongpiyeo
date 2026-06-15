@@ -77,9 +77,8 @@ input::placeholder, textarea::placeholder {
   @apply text-text-muted opacity-60;
 }
 
-button {
-  @apply text-text-primary !important;
-  color: rgb(var(--color-text-primary)) !important;
+button:not([class*='text-bg-primary']):not([class*='text-white']) {
+  @apply text-text-primary;
 }
 
 a {

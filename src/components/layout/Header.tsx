@@ -13,7 +13,7 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<AuthSession | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // 세션 새로고침 함수
@@ -39,7 +39,7 @@ export function Header() {
     }, 1000);
 
     window.addEventListener('storage', handleStorageChange);
-    setTimeout(() => setLoading(false), 100);
+    setMounted(true);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
@@ -160,36 +160,26 @@ export function Header() {
           {/* Auth Section */}
           <div className="hidden md:flex gap-1 lg:gap-2 items-center">
             <ThemeToggle />
-            {!loading ? (
+            {!mounted ? (
+              <div className="w-36 h-8 bg-bg-tertiary rounded-lg animate-pulse" aria-hidden="true" />
+            ) : user ? (
               <>
-                {user ? (
-                  <>
-                    <Link href="/mypage">
-                      <Button variant="secondary" size="xs" className="lg:px-4 whitespace-nowrap">
-                        마이페이지
-                      </Button>
-                    </Link>
-                    <Button variant="secondary" size="xs" className="lg:px-4 whitespace-nowrap" onClick={handleLogout}>
-                      로그아웃
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link href="/login">
-                      <Button variant="secondary" size="xs" className="lg:px-4 whitespace-nowrap">
-                        로그인
-                      </Button>
-                    </Link>
-                    <Link href="/register">
-                      <Button variant="primary" size="xs" className="lg:px-4 whitespace-nowrap">
-                        회원가입
-                      </Button>
-                    </Link>
-                  </>
-                )}
+                <Button variant="secondary" size="xs" href="/mypage" className="lg:px-4 whitespace-nowrap">
+                  마이페이지
+                </Button>
+                <Button variant="secondary" size="xs" className="lg:px-4 whitespace-nowrap" onClick={handleLogout}>
+                  로그아웃
+                </Button>
               </>
             ) : (
-              <div className="w-20 h-8 bg-bg-tertiary rounded animate-pulse" />
+              <>
+                <Button variant="secondary" size="xs" href="/login" className="lg:px-4 whitespace-nowrap">
+                  로그인
+                </Button>
+                <Button variant="primary" size="xs" href="/register" className="lg:px-4 whitespace-nowrap">
+                  회원가입
+                </Button>
+              </>
             )}
           </div>
 
@@ -260,33 +250,25 @@ export function Header() {
               고객센터
             </Link>
             <div className="pt-4 border-t border-border-light/50 flex flex-col gap-3">
-              {!loading && (
+              {!mounted ? (
+                <div className="w-full h-20 bg-bg-tertiary rounded-lg animate-pulse" aria-hidden="true" />
+              ) : user ? (
                 <>
-                  {user ? (
-                    <>
-                      <Link href="/mypage" className="w-full">
-                        <Button variant="secondary" size="sm" className="w-full">
-                          마이페이지
-                        </Button>
-                      </Link>
-                      <Button variant="secondary" size="sm" className="w-full" onClick={handleLogout}>
-                        로그아웃
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Link href="/login" className="w-full">
-                        <Button variant="secondary" size="sm" className="w-full">
-                          로그인
-                        </Button>
-                      </Link>
-                      <Link href="/register" className="w-full">
-                        <Button variant="primary" size="sm" className="w-full">
-                          회원가입
-                        </Button>
-                      </Link>
-                    </>
-                  )}
+                  <Button variant="secondary" size="sm" href="/mypage" className="w-full">
+                    마이페이지
+                  </Button>
+                  <Button variant="secondary" size="sm" className="w-full" onClick={handleLogout}>
+                    로그아웃
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="secondary" size="sm" href="/login" className="w-full">
+                    로그인
+                  </Button>
+                  <Button variant="primary" size="sm" href="/register" className="w-full">
+                    회원가입
+                  </Button>
                 </>
               )}
             </div>

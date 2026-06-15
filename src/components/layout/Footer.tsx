@@ -81,7 +81,9 @@ export function Footer() {
         </div>
 
         <div className="border-t border-border-light/50 pt-8 text-center">
-          <p className="text-text-muted text-xs">&copy; {currentYear} {SITE_CONFIG.businessName}. All rights reserved.</p>
+          <p className="text-text-muted text-xs" suppressHydrationWarning>
+            &copy; {currentYear} {SITE_CONFIG.businessName}. All rights reserved.
+          </p>
           <p className="mt-2 text-text-muted/70 text-xs">사업자등록번호: {SITE_CONFIG.businessNumber}</p>
         </div>
       </div>

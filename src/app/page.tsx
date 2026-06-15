@@ -112,9 +112,8 @@ export default async function HomePage() {
       .limit(6),
   ]);
 
-  // 회원 수 동적 증가
   const baseUsers = 2859;
-  const startDate = new Date('2026-01-01');
+  const startDate = new Date('2026-01-01T00:00:00+09:00');
   const now = new Date();
   const daysPassed = Math.floor((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
   const userCount = baseUsers + Math.floor(daysPassed * 59);
@@ -153,7 +152,7 @@ export default async function HomePage() {
 
 
   return (
-    <div className="bg-bg-primary">
+    <div className="page-shell">
       {/* JSON-LD Scripts */}
       <script
         type="application/ld+json"
@@ -190,17 +189,17 @@ export default async function HomePage() {
       )}
 
       {/* Compact Hero Section */}
-      <section className="w-full px-6 lg:px-8 max-w-[1650px] mx-auto py-6 md:py-8 relative overflow-hidden border-b border-border-light">
-        <div className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-3 leading-tight">
-            성인PC · 성인피씨 매매/구인 플랫폼
-          </h1>
-          <p className="text-text-secondary text-sm md:text-base mb-6 max-w-2xl mx-auto">
-            전국 성인PC 매물 · 구인구직 · 창업정보를 한곳에서
-          </p>
+      <section className="page-hero border-b-0">
+        <div className="page-hero-inner-wide !py-8 md:!py-10">
+          <div className="text-center max-w-3xl mx-auto">
+            <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-3 leading-tight tracking-tight">
+              성인PC · 성인피씨 매매/구인 플랫폼
+            </h1>
+            <p className="text-text-secondary text-sm md:text-base mb-8">
+              전국 성인PC 매물 · 구인구직 · 창업정보를 한곳에서
+            </p>
 
-          {/* Compact Stats */}
-          <div className="grid grid-cols-3 gap-3 md:gap-4 py-4 px-4 md:px-6 bg-bg-secondary border border-gold/30 rounded-lg max-w-2xl mx-auto mb-6">
+            <div className="grid grid-cols-3 gap-3 md:gap-4 py-5 px-4 md:px-6 surface-card max-w-2xl mx-auto mb-8 border-gold/25">
             <div className="text-center">
               <p className="text-2xl md:text-3xl font-bold text-gold">{listingCount || 0}</p>
               <p className="text-text-secondary text-xs md:text-sm font-medium">매물</p>
@@ -217,21 +216,15 @@ export default async function HomePage() {
 
           {/* CTA Buttons - 3개 */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
-            <Link href="/listings">
-              <Button variant="primary" size="lg" className="font-semibold text-sm md:text-base">
-                📋 매물 보기
-              </Button>
-            </Link>
-            <Link href="/listings/new">
-              <Button variant="secondary" size="lg" className="font-semibold text-sm md:text-base">
-                ✚ 매물 등록
-              </Button>
-            </Link>
-            <Link href="/jobs/new">
-              <Button variant="secondary" size="lg" className="font-semibold text-sm md:text-base">
-                💼 구인 등록
-              </Button>
-            </Link>
+            <Button href="/listings" variant="primary" size="lg" className="font-semibold text-sm md:text-base">
+              📋 매물 보기
+            </Button>
+            <Button href="/listings/new" variant="secondary" size="lg" className="font-semibold text-sm md:text-base">
+              ✚ 매물 등록
+            </Button>
+            <Button href="/jobs/new" variant="secondary" size="lg" className="font-semibold text-sm md:text-base">
+              💼 구인 등록
+            </Button>
           </div>
 
           {/* Telegram Buttons */}
@@ -240,7 +233,7 @@ export default async function HomePage() {
               href="https://t.me/korea24s"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block border-2 border-gold rounded-lg px-6 py-3 text-gold hover:bg-gold hover:text-white font-semibold transition duration-300"
+              className="inline-block border-2 border-gold rounded-xl px-6 py-3 text-gold hover:bg-gold hover:text-bg-primary font-semibold transition duration-300"
             >
               ✈️ 텔레그램문의
             </a>
@@ -248,19 +241,20 @@ export default async function HomePage() {
               href="https://t.me/pc365_112"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block border-2 border-red-500 rounded-lg px-6 py-3 text-red-500 hover:bg-red-500 hover:text-white font-semibold transition duration-300"
+              className="inline-block border-2 border-red-500/70 rounded-xl px-6 py-3 text-red-500 hover:bg-red-500 hover:text-white font-semibold transition duration-300"
             >
               🚨 단속 및 진상 단텔방 입장
             </a>
           </div>
+        </div>
         </div>
       </section>
 
 
       {/* Latest Listings Section */}
       {latestListings && latestListings.length > 0 && (
-        <section className="max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-gold/20">
-          <div className="max-w-6xl mx-auto">
+        <section className="home-section">
+          <div className="home-section-inner">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 매물</h2>
               <Link href="/listings" className="text-gold text-sm font-medium hover:text-gold/80 transition-colors">
@@ -273,7 +267,7 @@ export default async function HomePage() {
                 <Link
                   key={listing.id}
                   href={`/listings/${listing.id}`}
-                  className="group relative rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
+                  className="group relative rounded-2xl overflow-hidden surface-card-hover hover-lift"
                 >
                   <div className="relative w-full aspect-[4/3] bg-bg-secondary">
                     {listing.main_image_url || listing.thumbnail_url ? (
@@ -306,8 +300,8 @@ export default async function HomePage() {
 
       {/* Latest Jobs Section */}
       {latestJobs && latestJobs.length > 0 && (
-        <section className="max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-gold/20">
-          <div className="max-w-6xl mx-auto">
+        <section className="home-section">
+          <div className="home-section-inner">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 구인공고</h2>
               <Link href="/jobs" className="text-gold text-sm font-medium hover:text-gold/80 transition-colors">
@@ -320,14 +314,14 @@ export default async function HomePage() {
                 <Link
                   key={job.id}
                   href={`/jobs/${job.id}`}
-                  className="p-4 bg-bg-secondary border border-gold/20 rounded-lg hover:border-gold/50 transition-all duration-300 hover:shadow-md"
+                  className="p-4 home-card hover-lift"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
                       <p className="text-text-primary font-semibold text-sm line-clamp-2">{job.title}</p>
                       <p className="text-text-secondary text-xs mt-1">{job.region}</p>
                     </div>
-                    <Badge className="ml-2" variant="outline">
+                    <Badge className="ml-2" variant="secondary">
                       {job.category === 'recruitment' ? '채용' : '구직'}
                     </Badge>
                   </div>
@@ -340,8 +334,8 @@ export default async function HomePage() {
 
       {/* Latest Posts Section */}
       {latestPosts && latestPosts.length > 0 && (
-        <section className="max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-gold/20">
-          <div className="max-w-6xl mx-auto">
+        <section className="home-section">
+          <div className="home-section-inner">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 게시글</h2>
               <Link href="/community" className="text-gold text-sm font-medium hover:text-gold/80 transition-colors">
@@ -354,7 +348,7 @@ export default async function HomePage() {
                 <Link
                   key={post.id}
                   href={`/community/${post.id}`}
-                  className="p-4 bg-bg-secondary border border-gold/20 rounded-lg hover:border-gold/50 transition-all duration-300 hover:shadow-md"
+                  className="p-4 home-card hover-lift"
                 >
                   <p className="text-text-primary font-semibold text-sm line-clamp-2 mb-3">{post.title}</p>
                   <div className="flex items-center justify-between text-xs text-text-secondary">
@@ -372,8 +366,8 @@ export default async function HomePage() {
       )}
 
       {/* Features Section */}
-      <section className="max-w-full mx-auto px-4 lg:px-8 py-10 md:py-14 border-b border-gold/20 relative">
-        <div className="max-w-6xl mx-auto">
+      <section className="home-section relative">
+        <div className="home-section-inner">
           <h2 className="text-2xl md:text-3xl font-bold text-center text-text-primary mb-2">
             왜 <span className="text-gold">{SITE_CONFIG.businessName}</span>를 선택할까요?
           </h2>
@@ -401,7 +395,7 @@ export default async function HomePage() {
             ].map((feature, idx) => (
               <div
                 key={idx}
-                className="p-4 md:p-5 rounded-lg bg-bg-secondary border border-gold/30 hover:border-gold/60 transition-all duration-300 text-center"
+                className="home-card p-4 md:p-5 text-center hover-lift"
               >
                 <div className="bg-gold/20 w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
