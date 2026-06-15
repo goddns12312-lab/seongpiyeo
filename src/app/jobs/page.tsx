@@ -107,7 +107,7 @@ function JobsContent() {
   };
 
   return (
-    <div className="bg-bg-primary min-h-screen">
+    <div className="page-shell">
       <Toast />
       <Script
         id="jobs-schema"
@@ -115,30 +115,33 @@ function JobsContent() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jobSchema) }}
       />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-bg-secondary via-bg-primary to-bg-primary border-b border-border-light">
-        <div className="max-w-full mx-auto px-4 lg:px-8 py-8 lg:py-12">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="flex-1">
-              <h1 className="text-3xl lg:text-4xl font-bold text-text-primary mb-2">
+      <header className="page-hero">
+        <div className="page-hero-inner-wide">
+          <nav className="breadcrumb" aria-label="breadcrumb">
+            <Link href="/">홈</Link>
+            <span className="breadcrumb-sep">/</span>
+            <span className="text-text-secondary">구인구직</span>
+          </nav>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            <div className="flex-1 max-w-2xl">
+              <h1 className="text-3xl lg:text-4xl font-bold text-text-primary tracking-tight mb-2">
                 PC방 구인구직
               </h1>
-              <p className="text-text-secondary text-base max-w-2xl">
-                성인PC방 직원 구인·구직 정보를 등록하고 확인하세요. 성피요에서 PC방 관련 일자리를 찾아보세요.
+              <p className="text-text-secondary text-sm md:text-base">
+                성인PC방 직원 구인·구직 정보를 등록하고 확인하세요.
               </p>
             </div>
             <button
               onClick={handleNewJobClick}
-              className="px-6 py-3 bg-gold text-bg-primary rounded-lg font-semibold hover:bg-gold-light transition whitespace-nowrap"
+              className="px-6 py-3 bg-gold text-bg-primary rounded-xl font-semibold hover:bg-gold-light transition whitespace-nowrap shadow-sm"
             >
               공고 올리기
             </button>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* Tabs */}
-      <section className="bg-bg-secondary border-b border-border-light sticky top-16 z-30">
+      <section className="sticky top-16 z-30 border-b border-border-light bg-bg-secondary/90 backdrop-blur-md">
         <div className="max-w-full mx-auto px-4 lg:px-8">
           <div className="flex gap-0">
             <button

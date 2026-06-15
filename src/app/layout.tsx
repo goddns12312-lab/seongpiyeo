@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { SkipLink } from '@/components/layout/SkipLink';
 import { SITE_CONFIG } from '@/lib/site';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { buildWebsiteSchema, buildOrganizationSchema } from '@/lib/seo-schema';
@@ -80,8 +81,8 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   icons: {
-    icon: [{ url: '/423432.png', type: 'image/png' }],
-    apple: [{ url: '/423432.png', type: 'image/png', sizes: '180x180' }],
+    icon: [{ url: '/logo-icon.png', type: 'image/png' }],
+    apple: [{ url: '/logo-icon.png', type: 'image/png', sizes: '180x180' }],
   },
 };
 
@@ -112,14 +113,13 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=yes" />
         <link rel="alternate" hrefLang="ko-KR" href={SITE_CONFIG.url} />
         <link rel="alternate" hrefLang="x-default" href={SITE_CONFIG.url} />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://supabase.co" />
-        <link rel="preconnect" href="https://cdn.imweb.me" />
-
-        {/* DNS prefetch for third-party domains */}
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        <link rel="dns-prefetch" href="https://cdn.imweb.me" />
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <>
+            <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="" />
+            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_SUPABASE_URL} />
+          </>
+        )}
 
         {/* JSON-LD Structured Data - Organization Schema */}
         <script
@@ -140,8 +140,9 @@ export default function RootLayout({
       </head>
       <body className="bg-bg-primary">
         <ThemeProvider>
+          <SkipLink />
           <Header />
-          <main className="min-h-screen">
+          <main id="main-content" className="min-h-screen" tabIndex={-1}>
             {children}
           </main>
           <Footer />

@@ -16,11 +16,11 @@
 
   --color-text-primary: 30 30 30; /* #1e1e1e */
   --color-text-secondary: 80 80 80; /* #505050 */
-  --color-text-muted: 120 120 120; /* #787878 */
+  --color-text-muted: 95 95 95; /* #5f5f5f — WCAG AA 대비 */
 
-  --color-gold: 184 118 22; /* #b87616 */
-  --color-gold-light: 200 138 75; /* #c88a4b */
-  --color-gold-dark: 139 89 20; /* #8b5914 */
+  --color-gold: 139 89 20; /* #8b5914 — WCAG AA 텍스트 대비 (라이트) */
+  --color-gold-light: 162 119 76; /* #a2774c */
+  --color-gold-dark: 110 70 16; /* #6e4610 */
   --color-gold-muted: 162 119 76; /* #a2774c */
 
   --shadow-elevation: 0 0 0 / 0.1;
@@ -85,6 +85,15 @@ a {
   @apply transition-colors;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  @apply outline-none ring-2 ring-gold ring-offset-2 ring-offset-bg-primary;
+}
+
 button {
   @apply transition-colors;
 }
@@ -140,8 +149,15 @@ button {
   box-shadow: 0 20px 40px rgba(200, 169, 107, 0.15);
 }
 
-.dark .hover-lift:hover {
-  box-shadow: 0 20px 40px rgba(200, 169, 107, 0.2);
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ── Premium page design system (light + dark via CSS vars) ── */
@@ -233,7 +249,7 @@ button {
   }
 
   .stat-value {
-    @apply text-2xl md:text-3xl font-bold text-gold tabular-nums relative;
+    @apply text-2xl md:text-3xl font-bold text-gold-dark dark:text-gold tabular-nums relative;
   }
 
   .stat-label {
@@ -320,5 +336,29 @@ button {
 
   .pagination-btn-active {
     @apply bg-gold text-bg-primary border-gold font-semibold shadow-sm;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 bg-gradient-to-r from-gold to-gold-light text-bg-primary border border-gold-dark/40 hover:shadow-hover px-8 py-3 text-base;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 bg-bg-secondary border-2 border-border-light text-text-primary hover:bg-bg-tertiary hover:border-gold hover:text-gold-dark px-8 py-3 text-base;
+  }
+
+  .btn-lg {
+    @apply px-8 py-3 text-sm md:text-base;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 }

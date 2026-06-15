@@ -9,6 +9,14 @@ import { Button } from '@/components/ui/Button';
 import { ListingCard } from '@/components/listings/ListingCard';
 import { PostCard } from '@/components/community/PostCard';
 import { Listing, Post, Profile } from '@/types';
+import {
+  PageShell,
+  PageContainer,
+  StatCard,
+  SectionHeader,
+  EmptyState,
+  SurfaceCard,
+} from '@/components/layout/PageShell';
 
 /** mypage 전용 — 존재하지 않을 수 있는 컬럼(idx 등) 제외 */
 const MY_LISTING_SELECT =
@@ -150,29 +158,30 @@ export default function MyPage() {
 
   if (loading || !user || !profile) {
     return (
-      <div className="bg-bg-primary min-h-screen py-12">
-        <div className="max-w-5xl mx-auto px-4 text-center">
+      <PageShell>
+        <PageContainer className="py-20 text-center">
+          <div className="inline-block w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mb-4" />
           <p className="text-text-secondary">로딩 중...</p>
-        </div>
-      </div>
+        </PageContainer>
+      </PageShell>
     );
   }
 
   return (
-    <div className="bg-bg-primary min-h-screen py-12">
-      <div className="max-w-5xl mx-auto px-4">
-        <div className="bg-bg-secondary border border-border-light rounded-lg p-6 md:p-8 mb-8">
-          <div className="flex items-start justify-between mb-6">
+    <PageShell>
+      <PageContainer className="py-10 md:py-12">
+        <SurfaceCard className="p-6 md:p-8 mb-10">
+          <div className="flex items-start justify-between mb-8 gap-4">
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 bg-gold/20 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 rounded-2xl bg-gold/15 border border-gold/25 flex items-center justify-center shrink-0">
                 <svg className="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-text-primary mb-1">{profile.nickname}</h1>
-                <p className="text-text-secondary text-sm">@{user.username}</p>
-                {profile.phone && <p className="text-text-secondary text-sm">{profile.phone}</p>}
+                <h1 className="text-2xl md:text-3xl font-bold text-text-primary mb-1">{profile.nickname}</h1>
+                <p className="text-text-muted text-sm">@{user.username}</p>
+                {profile.phone && <p className="text-text-secondary text-sm mt-1">{profile.phone}</p>}
               </div>
             </div>
 
@@ -185,31 +194,24 @@ export default function MyPage() {
             )}
           </div>
 
-          <div className="border-t border-border-light pt-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-gold">{listings.length}</p>
-                <p className="text-text-secondary text-sm mt-1">등록된 매물</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-gold">{likedListings.length}</p>
-                <p className="text-text-secondary text-sm mt-1">좋아요한 매물</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-gold">{posts.length}</p>
-                <p className="text-text-secondary text-sm mt-1">작성한 게시글</p>
-              </div>
+          <div className="border-t border-border-light/60 pt-8">
+            <div className="grid grid-cols-3 gap-4">
+              <StatCard label="등록된 매물" value={listings.length} />
+              <StatCard label="좋아요한 매물" value={likedListings.length} />
+              <StatCard label="작성한 게시글" value={posts.length} />
             </div>
           </div>
-        </div>
+        </SurfaceCard>
 
-        <section className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-text-primary">내 매물</h2>
-            <Link href="/listings/new">
-              <Button variant="primary">새 매물 등록</Button>
-            </Link>
-          </div>
+        <section className="mb-10">
+          <SectionHeader
+            title="내 매물"
+            action={
+              <Link href="/listings/new">
+                <Button variant="primary" size="sm">새 매물 등록</Button>
+              </Link>
+            }
+          />
 
           {listings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -218,17 +220,19 @@ export default function MyPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-bg-secondary border border-border-light rounded-lg p-8 text-center">
-              <p className="text-text-secondary mb-4">등록된 매물이 없습니다.</p>
-              <Link href="/listings/new">
-                <Button variant="primary">첫 매물 등록하기</Button>
-              </Link>
-            </div>
+            <EmptyState
+              title="등록된 매물이 없습니다"
+              action={
+                <Link href="/listings/new">
+                  <Button variant="primary">첫 매물 등록하기</Button>
+                </Link>
+              }
+            />
           )}
         </section>
 
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-text-primary mb-6">좋아요한 매물</h2>
+        <section className="mb-10">
+          <SectionHeader title="좋아요한 매물" />
 
           {likedListings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -237,22 +241,26 @@ export default function MyPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-bg-secondary border border-border-light rounded-lg p-8 text-center">
-              <p className="text-text-secondary mb-4">좋아요한 매물이 없습니다.</p>
-              <Link href="/listings">
-                <Button variant="primary">매물 둘러보기</Button>
-              </Link>
-            </div>
+            <EmptyState
+              title="좋아요한 매물이 없습니다"
+              action={
+                <Link href="/listings">
+                  <Button variant="primary">매물 둘러보기</Button>
+                </Link>
+              }
+            />
           )}
         </section>
 
-        <section className="mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-text-primary">최근 게시글</h2>
-            <Link href="/community/new">
-              <Button variant="primary">게시글 작성</Button>
-            </Link>
-          </div>
+        <section className="mb-10">
+          <SectionHeader
+            title="최근 게시글"
+            action={
+              <Link href="/community/new">
+                <Button variant="primary" size="sm">게시글 작성</Button>
+              </Link>
+            }
+          />
 
           {posts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -261,15 +269,17 @@ export default function MyPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-bg-secondary border border-border-light rounded-lg p-8 text-center">
-              <p className="text-text-secondary mb-4">작성한 게시글이 없습니다.</p>
-              <Link href="/community/new">
-                <Button variant="primary">첫 게시글 작성하기</Button>
-              </Link>
-            </div>
+            <EmptyState
+              title="작성한 게시글이 없습니다"
+              action={
+                <Link href="/community/new">
+                  <Button variant="primary">첫 게시글 작성하기</Button>
+                </Link>
+              }
+            />
           )}
         </section>
-      </div>
-    </div>
+      </PageContainer>
+    </PageShell>
   );
 }

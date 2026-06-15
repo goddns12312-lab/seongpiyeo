@@ -3,6 +3,40 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ensureAdminClient } from '@/lib/admin-client';
+import {
+  PageShell,
+  PageHero,
+  PageContainer,
+  StatCard,
+  SurfaceCard,
+} from '@/components/layout/PageShell';
+
+const ADMIN_LINKS = [
+  {
+    href: '/admin/listings',
+    title: '매물 관리',
+    desc: '매물 승인, 수정, 삭제',
+    icon: 'M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z',
+  },
+  {
+    href: '/admin/posts',
+    title: '게시글 관리',
+    desc: '부적절한 게시글 삭제',
+    icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2h-3l-4 4z',
+  },
+  {
+    href: '/admin/users',
+    title: '회원 관리',
+    desc: '회원 조회, 정지, 권한 관리',
+    icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
+  },
+  {
+    href: '/admin/banners',
+    title: '배너 관리',
+    desc: '광고 배너 추가/수정',
+    icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01',
+  },
+];
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
@@ -27,19 +61,10 @@ export default function AdminDashboard() {
         { count: totalUsers },
         { count: totalPosts },
       ] = await Promise.all([
-        supabase
-          .from('listings')
-          .select('id', { count: 'exact', head: true })
-          .eq('status', 'pending'),
-        supabase
-          .from('listings')
-          .select('id', { count: 'exact', head: true })
-          .eq('status', 'active'),
+        supabase.from('listings').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('listings').select('id', { count: 'exact', head: true }).eq('status', 'active'),
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
-        supabase
-          .from('posts')
-          .select('id', { count: 'exact', head: true })
-          .eq('status', 'active'),
+        supabase.from('posts').select('id', { count: 'exact', head: true }).eq('status', 'active'),
       ]);
 
       setStats({
@@ -48,95 +73,53 @@ export default function AdminDashboard() {
         totalUsers: totalUsers || 0,
         totalPosts: totalPosts || 0,
       });
-
       setLoading(false);
     };
-
     load();
   }, []);
 
   if (loading) {
     return (
-      <div className="bg-bg-primary min-h-screen py-12 flex items-center justify-center">
-        <p className="text-text-secondary">로딩 중...</p>
-      </div>
+      <PageShell>
+        <PageContainer className="py-20 flex items-center justify-center">
+          <p className="text-text-secondary">로딩 중...</p>
+        </PageContainer>
+      </PageShell>
     );
   }
 
   return (
-    <div className="bg-bg-primary min-h-screen py-12">
-      <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-text-primary mb-8">관리자 대시보드</h1>
+    <PageShell>
+      <PageHero
+        title="관리자 대시보드"
+        description="매물, 게시글, 회원, 배너를 한곳에서 관리합니다."
+        breadcrumb={[{ label: '홈', href: '/' }, { label: '관리자' }]}
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-            <p className="text-text-secondary text-sm mb-2">승인 대기</p>
-            <p className="text-3xl font-bold text-gold">{stats.pendingCount}</p>
-          </div>
-          <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-            <p className="text-text-secondary text-sm mb-2">활성 매물</p>
-            <p className="text-3xl font-bold text-gold">{stats.activeListings}</p>
-          </div>
-          <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-            <p className="text-text-secondary text-sm mb-2">회원 수</p>
-            <p className="text-3xl font-bold text-gold">{stats.totalUsers}</p>
-          </div>
-          <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-            <p className="text-text-secondary text-sm mb-2">게시글</p>
-            <p className="text-3xl font-bold text-gold">{stats.totalPosts}</p>
-          </div>
+      <PageContainer className="py-10 md:py-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          <StatCard label="승인 대기" value={stats.pendingCount} accent="orange" />
+          <StatCard label="활성 매물" value={stats.activeListings} />
+          <StatCard label="회원 수" value={stats.totalUsers} />
+          <StatCard label="게시글" value={stats.totalPosts} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Link href="/admin/listings">
-            <div className="bg-bg-secondary border border-border-light rounded-lg p-6 hover:border-gold transition-colors cursor-pointer group">
-              <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-gold/20 transition-colors">
-                <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 className="text-text-primary font-semibold mb-2">매물 관리</h3>
-              <p className="text-text-secondary text-sm">매물 승인, 수정, 삭제</p>
-            </div>
-          </Link>
-
-          <Link href="/admin/posts">
-            <div className="bg-bg-secondary border border-border-light rounded-lg p-6 hover:border-gold transition-colors cursor-pointer group">
-              <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-gold/20 transition-colors">
-                <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2h-3l-4 4z" />
-                </svg>
-              </div>
-              <h3 className="text-text-primary font-semibold mb-2">게시글 관리</h3>
-              <p className="text-text-secondary text-sm">부적절한 게시글 삭제</p>
-            </div>
-          </Link>
-
-          <Link href="/admin/users">
-            <div className="bg-bg-secondary border border-border-light rounded-lg p-6 hover:border-gold transition-colors cursor-pointer group">
-              <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-gold/20 transition-colors">
-                <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 12H9m4 5H9m6-9h.01M9 16h.01" />
-                </svg>
-              </div>
-              <h3 className="text-text-primary font-semibold mb-2">회원 관리</h3>
-              <p className="text-text-secondary text-sm">사용자 정보 조회</p>
-            </div>
-          </Link>
-
-          <Link href="/admin/banners">
-            <div className="bg-bg-secondary border border-border-light rounded-lg p-6 hover:border-gold transition-colors cursor-pointer group">
-              <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-gold/20 transition-colors">
-                <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                </svg>
-              </div>
-              <h3 className="text-text-primary font-semibold mb-2">배너 관리</h3>
-              <p className="text-text-secondary text-sm">광고 배너 추가/수정</p>
-            </div>
-          </Link>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {ADMIN_LINKS.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <SurfaceCard hover className="p-6 h-full group">
+                <div className="w-12 h-12 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center mb-4 group-hover:bg-gold/15 transition-colors">
+                  <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d={item.icon} />
+                  </svg>
+                </div>
+                <h2 className="text-text-primary font-semibold mb-2">{item.title}</h2>
+                <p className="text-text-muted text-sm">{item.desc}</p>
+              </SurfaceCard>
+            </Link>
+          ))}
         </div>
-      </div>
-    </div>
+      </PageContainer>
+    </PageShell>
   );
 }

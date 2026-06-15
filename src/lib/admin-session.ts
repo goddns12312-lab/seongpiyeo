@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { createClient as createSupabaseJsClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
-import type { AuthSession } from '@/lib/auth';
+import type { AuthSession } from '@/lib/auth-session';
 
 export function parseSessionFromCookieValue(raw: string | undefined): AuthSession | null {
   if (!raw) return null;

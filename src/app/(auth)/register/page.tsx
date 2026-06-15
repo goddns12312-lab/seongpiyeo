@@ -78,19 +78,20 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        <div className="bg-bg-secondary border border-border-light rounded-lg p-8">
+    <div className="page-shell min-h-screen flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md relative">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-gold/10 via-transparent to-transparent rounded-3xl blur-2xl" />
+        <div className="auth-card">
           <h1 className="text-3xl font-bold text-center text-text-primary mb-2">회원가입</h1>
-          <p className="text-text-secondary text-center text-sm mb-8">새로운 계정을 만들어보세요</p>
+          <p className="text-text-muted text-center text-sm mb-8">새로운 계정을 만들어보세요</p>
 
           {error && (
-            <div className="bg-red-900/20 border border-red-900 text-red-200 px-4 py-3 rounded mb-6 text-sm">
+            <div className="bg-red-500/10 border border-red-500/25 text-red-600 dark:text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleRegister} className="space-y-4">
+          <form onSubmit={handleRegister} className="space-y-5">
             <div>
               <label className="block text-text-primary text-sm font-medium mb-2">
                 아이디 <span className="text-red-400">*</span>
@@ -100,12 +101,12 @@ export default function RegisterPage() {
                 value={username}
                 onChange={(e) => checkUsername(e.target.value)}
                 placeholder="영문/숫자 4~20자"
-                className={`w-full px-4 py-2 bg-bg-tertiary border rounded focus:outline-none focus:border-gold text-text-primary ${
+                className={`input-field ${
                   usernameStatus === 'unavailable'
-                    ? 'border-red-500'
+                    ? '!border-red-500'
                     : usernameStatus === 'available'
-                      ? 'border-green-500'
-                      : 'border-border-light'
+                      ? '!border-emerald-500'
+                      : ''
                 }`}
                 required
               />
@@ -129,7 +130,7 @@ export default function RegisterPage() {
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 placeholder="사용할 닉네임"
-                className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary rounded focus:outline-none focus:border-gold"
+                className="input-field"
                 required
               />
             </div>
@@ -141,7 +142,7 @@ export default function RegisterPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="010-1234-5678"
-                className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary rounded focus:outline-none focus:border-gold"
+                className="input-field"
               />
               <p className="text-text-secondary text-xs mt-1">선택 입력</p>
             </div>
@@ -155,7 +156,7 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary rounded focus:outline-none focus:border-gold"
+                className="input-field"
                 required
               />
               <p className="text-text-secondary text-xs mt-1">최소 6자 이상</p>
@@ -166,9 +167,9 @@ export default function RegisterPage() {
             </Button>
           </form>
 
-          <p className="text-center text-text-secondary text-sm mt-6">
+          <p className="text-center text-text-muted text-sm mt-6">
             이미 계정이 있으신가요?{' '}
-            <Link href="/login" className="text-gold hover:text-opacity-80">
+            <Link href="/login" className="text-gold hover:text-gold-light font-medium">
               로그인하기
             </Link>
           </p>

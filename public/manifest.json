@@ -4,29 +4,22 @@
   "description": "성인PC 성인피씨 성인피시 창업 정보와 매물 거래를 한곳에서! 안전한 성인PC방 매매 플랫폼",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f1115",
+  "background_color": "#ffffff",
   "theme_color": "#c8a96b",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/logo-icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/logo.png",
+      "src": "/logo-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/logo.png",
-      "sizes": "540x720",
-      "type": "image/png"
     }
   ],
   "categories": ["business", "shopping"],

@@ -1,49 +1,9 @@
 import bcrypt from 'bcryptjs';
 import { createClient } from '@/lib/supabase/client';
+import { type AuthSession, saveSession } from '@/lib/auth-session';
 
-export interface AuthSession {
-  id: string;
-  username: string;
-  nickname: string;
-  role: string;
-}
-
-const SESSION_KEY = 'pc_bang_session';
-
-export function saveSession(session: AuthSession) {
-  if (typeof window !== 'undefined') {
-    // localStorage에 저장
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-
-    // 쿠키에도 저장 (API 요청 시 credentials: 'include'로 전달되도록)
-    const maxAge = 7 * 24 * 60 * 60; // 7일
-    const cookieValue = encodeURIComponent(JSON.stringify(session));
-
-    // production에서는 Secure 플래그 추가, localhost에서는 제외
-    const isProduction = typeof window !== 'undefined' &&
-                         window.location.hostname !== 'localhost' &&
-                         !window.location.hostname.startsWith('127.');
-
-    const secureFlag = isProduction ? '; Secure' : '';
-    const cookieString = `${SESSION_KEY}=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax${secureFlag}`;
-
-    document.cookie = cookieString;
-  }
-}
-
-export function getSession(): AuthSession | null {
-  if (typeof window !== 'undefined') {
-    const session = localStorage.getItem(SESSION_KEY);
-    return session ? JSON.parse(session) : null;
-  }
-  return null;
-}
-
-export function clearSession() {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(SESSION_KEY);
-  }
-}
+export type { AuthSession };
+export { saveSession, getSession, clearSession, logout } from '@/lib/auth-session';
 
 export function validateUsername(username: string): { valid: boolean; error?: string } {
   if (!username) {
@@ -282,8 +242,4 @@ export async function loginUser(username: string, password: string) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     return { success: false, error: '로그인 중 오류가 발생했습니다: ' + errorMessage };
   }
-}
-
-export function logout() {
-  clearSession();
 }

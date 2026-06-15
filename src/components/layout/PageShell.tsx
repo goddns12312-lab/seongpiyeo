@@ -33,7 +33,7 @@ export function PageHero({
     <header className="page-hero">
       <div className={wide ? 'page-hero-inner-wide' : 'page-hero-inner'}>
         {breadcrumb && breadcrumb.length > 0 && (
-          <nav className="breadcrumb" aria-label="breadcrumb">
+          <nav className="breadcrumb" aria-label="현재 위치">
             {breadcrumb.map((item, i) => (
               <span key={item.label} className="flex items-center gap-2">
                 {i > 0 && <span className="breadcrumb-sep">/</span>}

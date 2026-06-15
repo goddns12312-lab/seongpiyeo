@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getSession, logout, AuthSession } from '@/lib/auth';
+import { getSession, logout, AuthSession } from '@/lib/auth-session';
 import { Button } from '@/components/ui/Button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { SITE_CONFIG } from '@/lib/site';
@@ -33,23 +33,21 @@ export function Header() {
       }
     };
 
-    // 주기적으로 세션 확인 (1초마다) - 같은 탭에서의 변경도 감지
-    const interval = setInterval(() => {
-      refreshSession();
-    }, 1000);
+    const handleSessionChange = () => refreshSession();
 
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('pc_bang_session_change', handleSessionChange);
     setMounted(true);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
+      window.removeEventListener('pc_bang_session_change', handleSessionChange);
     };
   }, []);
 
-  // pathname 변경 시에도 세션 새로고침 (페이지 이동 감지)
   useEffect(() => {
     refreshSession();
+    setIsMenuOpen(false);
   }, [pathname]);
 
   const handleLogout = () => {
@@ -67,30 +65,35 @@ export function Header() {
       <div className="max-w-full mx-auto px-4 lg:px-8 py-2">
         <div className="flex justify-between items-center gap-8">
           {/* Logo */}
-          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity h-[60px] overflow-hidden" title={`${SITE_CONFIG.businessName} - 성인PC 매물 거래 플랫폼`}>
+          <Link
+            href="/"
+            className="flex items-center hover:opacity-80 transition-opacity h-[52px] overflow-hidden shrink-0"
+            aria-label={`${SITE_CONFIG.businessName} 홈으로 이동`}
+          >
             <Image
-              src="/423432.png"
-              alt={SITE_CONFIG.businessName}
-              width={100}
-              height={100}
-              className="object-contain"
+              src="/logo.webp"
+              alt=""
+              width={80}
+              height={52}
+              sizes="80px"
+              className="object-contain w-auto h-[52px]"
               priority
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-2 lg:gap-4 flex-1 items-center">
+          <nav className="hidden md:flex gap-2 lg:gap-4 flex-1 items-center" aria-label="주요 메뉴">
             {/* Main Menu - Button Style */}
             <div className="flex gap-2 lg:gap-3">
               <Link
                 href="/listings"
-                className={`cursor-pointer px-3 py-1.5 rounded-lg border-2 transition-all duration-300 font-semibold text-xs sm:text-sm whitespace-nowrap ${isActive('/listings') ? 'border-gold bg-gold/10 text-gold-light' : 'border-gold text-gold hover:bg-gold/10'}`}
+                className={`cursor-pointer px-3 py-1.5 rounded-lg border-2 transition-all duration-300 font-semibold text-xs sm:text-sm whitespace-nowrap ${isActive('/listings') ? 'border-gold bg-gold/10 text-gold-dark dark:text-gold-light' : 'border-gold text-gold-dark dark:text-gold hover:bg-gold/10'}`}
               >
                 성인PC 팝니다
               </Link>
               <Link
                 href="/jobs"
-                className={`cursor-pointer px-3 py-1.5 rounded-lg border-2 transition-all duration-300 font-semibold text-xs sm:text-sm whitespace-nowrap ${isActive('/jobs') ? 'border-gold bg-gold/10 text-gold-light' : 'border-gold text-gold hover:bg-gold/10'}`}
+                className={`cursor-pointer px-3 py-1.5 rounded-lg border-2 transition-all duration-300 font-semibold text-xs sm:text-sm whitespace-nowrap ${isActive('/jobs') ? 'border-gold bg-gold/10 text-gold-dark dark:text-gold-light' : 'border-gold text-gold-dark dark:text-gold hover:bg-gold/10'}`}
               >
                 구인구직
               </Link>
@@ -148,8 +151,8 @@ export function Header() {
                 href="https://t.me/pc365_112"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="cursor-pointer relative text-sm font-semibold whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-red-500/10 text-red-500 hover:text-red-400"
-                title="블랙진상조회"
+                className="cursor-pointer relative text-sm font-semibold whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-red-500/10 text-red-700 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300"
+                aria-label="블랙진상조회 (텔레그램, 새 창)"
               >
                 블랙진상조회
                 <span className="absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-red-500 to-red-400 group-hover:w-[calc(100%-1rem)] transition-all duration-300 w-0"></span>
@@ -185,9 +188,10 @@ export function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-gold"
+            type="button"
+            className="md:hidden text-gold-dark dark:text-gold p-2 rounded-lg hover:bg-bg-tertiary"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="메뉴 토글"
+            aria-label={isMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
           >
@@ -199,7 +203,7 @@ export function Header() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <nav className="md:hidden mt-6 pb-6 border-t border-border-light pt-6 flex flex-col gap-5" id="mobile-menu" role="navigation" aria-label="모바일 네비게이션">
+          <nav className="md:hidden mt-6 pb-6 border-t border-border-light pt-6 flex flex-col gap-5" id="mobile-menu" aria-label="모바일 메뉴">
             {/* Theme Toggle */}
             <div className="flex items-center justify-between mb-2 pb-4 border-b border-border-light/50">
               <span className="text-text-secondary text-xs font-semibold uppercase tracking-wider">테마</span>
@@ -208,18 +212,18 @@ export function Header() {
 
             {/* Main Menu */}
             <div className="flex flex-col gap-2">
-              <span className="text-gold text-xs font-bold uppercase tracking-wider">주요메뉴</span>
-              <Link href="/listings" className="cursor-pointer px-3 py-2 rounded border-2 border-gold text-gold hover:bg-gold/10 font-semibold transition-all">
+              <span className="text-gold-dark dark:text-gold text-xs font-bold uppercase tracking-wider">주요메뉴</span>
+              <Link href="/listings" className="cursor-pointer px-3 py-2 rounded border-2 border-gold text-gold-dark dark:text-gold hover:bg-gold/10 font-semibold transition-all">
                 성인PC 팝니다
               </Link>
-              <Link href="/jobs" className="cursor-pointer px-3 py-2 rounded border-2 border-gold text-gold hover:bg-gold/10 font-semibold transition-all">
+              <Link href="/jobs" className="cursor-pointer px-3 py-2 rounded border-2 border-gold text-gold-dark dark:text-gold hover:bg-gold/10 font-semibold transition-all">
                 구인구직
               </Link>
             </div>
 
             {/* Additional Menu */}
             <div className="flex flex-col gap-3">
-              <span className="text-gold text-xs font-bold uppercase tracking-wider">정보</span>
+              <span className="text-gold-dark dark:text-gold text-xs font-bold uppercase tracking-wider">정보</span>
               <Link href="/secondhand" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold hover:bg-bg-tertiary/50 font-semibold transition-all rounded">
                 중고장터
               </Link>
@@ -230,7 +234,7 @@ export function Header() {
 
             {/* Community Menu */}
             <div className="flex flex-col gap-2 bg-bg-tertiary/50 rounded-lg p-4 border border-border-light/30">
-              <span className="text-gold text-xs font-bold uppercase tracking-wider">커뮤니티</span>
+              <span className="text-gold-dark dark:text-gold text-xs font-bold uppercase tracking-wider">커뮤니티</span>
               <Link href="/community" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold hover:bg-gold/10 font-semibold transition-all rounded">
                 자유게시판
               </Link>

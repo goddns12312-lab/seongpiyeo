@@ -2,9 +2,9 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { createPublicClient } from '@/lib/supabase/public';
-import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { formatPrice, formatDate } from '@/lib/utils';
+import { getBannerImageUrl, getOptimizedImageUrl } from '@/lib/image-url';
 import { Listing, Banner, REGIONS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
 
@@ -153,6 +153,14 @@ export default async function HomePage() {
 
   return (
     <div className="page-shell">
+      {topBanners && topBanners.length > 0 && (
+        <link
+          rel="preload"
+          as="image"
+          href={getBannerImageUrl(topBanners[0].image_url)}
+          fetchPriority="high"
+        />
+      )}
       {/* JSON-LD Scripts */}
       <script
         type="application/ld+json"
@@ -161,24 +169,26 @@ export default async function HomePage() {
 
       {/* Top Banners */}
       {topBanners && topBanners.length > 0 && (
-        <section className="border-b border-border-light relative py-5 md:py-6">
+        <section className="border-b border-border-light relative py-5 md:py-6" aria-label="프로모션 배너">
           <div className="w-full px-6 lg:px-8 max-w-[1650px] mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-              {topBanners.slice(0, 2).map((banner: Banner) => (
+              {topBanners.slice(0, 2).map((banner: Banner, index: number) => (
                 <Link
                   key={banner.id}
                   href={banner.link_url || '#'}
-                  className="relative rounded-lg overflow-hidden"
+                  className="relative rounded-lg overflow-hidden block"
+                  aria-label={banner.title || '프로모션 배너'}
                 >
                   <div className="relative w-full aspect-[7/2] bg-bg-tertiary">
                     <Image
-                      src={banner.image_url}
-                      alt={banner.title}
+                      src={getBannerImageUrl(banner.image_url)}
+                      alt=""
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover object-center"
-                      quality={75}
-                      priority
+                      quality={70}
+                      priority={index === 0}
+                      loading={index === 0 ? 'eager' : 'lazy'}
                     />
                   </div>
                 </Link>
@@ -201,49 +211,50 @@ export default async function HomePage() {
 
             <div className="grid grid-cols-3 gap-3 md:gap-4 py-5 px-4 md:px-6 surface-card max-w-2xl mx-auto mb-8 border-gold/25">
             <div className="text-center">
-              <p className="text-2xl md:text-3xl font-bold text-gold">{listingCount || 0}</p>
+              <p className="text-2xl md:text-3xl font-bold text-gold-dark dark:text-gold tabular-nums">{listingCount || 0}</p>
               <p className="text-text-secondary text-xs md:text-sm font-medium">매물</p>
             </div>
             <div className="text-center border-l border-r border-gold/30">
-              <p className="text-2xl md:text-3xl font-bold text-gold">{userCount || 0}</p>
+              <p className="text-2xl md:text-3xl font-bold text-gold-dark dark:text-gold tabular-nums">{userCount || 0}</p>
               <p className="text-text-secondary text-xs md:text-sm font-medium">회원</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl md:text-3xl font-bold text-gold">24/7</p>
+              <p className="text-2xl md:text-3xl font-bold text-gold-dark dark:text-gold">24/7</p>
               <p className="text-text-secondary text-xs md:text-sm font-medium">운영</p>
             </div>
           </div>
 
           {/* CTA Buttons - 3개 */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
-            <Button href="/listings" variant="primary" size="lg" className="font-semibold text-sm md:text-base">
-              📋 매물 보기
-            </Button>
-            <Button href="/listings/new" variant="secondary" size="lg" className="font-semibold text-sm md:text-base">
-              ✚ 매물 등록
-            </Button>
-            <Button href="/jobs/new" variant="secondary" size="lg" className="font-semibold text-sm md:text-base">
-              💼 구인 등록
-            </Button>
+            <Link href="/listings" className="btn-primary btn-lg">
+              매물 보기
+            </Link>
+            <Link href="/listings/new" className="btn-secondary btn-lg">
+              매물 등록
+            </Link>
+            <Link href="/jobs/new" className="btn-secondary btn-lg">
+              구인 등록
+            </Link>
           </div>
 
-          {/* Telegram Buttons */}
           <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
             <a
               href="https://t.me/korea24s"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block border-2 border-gold rounded-xl px-6 py-3 text-gold hover:bg-gold hover:text-bg-primary font-semibold transition duration-300"
+              className="inline-block border-2 border-gold rounded-xl px-6 py-3 text-gold-dark dark:text-gold hover:bg-gold hover:text-bg-primary font-semibold transition duration-300 text-center"
+              aria-label="텔레그램 문의 (새 창)"
             >
-              ✈️ 텔레그램문의
+              텔레그램 문의
             </a>
             <a
               href="https://t.me/pc365_112"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block border-2 border-red-500/70 rounded-xl px-6 py-3 text-red-500 hover:bg-red-500 hover:text-white font-semibold transition duration-300"
+              className="inline-block border-2 border-red-600 rounded-xl px-6 py-3 text-red-700 dark:text-red-400 hover:bg-red-600 hover:text-white font-semibold transition duration-300 text-center"
+              aria-label="단속 및 진상 단톡방 입장 (새 창)"
             >
-              🚨 단속 및 진상 단텔방 입장
+              단속 및 진상 단톡방 입장
             </a>
           </div>
         </div>
@@ -257,7 +268,7 @@ export default async function HomePage() {
           <div className="home-section-inner">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 매물</h2>
-              <Link href="/listings" className="text-gold text-sm font-medium hover:text-gold/80 transition-colors">
+              <Link href="/listings" className="text-gold-dark dark:text-gold text-sm font-medium hover:underline transition-colors">
                 전체 보기 →
               </Link>
             </div>
@@ -268,21 +279,22 @@ export default async function HomePage() {
                   key={listing.id}
                   href={`/listings/${listing.id}`}
                   className="group relative rounded-2xl overflow-hidden surface-card-hover hover-lift"
+                  aria-label={`${listing.title} 매물 상세보기`}
                 >
                   <div className="relative w-full aspect-[4/3] bg-bg-secondary">
                     {listing.main_image_url || listing.thumbnail_url ? (
                       <Image
-                        src={listing.main_image_url || listing.thumbnail_url}
-                        alt={listing.title}
+                        src={getOptimizedImageUrl(listing.main_image_url || listing.thumbnail_url, 320, 70)}
+                        alt=""
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
-                        quality={75}
-                        unoptimized
+                        quality={70}
+                        loading="lazy"
                       />
                     ) : (
-                      <div className="w-full h-full bg-bg-tertiary flex items-center justify-center text-text-secondary">
-                        📷
+                      <div className="w-full h-full bg-bg-tertiary flex items-center justify-center text-text-muted text-xs">
+                        이미지 없음
                       </div>
                     )}
                   </div>
@@ -304,7 +316,7 @@ export default async function HomePage() {
           <div className="home-section-inner">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 구인공고</h2>
-              <Link href="/jobs" className="text-gold text-sm font-medium hover:text-gold/80 transition-colors">
+              <Link href="/jobs" className="text-gold-dark dark:text-gold text-sm font-medium hover:underline transition-colors">
                 전체 보기 →
               </Link>
             </div>
@@ -338,7 +350,7 @@ export default async function HomePage() {
           <div className="home-section-inner">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 게시글</h2>
-              <Link href="/community" className="text-gold text-sm font-medium hover:text-gold/80 transition-colors">
+              <Link href="/community" className="text-gold-dark dark:text-gold text-sm font-medium hover:underline transition-colors">
                 전체 보기 →
               </Link>
             </div>
@@ -369,7 +381,7 @@ export default async function HomePage() {
       <section className="home-section relative">
         <div className="home-section-inner">
           <h2 className="text-2xl md:text-3xl font-bold text-center text-text-primary mb-2">
-            왜 <span className="text-gold">{SITE_CONFIG.businessName}</span>를 선택할까요?
+            왜 <span className="text-gold-dark dark:text-gold">{SITE_CONFIG.businessName}</span>를 선택할까요?
           </h2>
           <p className="text-center text-text-secondary text-sm md:text-base mb-8 max-w-2xl mx-auto">
             안전하고 투명한 성인PC 거래 플랫폼
@@ -398,7 +410,7 @@ export default async function HomePage() {
                 className="home-card p-4 md:p-5 text-center hover-lift"
               >
                 <div className="bg-gold/20 w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-gold-dark dark:text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={feature.icon} />
                   </svg>
                 </div>
@@ -412,23 +424,24 @@ export default async function HomePage() {
 
       {/* Bottom Banners */}
       {bottomBanners && bottomBanners.length > 0 && (
-        <section className="border-t border-border-light relative py-5 md:py-6">
+        <section className="border-t border-border-light relative py-5 md:py-6" aria-label="하단 배너">
           <div className="w-full px-6 lg:px-8 max-w-[1650px] mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               {bottomBanners.slice(0, 2).map((banner: Banner) => (
                 <Link
                   key={banner.id}
                   href={banner.link_url || '#'}
-                  className="relative rounded-lg overflow-hidden"
+                  className="relative rounded-lg overflow-hidden block"
+                  aria-label={banner.title || '하단 배너'}
                 >
                   <div className="relative w-full aspect-[7/2] bg-bg-tertiary">
                     <Image
-                      src={banner.image_url}
-                      alt={banner.title}
+                      src={getBannerImageUrl(banner.image_url)}
+                      alt=""
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover object-center"
-                      quality={75}
+                      quality={70}
                       loading="lazy"
                     />
                   </div>

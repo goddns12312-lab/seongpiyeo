@@ -1,6 +1,13 @@
 import Script from 'next/script';
+import Link from 'next/link';
 import { FAQAccordion } from '@/components/faq/FAQAccordion';
 import { buildFAQPageSchema } from '@/lib/seo-schema';
+import {
+  PageShell,
+  PageHero,
+  PageContainer,
+  SurfaceCard,
+} from '@/components/layout/PageShell';
 
 const faqs = [
   {
@@ -58,45 +65,7 @@ const faqs = [
       },
       {
         q: '양도양수 계약 시 주의사항은?',
-        a: '계약서 작성 시 권리금, 보증금, 월세, 시설 상태, 채무 현황 등을 명확히 기록하세요. 전문가 검토를 권장합니다.'
-      },
-      {
-        q: '보증금은 돌려받나요?',
-        a: '네. 보증금은 임대차 계약 종료 시 관례적으로 전액 반환됩니다. 다만 수선비 등으로 일부 차감될 수 있습니다.'
-      },
-      {
-        q: '매물 구분 기준이 뭔가요?',
-        a: '우리 사이트에서는 매물을 매매/양도양수와 임대로 구분합니다. 권리금을 포함한 경우 매매, 월세만 있는 경우 임대입니다.'
-      }
-    ]
-  },
-  {
-    category: '구인 & 채용',
-    items: [
-      {
-        q: 'PC방 직원 급여는 어떻게 되나요?',
-        a: '지역과 경력에 따라 다르지만, 알바 시급 10,000~12,000원, 정직원 월급 1,800~2,500만원 정도입니다.'
-      },
-      {
-        q: '성피요에서 직원을 구할 수 있나요?',
-        a: '네. 성피요 구인공고 게시판에서 PC방 직원 모집 공고를 올릴 수 있습니다. 무료로 이용할 수 있습니다.'
-      },
-      {
-        q: '구인공고 등록은 어떻게 하나요?',
-        a: '로그인 후 "구인공고" 섹션에서 "새 공고 올리기"를 클릭하여 직종, 급여, 근무 시간 등을 입력하면 됩니다.'
-      }
-    ]
-  },
-  {
-    category: '중고 거래',
-    items: [
-      {
-        q: 'PC방 장비를 중고로 살 수 있나요?',
-        a: '네. 성피요 중고장터에서 PC방 운영에 필요한 장비(PC, 의자, 책상, 냉난방기 등)를 중고 가격으로 구매할 수 있습니다.'
-      },
-      {
-        q: '중고 물품은 어떻게 판매하나요?',
-        a: '로그인 후 "중고장터"에서 판매 물품을 등록하면 됩니다. 사진, 설명, 가격을 입력하세요.'
+        a: '권리금, 보증금, 월세, 시설 상태, 임대차 계약 기간, 소방·위생 기준 충족 여부를 반드시 확인하세요. 계약서에 명확히 기재하고, 현장 실사를 권장합니다.'
       },
       {
         q: '거래는 어떻게 이루어지나요?',
@@ -131,43 +100,37 @@ export default function FAQPage() {
   );
 
   return (
-    <div className="bg-bg-primary min-h-screen py-12">
+    <PageShell>
       <Script
         id="faq-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl lg:text-5xl font-bold text-text-primary mb-4">
-            자주 묻는 질문
-          </h1>
-          <p className="text-text-secondary text-lg">
-            PC방 창업, 거래, 구인구직에 관해 자주 묻는 질문들을 모았습니다.
-          </p>
-        </div>
+      <PageHero
+        title="자주 묻는 질문"
+        description="PC방 창업, 거래, 구인구직에 관해 자주 묻는 질문들을 모았습니다."
+        breadcrumb={[{ label: '홈', href: '/' }, { label: 'FAQ' }]}
+      />
 
-        {/* FAQ Accordion */}
+      <PageContainer narrow className="py-10 md:py-12">
         <FAQAccordion faqs={faqs} />
 
-        {/* Footer CTA */}
-        <div className="mt-16 p-8 bg-bg-secondary border border-border-light rounded-lg text-center">
-          <h2 className="text-2xl font-bold text-text-primary mb-4">
+        <SurfaceCard className="cta-banner mt-16">
+          <h2 className="text-2xl font-bold text-text-primary mb-3">
             더 많은 매물을 확인하고 싶으신가요?
           </h2>
-          <p className="text-text-secondary mb-6">
+          <p className="text-text-secondary mb-6 text-sm">
             성피요에서는 전국 638개 이상의 성인PC 매물을 한눈에 볼 수 있습니다.
           </p>
-          <a
+          <Link
             href="/listings"
-            className="inline-block px-8 py-3 bg-gold text-bg-primary font-semibold rounded-lg hover:bg-gold-light transition-colors"
+            className="inline-flex px-8 py-3 bg-gold text-bg-primary font-semibold rounded-xl hover:bg-gold-light transition-colors"
           >
             전체 매물 보기
-          </a>
-        </div>
-      </div>
-    </div>
+          </Link>
+        </SurfaceCard>
+      </PageContainer>
+    </PageShell>
   );
 }

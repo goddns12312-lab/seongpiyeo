@@ -1,6 +1,15 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { createPublicClient } from '@/lib/supabase/public';
+import {
+  PageShell,
+  PageHero,
+  PageContainer,
+  StatCard,
+  SectionHeader,
+  SurfaceCard,
+  EmptyState,
+} from '@/components/layout/PageShell';
 
 export default async function CommunityPage() {
   let postsWithAuthor: any[] = [];
@@ -35,141 +44,95 @@ export default async function CommunityPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-800 dark:to-pink-800 text-white py-16 px-4">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-5xl font-bold mb-4">자유게시판</h1>
-          <p className="text-lg text-purple-100 mb-6">성인PC 거래 관련 자유로운 주제를 나누는 커뮤니티입니다</p>
+    <PageShell>
+      <PageHero
+        title="자유게시판"
+        description="성인PC 거래 관련 자유로운 주제를 나누는 커뮤니티입니다"
+        breadcrumb={[{ label: '홈', href: '/' }, { label: '자유게시판' }]}
+        actions={
           <Link href="/community/new">
-            <Button variant="primary" className="bg-gold hover:bg-gold-light">게시글 작성</Button>
+            <Button variant="primary">게시글 작성</Button>
           </Link>
-        </div>
-      </div>
+        }
+      />
 
-      <div className="max-w-5xl mx-auto px-4 py-12">
-        {/* Category Cards */}
-        <div className="grid md:grid-cols-4 gap-4 mb-12">
-          <div className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md transition-shadow">
-            <div className="text-3xl mb-2">💡</div>
-            <h3 className="font-semibold text-text-primary mb-1">정보공유</h3>
-            <p className="text-xs text-text-secondary">운영 노하우</p>
-          </div>
-          <div className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md transition-shadow">
-            <div className="text-3xl mb-2">❓</div>
-            <h3 className="font-semibold text-text-primary mb-1">질문답변</h3>
-            <p className="text-xs text-text-secondary">궁금한 점 물어보기</p>
-          </div>
-          <div className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md transition-shadow">
-            <div className="text-3xl mb-2">🎉</div>
-            <h3 className="font-semibold text-text-primary mb-1">이벤트</h3>
-            <p className="text-xs text-text-secondary">커뮤니티 이벤트</p>
-          </div>
-          <div className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md transition-shadow">
-            <div className="text-3xl mb-2">🤝</div>
-            <h3 className="font-semibold text-text-primary mb-1">거래후기</h3>
-            <p className="text-xs text-text-secondary">만족스러운 거래</p>
-          </div>
+      <PageContainer className="py-10 md:py-12">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          {[
+            { icon: '💡', title: '정보공유', desc: '운영 노하우' },
+            { icon: '❓', title: '질문답변', desc: '궁금한 점 물어보기' },
+            { icon: '🎉', title: '이벤트', desc: '커뮤니티 이벤트' },
+            { icon: '🤝', title: '거래후기', desc: '만족스러운 거래' },
+          ].map((cat) => (
+            <SurfaceCard key={cat.title} hover className="p-5 text-center">
+              <div className="text-3xl mb-3">{cat.icon}</div>
+              <h3 className="font-semibold text-text-primary mb-1">{cat.title}</h3>
+              <p className="text-xs text-text-secondary">{cat.desc}</p>
+            </SurfaceCard>
+          ))}
         </div>
 
-        {/* Stats */}
         <div className="grid md:grid-cols-3 gap-4 mb-12">
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 text-center">
-            <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">234</div>
-            <div className="text-sm text-text-secondary">총 게시글</div>
-          </div>
-          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-6 text-center">
-            <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">1.2K</div>
-            <div className="text-sm text-text-secondary">총 댓글</div>
-          </div>
-          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-6 text-center">
-            <div className="text-4xl font-bold text-amber-600 dark:text-amber-400 mb-2">892</div>
-            <div className="text-sm text-text-secondary">활성 회원</div>
-          </div>
+          <StatCard label="총 게시글" value={postsWithAuthor.length || '—'} />
+          <StatCard label="카테고리" value="4" accent="default" />
+          <StatCard label="커뮤니티" value="활성" accent="default" />
         </div>
 
-        {/* Posts Section */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-text-primary mb-8">최신 게시글</h2>
+        <SectionHeader title="최신 게시글" />
 
-          {postsWithAuthor.length > 0 ? (
-            <div className="space-y-3">
-              {postsWithAuthor.map((post, index) => (
-                <div
-                  key={post.id}
-                  className="bg-bg-secondary border border-border-light rounded-lg p-5 hover:shadow-md hover:border-gold/30 transition-all"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="text-text-secondary font-semibold text-lg w-8 flex-shrink-0">
-                      {postsWithAuthor.length - index}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <Link
-                        href={`/community/${post.id}`}
-                        className="text-gold hover:text-gold-light font-semibold transition-colors block truncate mb-2"
-                      >
-                        {post.title}
-                      </Link>
-                      <div className="flex flex-wrap gap-4 text-xs text-text-secondary">
-                        <span>{post.author}</span>
-                        <span>{post.date}</span>
-                        <span>👁 {post.views}</span>
-                        <span>💬 {post.comments}</span>
-                      </div>
+        {postsWithAuthor.length > 0 ? (
+          <div className="space-y-3 mb-12">
+            {postsWithAuthor.map((post, index) => (
+              <SurfaceCard key={post.id} hover className="p-5" as="article">
+                <div className="flex items-start gap-4">
+                  <span className="text-text-muted font-semibold text-sm w-8 shrink-0 tabular-nums">
+                    {postsWithAuthor.length - index}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <Link
+                      href={`/community/${post.id}`}
+                      className="text-text-primary hover:text-gold font-semibold transition-colors block truncate mb-2"
+                    >
+                      {post.title}
+                    </Link>
+                    <div className="flex flex-wrap gap-4 text-xs text-text-muted">
+                      <span>{post.author}</span>
+                      <time>{post.date}</time>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-text-secondary mb-4">등록된 게시글이 없습니다</p>
+              </SurfaceCard>
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            title="등록된 게시글이 없습니다"
+            description="첫 번째 글을 작성해 커뮤니티를 시작해 보세요"
+            action={
               <Link href="/community/new">
-                <Button variant="primary" className="bg-gold hover:bg-gold-light">첫 게시글 작성하기</Button>
+                <Button variant="primary">첫 게시글 작성하기</Button>
               </Link>
-            </div>
-          )}
-        </div>
+            }
+          />
+        )}
 
-        {/* Rules Section */}
-        <div className="bg-bg-secondary border border-border-light rounded-lg p-8 mb-12">
-          <h2 className="text-3xl font-bold text-text-primary mb-6">커뮤니티 규칙</h2>
-          <ul className="space-y-3 text-text-secondary">
-            <li className="flex gap-3">
-              <span className="text-gold">✓</span>
-              <span>모든 회원을 존중하는 태도로 댓글을 작성해 주세요</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-gold">✓</span>
-              <span>광고성 글이나 스팸은 엄격하게 제재됩니다</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-gold">✓</span>
-              <span>개인정보 공유는 삼가주세요</span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-gold">✓</span>
-              <span>부적절한 내용은 신고 버튼으로 신고해 주세요</span>
-            </li>
+        <SurfaceCard className="p-8 mb-8">
+          <h2 className="section-heading mb-6">커뮤니티 규칙</h2>
+          <ul className="space-y-3 text-text-secondary text-sm leading-relaxed">
+            {[
+              '모든 회원을 존중하는 태도로 댓글을 작성해 주세요',
+              '광고성 글이나 스팸은 엄격하게 제재됩니다',
+              '개인정보 공유는 삼가주세요',
+              '부적절한 내용은 신고 버튼으로 신고해 주세요',
+            ].map((rule) => (
+              <li key={rule} className="flex gap-3">
+                <span className="text-gold shrink-0">✓</span>
+                <span>{rule}</span>
+              </li>
+            ))}
           </ul>
-        </div>
-
-        {/* Pagination */}
-        <div className="flex justify-center gap-2">
-          {[1, 2, 3].map((page) => (
-            <button
-              key={page}
-              className={`px-4 py-2 rounded border transition-colors font-medium ${
-                page === 1
-                  ? 'bg-gold text-white border-gold'
-                  : 'border-border-light text-text-secondary hover:text-gold hover:border-gold'
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+        </SurfaceCard>
+      </PageContainer>
+    </PageShell>
   );
 }

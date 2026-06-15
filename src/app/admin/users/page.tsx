@@ -317,7 +317,7 @@ export default function AdminUsersPage() {
   if (loading) return <LoadingSkeleton />;
 
   return (
-    <div className="bg-bg-primary min-h-screen">
+    <div className="page-shell">
       <div className="relative overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-gold/5 via-transparent to-transparent pointer-events-none" />
 

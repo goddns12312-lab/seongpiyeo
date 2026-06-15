@@ -118,7 +118,7 @@ export default async function ListingsPage({ searchParams }: Props) {
   );
 
   return (
-    <div className="bg-bg-primary min-h-screen">
+    <div className="page-shell">
       <Script
         id="collection-schema"
         type="application/ld+json"
@@ -126,35 +126,38 @@ export default async function ListingsPage({ searchParams }: Props) {
           __html: JSON.stringify(collectionSchema),
         }}
       />
-      <section className="bg-gradient-to-br from-bg-secondary via-bg-primary to-bg-primary border-b border-border-light">
-        <div className="max-w-full mx-auto px-4 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3">
+
+      <header className="page-hero">
+        <div className="page-hero-inner-wide">
+          <nav className="breadcrumb" aria-label="breadcrumb">
+            <Link href="/">홈</Link>
+            <span className="breadcrumb-sep">/</span>
+            <span className="text-text-secondary">PC방 매물</span>
+          </nav>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div className="flex-1">
-              <h1 className="text-2xl lg:text-3xl font-bold text-text-primary mb-1">
+              <h1 className="text-3xl lg:text-4xl font-bold text-text-primary tracking-tight mb-2">
                 PC방 매물
               </h1>
-              <p className="text-sm text-text-secondary font-light">
+              <p className="text-sm text-text-secondary">
                 전체 {totalCount || 0}개 매물
                 {region && region !== 'all' && region !== 'undefined' && (
-                  <span className="ml-2 text-gold-light font-semibold">
+                  <span className="ml-2 text-gold font-semibold">
                     ({region} {filteredListings.length}개 표시 중)
                   </span>
                 )}
               </p>
             </div>
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center flex-wrap">
               <form className="flex gap-2">
                 <input
                   type="text"
                   name="search"
                   defaultValue={search || ''}
                   placeholder="매물 검색..."
-                  className="px-3 py-2 bg-bg-tertiary border border-border-light rounded text-text-primary placeholder-text-muted focus:outline-none focus:border-gold text-sm"
+                  className="input-field !py-2 !w-48"
                 />
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-gold text-bg-primary rounded text-sm font-semibold hover:bg-gold-light transition"
-                >
+                <button type="submit" className="pagination-btn !bg-gold !text-bg-primary !border-gold">
                   검색
                 </button>
               </form>
@@ -166,31 +169,27 @@ export default async function ListingsPage({ searchParams }: Props) {
             </div>
           </div>
         </div>
-      </section>
+      </header>
 
-      <section className="bg-gradient-to-r from-bg-secondary to-bg-tertiary sticky top-16 z-40 border-b border-border-accent backdrop-blur-sm bg-opacity-95">
-        <div className="max-w-full mx-auto px-4 lg:px-8 py-2">
-          <h3 className="text-text-primary font-semibold text-xs mb-1.5 uppercase tracking-widest opacity-75">
-            지역
-          </h3>
+      <section className="sticky top-16 z-40 border-b border-border-light bg-bg-secondary/90 backdrop-blur-md">
+        <div className="page-container-wide py-3">
+          <h2 className="text-text-muted font-semibold text-xs mb-2 uppercase tracking-widest">지역</h2>
           <RegionFilter selectedRegion={region || 'all'} regionCounts={regionCounts} />
         </div>
       </section>
 
-      <section className="max-w-full mx-auto px-4 lg:px-8 py-6">
+      <section className="page-container-wide py-8">
         <ListingGrid listings={filteredListings} />
       </section>
 
       {totalPages > 1 && (
-        <section className="max-w-full mx-auto px-4 lg:px-8 py-8">
+        <section className="page-container-wide py-8">
           <div className="flex items-center justify-center gap-2 flex-wrap">
             {currentPage > 1 && (
               <Link
                 href={`/listings?${search ? `search=${encodeURIComponent(search)}&` : ''}${region && region !== 'all' && region !== 'undefined' ? `region=${encodeURIComponent(region)}&` : ''}page=${currentPage - 1}`}
               >
-                <button className="px-4 py-2 bg-bg-secondary border border-border-light text-text-primary rounded hover:bg-bg-tertiary transition">
-                  이전
-                </button>
+                <button className="pagination-btn">이전</button>
               </Link>
             )}
 
@@ -203,10 +202,8 @@ export default async function ListingsPage({ searchParams }: Props) {
                     href={`/listings?${search ? `search=${encodeURIComponent(search)}&` : ''}${region && region !== 'all' && region !== 'undefined' ? `region=${encodeURIComponent(region)}&` : ''}page=${pageNum}`}
                   >
                     <button
-                      className={`px-3 py-2 rounded transition ${
-                        currentPage === pageNum
-                          ? 'bg-gold text-bg-primary font-semibold'
-                          : 'bg-bg-secondary border border-border-light text-text-primary hover:bg-bg-tertiary'
+                      className={`px-3 py-2 rounded-xl text-sm transition ${
+                        currentPage === pageNum ? 'pagination-btn-active' : 'pagination-btn'
                       }`}
                     >
                       {pageNum}
@@ -220,14 +217,12 @@ export default async function ListingsPage({ searchParams }: Props) {
               <Link
                 href={`/listings?${search ? `search=${encodeURIComponent(search)}&` : ''}${region && region !== 'all' && region !== 'undefined' ? `region=${encodeURIComponent(region)}&` : ''}page=${currentPage + 1}`}
               >
-                <button className="px-4 py-2 bg-bg-secondary border border-border-light text-text-primary rounded hover:bg-bg-tertiary transition">
-                  다음
-                </button>
+                <button className="pagination-btn">다음</button>
               </Link>
             )}
           </div>
 
-          <div className="text-center mt-4 text-text-secondary text-sm">
+          <div className="text-center mt-4 text-text-muted text-sm">
             {currentPage} / {totalPages} 페이지
           </div>
         </section>

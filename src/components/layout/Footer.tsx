@@ -10,7 +10,7 @@ export function Footer() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
           <div className="sm:col-span-2 lg:col-span-1">
-            <h3 className="text-xl font-bold bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-4" title="성피요 - 성인PC 매물 거래 플랫폼">
+            <h3 className="text-xl font-bold text-gold-dark dark:text-gold mb-4">
               {SITE_CONFIG.name}
             </h3>
             <p className="text-text-secondary text-sm leading-relaxed max-w-xs">

@@ -58,19 +58,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        <div className="bg-bg-secondary border border-border-light rounded-lg p-8">
+    <div className="page-shell min-h-screen flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md relative">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-gold/10 via-transparent to-transparent rounded-3xl blur-2xl" />
+        <div className="auth-card">
           <h1 className="text-3xl font-bold text-center text-text-primary mb-2">로그인</h1>
-          <p className="text-text-secondary text-center text-sm mb-8">PC방거래 계정으로 로그인하세요</p>
+          <p className="text-text-muted text-center text-sm mb-8">PC방거래 계정으로 로그인하세요</p>
 
           {error && (
-            <div className="bg-red-900/20 border border-red-900 text-red-200 px-4 py-3 rounded mb-6 text-sm">
+            <div className="bg-red-500/10 border border-red-500/25 text-red-600 dark:text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="block text-text-primary text-sm font-medium mb-2">아이디</label>
               <input
@@ -78,7 +79,7 @@ export default function LoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="아이디를 입력하세요"
-                className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary rounded focus:outline-none focus:border-gold"
+                className="input-field"
                 required
               />
             </div>
@@ -90,7 +91,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-2 bg-bg-tertiary border border-border-light text-text-primary rounded focus:outline-none focus:border-gold"
+                className="input-field"
                 required
               />
             </div>
@@ -100,9 +101,9 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <p className="text-center text-text-secondary text-sm mt-6">
+          <p className="text-center text-text-muted text-sm mt-6">
             계정이 없으신가요?{' '}
-            <Link href="/register" className="text-gold hover:text-opacity-80">
+            <Link href="/register" className="text-gold hover:text-gold-light font-medium">
               회원가입하기
             </Link>
           </p>
