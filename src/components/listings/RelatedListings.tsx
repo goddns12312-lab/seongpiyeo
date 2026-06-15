@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatPrice, formatDate } from '@/lib/utils';
+import { getOptimizedImageUrl } from '@/lib/image-url';
 
 interface RelatedListing {
   id: string;
@@ -59,12 +60,12 @@ export function RelatedListings({
             <div className="relative w-full aspect-video bg-bg-tertiary overflow-hidden">
               {listing.main_image_url ? (
                 <Image
-                  src={listing.main_image_url}
+                  src={getOptimizedImageUrl(listing.main_image_url, 400, 75)}
                   alt={listing.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  unoptimized
+                  loading="lazy"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
@@ -88,12 +89,12 @@ export function RelatedListings({
             {/* Content */}
             <div className="p-4">
               {/* Title */}
-              <h3 className="font-semibold text-text-primary mb-2 line-clamp-2 group-hover:text-gold transition-colors">
+              <h3 className="font-semibold text-text-primary mb-2 line-clamp-2 group-hover:text-gold-dark dark:group-hover:text-gold transition-colors">
                 {listing.title}
               </h3>
 
               {/* Price */}
-              <p className="text-sm font-bold text-gold mb-2">
+              <p className="text-sm font-bold text-gold-dark dark:text-gold mb-2">
                 {getPrice(listing)}
               </p>
 
@@ -118,7 +119,7 @@ export function RelatedListings({
             href={`/listings?region=${encodeURIComponent(currentRegion)}${
               currentDistrict ? `&district=${encodeURIComponent(currentDistrict)}` : ''
             }`}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gold hover:bg-gold hover:bg-opacity-10 rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gold-dark dark:text-gold hover:bg-gold/10 rounded-lg transition-colors"
           >
             {locationDisplay} 전체 매물 보기
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -2,7 +2,8 @@
 
 import { FormEvent, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { loginUser, getSession } from '@/lib/auth';
+import { loginUser } from '@/lib/auth-credentials';
+import { getSession } from '@/lib/auth-session';
 import { Button } from '@/components/ui/Button';
 
 function setSessionCookie(session: object) {

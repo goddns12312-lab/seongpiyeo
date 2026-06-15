@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { ensureAdminClient } from '@/lib/admin-client';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth-session';
 import { ADMIN_USER_SELECT } from '@/lib/account-queries';
 import { Badge } from '@/components/ui/Badge';
 import { formatDate } from '@/lib/utils';

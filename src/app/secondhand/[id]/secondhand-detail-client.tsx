@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { deleteSecondhandItem } from '@/lib/actions';
 import { createClient } from '@/lib/supabase/client';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth-session';
 
 export interface SecondhandItem {
   id: string;

@@ -49,12 +49,12 @@ export default function SupportPage() {
       <PageContainer narrow className="py-10 md:py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
           <SurfaceCard hover className="p-6">
-            <h2 className="text-lg font-semibold text-gold mb-3">이메일</h2>
+            <h2 className="text-lg font-semibold text-gold-dark dark:text-gold mb-3">이메일</h2>
             <p className="text-text-primary font-medium mb-2">support@pc365.kr</p>
             <p className="text-text-muted text-sm">24시간 문의 접수 가능합니다.</p>
           </SurfaceCard>
           <SurfaceCard hover className="p-6">
-            <h2 className="text-lg font-semibold text-gold mb-3">전화</h2>
+            <h2 className="text-lg font-semibold text-gold-dark dark:text-gold mb-3">전화</h2>
             <p className="text-text-primary font-medium mb-2">1588-1234</p>
             <p className="text-text-muted text-sm">평일 10:00 – 18:00</p>
           </SurfaceCard>

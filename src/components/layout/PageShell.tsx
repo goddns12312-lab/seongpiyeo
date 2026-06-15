@@ -87,7 +87,7 @@ export function StatCard({ label, value, accent = 'gold' }: StatCardProps) {
         ? 'text-red-400'
         : accent === 'default'
           ? 'text-text-primary'
-          : 'text-gold';
+          : 'text-gold-dark dark:text-gold';
 
   return (
     <div className="stat-card">

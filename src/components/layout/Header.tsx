@@ -103,28 +103,28 @@ export function Header() {
             <div className="hidden lg:flex gap-3 pl-4 border-l border-border-light/50">
               <Link
                 href="/guide"
-                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/guide') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/guide') ? 'text-gold-dark dark:text-gold-light' : 'text-text-secondary hover:text-gold-dark dark:hover:text-gold'}`}
               >
                 가이드
                 <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/guide') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
               </Link>
               <Link
                 href="/faq"
-                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/faq') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/faq') ? 'text-gold-dark dark:text-gold-light' : 'text-text-secondary hover:text-gold-dark dark:hover:text-gold'}`}
               >
                 FAQ
                 <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/faq') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
               </Link>
               <Link
                 href="/secondhand"
-                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/secondhand') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/secondhand') ? 'text-gold-dark dark:text-gold-light' : 'text-text-secondary hover:text-gold-dark dark:hover:text-gold'}`}
               >
                 중고장터
                 <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/secondhand') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
               </Link>
               <Link
                 href="/notice"
-                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/notice') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+                className={`cursor-pointer relative text-sm font-medium whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-bg-tertiary/50 ${isActive('/notice') ? 'text-gold-dark dark:text-gold-light' : 'text-text-secondary hover:text-gold-dark dark:hover:text-gold'}`}
               >
                 공지사항
                 <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/notice') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
@@ -135,14 +135,14 @@ export function Header() {
             <div className="hidden lg:flex gap-3 pl-4 border-l border-border-light/50 bg-bg-tertiary/50 rounded-lg px-3 py-1">
               <Link
                 href="/community"
-                className={`cursor-pointer relative text-sm font-semibold whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-gold/10 ${isActive('/community') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+                className={`cursor-pointer relative text-sm font-semibold whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-gold/10 ${isActive('/community') ? 'text-gold-dark dark:text-gold-light' : 'text-text-secondary hover:text-gold-dark dark:hover:text-gold'}`}
               >
                 자유게시판
                 <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/community') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
               </Link>
               <Link
                 href="/exchange-info"
-                className={`cursor-pointer relative text-sm font-semibold whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-gold/10 ${isActive('/exchange-info') ? 'text-gold-light' : 'text-text-secondary hover:text-gold'}`}
+                className={`cursor-pointer relative text-sm font-semibold whitespace-nowrap transition-all duration-300 group px-2 py-1 rounded hover:bg-gold/10 ${isActive('/exchange-info') ? 'text-gold-dark dark:text-gold-light' : 'text-text-secondary hover:text-gold-dark dark:hover:text-gold'}`}
               >
                 환수 및 정보
                 <span className={`absolute bottom-0 left-2 h-0.5 bg-gradient-to-r from-gold to-gold-light group-hover:w-[calc(100%-1rem)] transition-all duration-300 ${isActive('/exchange-info') ? 'w-[calc(100%-1rem)]' : 'w-0'}`}></span>
@@ -224,10 +224,10 @@ export function Header() {
             {/* Additional Menu */}
             <div className="flex flex-col gap-3">
               <span className="text-gold-dark dark:text-gold text-xs font-bold uppercase tracking-wider">정보</span>
-              <Link href="/secondhand" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold hover:bg-bg-tertiary/50 font-semibold transition-all rounded">
+              <Link href="/secondhand" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold-dark dark:hover:text-gold hover:bg-bg-tertiary/50 font-semibold transition-all rounded">
                 중고장터
               </Link>
-              <Link href="/notice" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold hover:bg-bg-tertiary/50 font-semibold transition-all rounded">
+              <Link href="/notice" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold-dark dark:hover:text-gold hover:bg-bg-tertiary/50 font-semibold transition-all rounded">
                 공지사항
               </Link>
             </div>
@@ -235,22 +235,23 @@ export function Header() {
             {/* Community Menu */}
             <div className="flex flex-col gap-2 bg-bg-tertiary/50 rounded-lg p-4 border border-border-light/30">
               <span className="text-gold-dark dark:text-gold text-xs font-bold uppercase tracking-wider">커뮤니티</span>
-              <Link href="/community" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold hover:bg-gold/10 font-semibold transition-all rounded">
+              <Link href="/community" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold-dark dark:hover:text-gold hover:bg-gold/10 font-semibold transition-all rounded">
                 자유게시판
               </Link>
-              <Link href="/exchange-info" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold hover:bg-gold/10 font-semibold transition-all rounded">
+              <Link href="/exchange-info" className="cursor-pointer px-3 py-2 text-text-primary hover:text-gold-dark dark:hover:text-gold hover:bg-gold/10 font-semibold transition-all rounded">
                 환수 및 정보
               </Link>
               <a
                 href="https://t.me/pc365_112"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="cursor-pointer px-3 py-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 font-semibold transition-all rounded"
+                className="cursor-pointer px-3 py-2 text-red-700 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-500/10 font-semibold transition-all rounded"
+                aria-label="블랙진상조회 (텔레그램, 새 창)"
               >
-                🚨 블랙진상조회
+                블랙진상조회
               </a>
             </div>
-            <Link href="/support" className="text-text-primary hover:text-gold font-semibold transition-colors">
+            <Link href="/support" className="text-text-primary hover:text-gold-dark dark:hover:text-gold font-semibold transition-colors">
               고객센터
             </Link>
             <div className="pt-4 border-t border-border-light/50 flex flex-col gap-3">

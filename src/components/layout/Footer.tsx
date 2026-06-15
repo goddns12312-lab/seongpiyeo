@@ -22,22 +22,22 @@ export function Footer() {
             <h4 className="text-text-primary font-semibold mb-4 text-xs uppercase tracking-widest">서비스</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/listings" className="text-text-secondary hover:text-gold transition-colors">
+                <Link href="/listings" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
                   매물 목록
                 </Link>
               </li>
               <li>
-                <Link href="/jobs" className="text-text-secondary hover:text-gold transition-colors">
+                <Link href="/jobs" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
                   구인구직
                 </Link>
               </li>
               <li>
-                <Link href="/community" className="text-text-secondary hover:text-gold transition-colors">
+                <Link href="/community" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
                   커뮤니티
                 </Link>
               </li>
               <li>
-                <Link href="/listings/new" className="text-text-secondary hover:text-gold transition-colors">
+                <Link href="/listings/new" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
                   매물 등록
                 </Link>
               </li>
@@ -48,22 +48,22 @@ export function Footer() {
             <h4 className="text-text-primary font-semibold mb-4 text-xs uppercase tracking-widest">정보</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/guide" className="text-text-secondary hover:text-gold transition-colors">
+                <Link href="/guide" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
                   가이드
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-text-secondary hover:text-gold transition-colors">
+                <Link href="/faq" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/notice" className="text-text-secondary hover:text-gold transition-colors">
+                <Link href="/notice" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
                   공지사항
                 </Link>
               </li>
               <li>
-                <Link href="/support" className="text-text-secondary hover:text-gold transition-colors">
+                <Link href="/support" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
                   고객센터
                 </Link>
               </li>

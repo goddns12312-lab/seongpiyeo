@@ -27,7 +27,7 @@ export function Button({
     primary:
       'bg-gradient-to-r from-gold to-gold-light text-bg-primary hover:shadow-hover disabled:opacity-60 border border-gold-dark/40 hover:border-gold',
     secondary:
-      'bg-bg-secondary border-2 border-border-light text-text-primary hover:bg-bg-tertiary hover:border-gold hover:text-gold disabled:opacity-60',
+      'bg-bg-secondary border-2 border-border-light text-text-primary hover:bg-bg-tertiary hover:border-gold hover:text-gold-dark dark:hover:text-gold disabled:opacity-60',
     danger:
       'bg-red-600 text-white hover:bg-red-700 hover:shadow-hover disabled:opacity-60 border border-red-700/40',
   };

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth-session';
 
 export default function NewPostPage() {
   const router = useRouter();

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth-session';
 import Link from 'next/link';
 
 interface LikeButtonProps {

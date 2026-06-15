@@ -5,7 +5,7 @@ import Script from 'next/script';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth-session';
 import { Job, REGIONS } from '@/types';
 import { JobCard } from '@/components/jobs/JobCard';
 import { JobFilters } from '@/components/jobs/JobFilters';

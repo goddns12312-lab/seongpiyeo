@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { createClient } from '@/lib/supabase/client';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth-session';
 import { uploadFilesToStorage } from '@/lib/image-upload';
 
 const REGIONS = ['서울', '경기', '인천', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];

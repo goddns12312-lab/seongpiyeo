@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth-session';
 import { createClient } from '@/lib/supabase/client';
 
 const REGIONS = ['전체', '서울', '경기', '인천', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];

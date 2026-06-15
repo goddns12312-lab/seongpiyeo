@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth-session';
 import { COMMUNITY_CATEGORIES } from '@/lib/community-categories';
 
 export default function CategoryPage({ params }: { params: { category: string } }) {

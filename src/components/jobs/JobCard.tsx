@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { memo } from 'react';
+import { getOptimizedImageUrl } from '@/lib/image-url';
 import { Job } from '@/types';
 import { EMPLOYMENT_TYPE_LABELS } from '@/types';
 
@@ -20,6 +21,9 @@ function JobCardComponent({ job }: JobCardProps) {
   const isRecruitement = job.category === 'recruitment';
   const relativeTime = getRelativeTime(new Date(job.created_at));
 
+  const imageUrl = getPrimaryImage(job);
+  const imageSrc = imageUrl ? getOptimizedImageUrl(imageUrl, 400, 75) : PLACEHOLDER_IMAGE;
+
   const href = job.slug ? `/jobs/${job.slug}` : `/jobs/${job.id}`;
 
   return (
@@ -28,7 +32,7 @@ function JobCardComponent({ job }: JobCardProps) {
         {/* Image Section */}
         <div className="relative w-full h-40 bg-bg-tertiary overflow-hidden">
           <Image
-            src={getPrimaryImage(job) || PLACEHOLDER_IMAGE}
+            src={imageSrc}
             alt={job.title}
             fill
             className="object-cover hover:scale-105 transition-transform duration-300"
@@ -48,7 +52,7 @@ function JobCardComponent({ job }: JobCardProps) {
         {/* Content Section */}
         <div className="p-4 flex flex-col gap-3">
           {/* Title */}
-          <h3 className="text-text-primary font-semibold text-base line-clamp-2 hover:text-gold transition-colors">
+          <h3 className="text-text-primary font-semibold text-base line-clamp-2 group-hover:text-gold-dark dark:group-hover:text-gold transition-colors">
             {job.title}
           </h3>
 
@@ -65,7 +69,7 @@ function JobCardComponent({ job }: JobCardProps) {
               {job.region}
             </span>
             {job.employment_type && (
-              <span className="bg-gold/10 text-gold px-2.5 py-1 rounded text-xs font-semibold">
+              <span className="bg-gold/10 text-gold-dark dark:text-gold px-2.5 py-1 rounded text-xs font-semibold">
                 {EMPLOYMENT_TYPE_LABELS[job.employment_type] || job.employment_type}
               </span>
             )}
@@ -73,7 +77,7 @@ function JobCardComponent({ job }: JobCardProps) {
 
           {/* Salary */}
           {job.salary && (
-            <p className="text-gold font-bold text-sm">
+            <p className="text-gold-dark dark:text-gold font-bold text-sm">
               {job.salary}
             </p>
           )}

@@ -2,7 +2,8 @@
 
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
-import { registerUser, checkUsernameAvailability } from '@/lib/auth';
+import { registerUser } from '@/lib/auth-credentials';
+import { checkUsernameAvailability } from '@/lib/auth';
 import { Button } from '@/components/ui/Button';
 
 export default function RegisterPage() {

@@ -3,7 +3,7 @@
 import { FormEvent, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { getSession, AuthSession } from '@/lib/auth';
+import { getSession, AuthSession } from '@/lib/auth-session';
 import { Button } from '@/components/ui/Button';
 import { formatDateTime } from '@/lib/utils';
 import { Comment } from '@/types';

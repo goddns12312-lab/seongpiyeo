@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { getSession, AuthSession } from '@/lib/auth';
+import { getSession, AuthSession } from '@/lib/auth-session';
 import { REGIONS, EMPLOYMENT_TYPE_LABELS } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { showToast, Toast } from '@/components/ui/Toast';

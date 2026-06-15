@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getSession, AuthSession } from '@/lib/auth';
+import { getSession, AuthSession } from '@/lib/auth-session';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
 import { ListingCard } from '@/components/listings/ListingCard';

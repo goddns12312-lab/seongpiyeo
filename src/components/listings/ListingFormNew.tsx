@@ -3,7 +3,7 @@
 import { FormEvent, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth-session';
 import { Button } from '@/components/ui/Button';
 import { REGIONS } from '@/types';
 import { createListing, createListingImages, updateListing, deleteListingImages } from '@/lib/actions';

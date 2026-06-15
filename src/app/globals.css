@@ -217,7 +217,7 @@ button {
   }
 
   .breadcrumb a {
-    @apply hover:text-gold transition-colors;
+    @apply hover:text-gold-dark dark:hover:text-gold transition-colors;
   }
 
   .breadcrumb-sep {

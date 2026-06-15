@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, memo } from 'react';
 import { formatPrice, formatDate } from '@/lib/utils';
+import { getOptimizedImageUrl } from '@/lib/image-url';
 import { Listing, ListingImage } from '@/types';
 
 interface ListingCardProps {
@@ -17,6 +18,7 @@ function ListingCardComponent({ listing, images = [] }: ListingCardProps) {
   // 이미지 배열 정렬 (order_num 기준)
   const sortedImages = images.length > 0 ? [...images].sort((a, b) => a.order_num - b.order_num) : [];
   const currentImage = sortedImages[imageIndex]?.url || listing.main_image_url || listing.thumbnail_url;
+  const imageSrc = currentImage ? getOptimizedImageUrl(currentImage, 480, 75) : null;
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -34,15 +36,14 @@ function ListingCardComponent({ listing, images = [] }: ListingCardProps) {
         {/* Image with Overlay */}
         <div className="relative w-full aspect-[16/9] sm:aspect-[4/3] md:aspect-[16/9] bg-gradient-to-br from-bg-tertiary via-bg-secondary to-bg-light flex items-center justify-center overflow-hidden">
           {/* 현재 이미지 표시 */}
-          {currentImage ? (
+          {imageSrc ? (
             <Image
-              src={currentImage}
+              src={imageSrc}
               alt={`${listing.title} - ${listing.region} PC방 매물`}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
-              priority={false}
-              unoptimized
+              loading="lazy"
             />
           ) : (
             <Image
@@ -106,7 +107,7 @@ function ListingCardComponent({ listing, images = [] }: ListingCardProps) {
           <div className="mb-2 pb-2 border-b border-border-light/50">
             {/* 메인 가격: 월세 */}
             <p className="text-text-muted text-xs font-medium mb-0.5 uppercase tracking-widest opacity-75">월세</p>
-            <p className="text-gold font-bold text-lg lg:text-xl mb-2">
+            <p className="text-gold-dark dark:text-gold font-bold text-lg lg:text-xl mb-2">
               {listing.monthly_rent ? formatPrice(listing.monthly_rent) : '정보없음'}
             </p>
 
@@ -161,15 +162,9 @@ function ListingCardComponent({ listing, images = [] }: ListingCardProps) {
             {/* Stats Row */}
             <div className="flex items-center justify-between gap-2 text-xs text-text-muted font-light">
               <div className="flex items-center gap-3">
-                <span className="flex items-center gap-1" aria-label="조회수">
-                  👁️ {listing.view_count}
-                </span>
-                <span className="flex items-center gap-1" aria-label="댓글 수">
-                  💬 {(listing as any).commentCount || 0}
-                </span>
-                <span className="flex items-center gap-1" aria-label="좋아요 수">
-                  ❤️ {(listing as any).favoriteCount || 0}
-                </span>
+                <span>조회 {listing.view_count}</span>
+                <span>댓글 {(listing as any).commentCount || 0}</span>
+                <span>좋아요 {(listing as any).favoriteCount || 0}</span>
               </div>
               <span>{formatDate(listing.created_at)}</span>
             </div>

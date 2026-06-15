@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth-session';
 import { deleteListing } from '@/lib/actions';
 import { Button } from '@/components/ui/Button';
 

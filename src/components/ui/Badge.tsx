@@ -5,7 +5,7 @@ interface BadgeProps {
 }
 
 const variantClasses = {
-  primary: 'bg-gold/15 text-gold border border-gold/25',
+  primary: 'bg-gold/15 text-gold-dark dark:text-gold border border-gold/25',
   secondary: 'bg-bg-tertiary/80 text-text-secondary border border-border-light',
   info: 'bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20',
   success: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20',
