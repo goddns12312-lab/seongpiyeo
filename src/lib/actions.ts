@@ -174,12 +174,11 @@ export async function createListing(data: any) {
 export async function createListingImages(images: any[]) {
   const supabase = await createClient();
 
-  // alt 필드를 포함하여 저장 (buildListingImageAlt로 생성된 텍스트)
-  const imagesToInsert = images.map(img => ({
+  const imagesToInsert = images.map((img, index) => ({
     listing_id: img.listing_id,
-    image_url: img.image_url,
-    alt: img.alt || '',
-    order_num: img.order_num || 0,
+    url: img.url || img.image_url,
+    is_primary: img.is_primary ?? index === 0,
+    order_num: img.order_num ?? index,
   }));
 
   const { error: imageError } = await supabase

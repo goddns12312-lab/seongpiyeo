@@ -419,19 +419,30 @@ function extractTitleKeyword(originalTitle: string): string {
 export function buildListingSeoTitle(listing: any, businessName: string = SITE_CONFIG.businessName): string {
   const { region, district, location, premium_price, deposit, monthly_rent, title: originalTitle } = listing;
 
-  // 지역 정보 (district 우선, 없으면 location, 모두 없으면 region만)
   const locationPart = district || location || '';
   const fullLocation = locationPart ? `${region} ${locationPart}` : region;
 
-  // 가격 정보 (최대 2개) - 띄어쓰기 추가
   const priceParts: string[] = [];
   if (premium_price) priceParts.push(`권리금 ${premium_price}만`);
   if (deposit && !premium_price) priceParts.push(`보증금 ${deposit}만`);
   if (monthly_rent && priceParts.length < 2) priceParts.push(`월세 ${monthly_rent}만`);
   const priceInfo = priceParts.length > 0 ? ` | ${priceParts.join(' · ')}` : '';
 
-  // 완성된 제목 (성인PC 매물로 더 명확하게)
-  // ⚠️ 브랜드명은 layout.tsx의 title.template에서 추가되므로 여기서는 제거
+  const userTitle = originalTitle?.trim() || '';
+
+  // 사용자 제목이 있으면 SEO 메타용으로 "제목 | 지역 | 가격" 조합
+  if (userTitle) {
+    let title = `${userTitle} | ${fullLocation}${priceInfo}`;
+    if (title.length > 60) {
+      title = `${userTitle} | ${fullLocation}`;
+    }
+    if (title.length > 60) {
+      title = userTitle.slice(0, 60);
+    }
+    return title;
+  }
+
+  // 제목 없을 때만 지역+가격 자동 생성
   let title = `${fullLocation} 성인PC 매물${priceInfo}`;
 
   // 60자 제한: 너무 길면 "매물" 제거

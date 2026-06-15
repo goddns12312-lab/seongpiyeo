@@ -331,15 +331,6 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
 
       const facilitiesText = formData.strengths.join(',');
 
-      // SEO 자동 생성
-      const seoTitle = buildListingSeoTitle({
-        region: formData.region,
-        district: formData.district,
-        title: formData.title,
-        premium_price: formData.royalty ? parseInt(formData.royalty) : null,
-        monthly_rent: formData.monthly_rent ? parseInt(formData.monthly_rent) : null,
-      });
-
       const seoDescription = buildListingSeoDescription({
         region: formData.region,
         district: formData.district,
@@ -352,7 +343,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
       });
 
       const listingData = {
-        title: seoTitle, // SEO 제목 사용
+        title: formData.title.trim(),
         description: formData.description,
         region: formData.region,
         district: formData.district,
@@ -570,7 +561,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
         {/* SEO 미리보기 */}
         {formData.title && formData.region && formData.district && (
           <div className="bg-blue-900/20 border border-blue-500 rounded-lg p-3 mt-3">
-            <p className="text-blue-300 text-xs font-semibold mb-1">SEO 제목 미리보기</p>
+            <p className="text-blue-300 text-xs font-semibold mb-1">검색엔진(SEO) 제목 미리보기 — 목록에는 위에 입력한 제목이 표시됩니다</p>
             <p className="text-text-primary text-sm">
               {buildListingSeoTitle({
                 region: formData.region,
