@@ -1,6 +1,6 @@
 /** 마이페이지·관리자 페이지용 경량 SELECT */
 
-export const MY_PROFILE_SELECT = 'id, nickname, email, phone, role, created_at';
+export const MY_PROFILE_SELECT = 'id, nickname, username, phone, role, created_at';
 
 export const MY_POST_SELECT = 'id, title, category, view_count, status, created_at, user_id';
 

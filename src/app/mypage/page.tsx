@@ -32,15 +32,33 @@ export default function MyPage() {
     }
 
     setUser(session);
-    fetchData(session.id, session.nickname);
+    fetchData(session.id, session.nickname, session.role);
   }, [router]);
 
-  const fetchData = async (userId: string, nickname: string) => {
+  const fetchData = async (userId: string, nickname: string, role: AuthSession['role']) => {
     try {
       const supabase = createClient();
 
-      const [profileRes, listingsRes, favoritesRes, postsRes] = await Promise.all([
-        supabase.from('profiles').select(MY_PROFILE_SELECT).eq('id', userId).single(),
+      const profileRes = await supabase
+        .from('profiles')
+        .select(MY_PROFILE_SELECT)
+        .eq('id', userId)
+        .single();
+
+      if (profileRes.data) {
+        setProfile(profileRes.data as Profile);
+      } else if (profileRes.error) {
+        // profiles 조회 실패 시 세션 정보로 최소 프로필 구성
+        setProfile({
+          id: userId,
+          email: '',
+          nickname,
+          role,
+          created_at: new Date().toISOString(),
+        });
+      }
+
+      const [listingsRes, postsRes] = await Promise.all([
         supabase
           .from('listings')
           .select(LISTING_LIST_SELECT)
@@ -48,23 +66,12 @@ export default function MyPage() {
           .order('created_at', { ascending: false })
           .limit(MY_LISTINGS_LIMIT),
         supabase
-          .from('favorites')
-          .select(`created_at, listings!inner(${LISTING_LIST_SELECT})`)
-          .eq('user_id', userId)
-          .eq('listings.status', 'active')
-          .order('created_at', { ascending: false })
-          .limit(LIKED_LISTINGS_LIMIT),
-        supabase
           .from('posts')
           .select(MY_POST_SELECT)
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
           .limit(5),
       ]);
-
-      if (profileRes.data) {
-        setProfile(profileRes.data as Profile);
-      }
 
       if (listingsRes.data) {
         setListings(
@@ -76,18 +83,6 @@ export default function MyPage() {
         );
       }
 
-      if (favoritesRes.data) {
-        const liked = favoritesRes.data
-          .map((row: { listings: Listing }) => row.listings)
-          .filter(Boolean)
-          .map((listing) => ({
-            ...listing,
-            commentCount: 0,
-            favoriteCount: 0,
-          }));
-        setLikedListings(liked as Listing[]);
-      }
-
       if (postsRes.data) {
         setPosts(
           postsRes.data.map((post) => ({
@@ -96,12 +91,39 @@ export default function MyPage() {
           })) as (Post & { profiles?: { nickname: string } })[]
         );
       }
+
+      // 좋아요 매물: JOIN 대신 2단계 조회 (RLS/스키마 호환)
+      const { data: favoritesData } = await supabase
+        .from('favorites')
+        .select('listing_id')
+        .eq('user_id', userId)
+        .limit(LIKED_LISTINGS_LIMIT);
+
+      if (favoritesData && favoritesData.length > 0) {
+        const likedIds = favoritesData.map((f) => f.listing_id);
+        const { data: likedListingsData } = await supabase
+          .from('listings')
+          .select(LISTING_LIST_SELECT)
+          .in('id', likedIds)
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
+
+        if (likedListingsData) {
+          setLikedListings(
+            likedListingsData.map((listing) => ({
+              ...listing,
+              commentCount: 0,
+              favoriteCount: 0,
+            })) as Listing[]
+          );
+        }
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading || !user || !profile) {
+  if (loading || !user) {
     return (
       <div className="bg-bg-primary min-h-screen py-12">
         <div className="max-w-5xl mx-auto px-4 text-center">
@@ -110,6 +132,14 @@ export default function MyPage() {
       </div>
     );
   }
+
+  const displayProfile = profile ?? {
+    id: user.id,
+    email: '',
+    nickname: user.nickname,
+    role: user.role,
+    created_at: new Date().toISOString(),
+  };
 
   return (
     <div className="bg-bg-primary min-h-screen py-12">
@@ -125,16 +155,16 @@ export default function MyPage() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-text-primary mb-1">
-                  {profile.nickname}
+                  {displayProfile.nickname}
                 </h1>
                 <p className="text-text-secondary text-sm">@{user.username}</p>
-                {profile.phone && (
-                  <p className="text-text-secondary text-sm">{profile.phone}</p>
+                {displayProfile.phone && (
+                  <p className="text-text-secondary text-sm">{displayProfile.phone}</p>
                 )}
               </div>
             </div>
 
-            {profile.role === 'admin' && (
+            {displayProfile.role === 'admin' && (
               <Link href="/admin">
                 <Button variant="primary" size="sm">
                   관리자 페이지
