@@ -18,11 +18,6 @@ function ListingCardComponent({ listing, images = [] }: ListingCardProps) {
   const sortedImages = images.length > 0 ? [...images].sort((a, b) => a.order_num - b.order_num) : [];
   const currentImage = sortedImages[imageIndex]?.url || listing.main_image_url || listing.thumbnail_url;
 
-  // ✅ 이미지 URL 로깅 (개발용)
-  if (typeof window !== 'undefined') {
-    console.log(`[ListingCard] idx=${listing.idx?.substring(0, 10)} | images=${images.length} | mainImage=${listing.main_image_url?.substring(Math.max(0, listing.main_image_url.length - 40))}`);
-  }
-
   const handlePrevImage = (e: React.MouseEvent) => {
     e.preventDefault();
     setImageIndex((prev) => (prev === 0 ? sortedImages.length - 1 : prev - 1));

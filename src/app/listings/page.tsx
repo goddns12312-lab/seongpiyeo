@@ -1,32 +1,28 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Script from 'next/script';
-import { createClient } from '@/lib/supabase/server';
 import { ListingGrid } from '@/components/listings/ListingGrid';
 import { Button } from '@/components/ui/Button';
-import { REGIONS } from '@/types';
 import { RegionFilter } from '@/components/listings/RegionFilter';
 import { SITE_CONFIG } from '@/lib/site';
 import { buildListingsMetadata, addRobotsToMetadata } from '@/lib/seo-metadata';
 import { buildCollectionPageSchema } from '@/lib/seo-schema';
 import { createCanonicalUrl } from '@/lib/url-utils';
+import { getOgImageUrl } from '@/lib/seo-assets';
+import { createPublicClient } from '@/lib/supabase/public';
+import { getCachedRegionCounts, LISTING_LIST_SELECT } from '@/lib/listing-queries';
 
-// 2분마다 재생성 (ISR 캐싱) - Cold Start 최소화
 export const revalidate = 120;
 
 export async function generateMetadata(
   { searchParams }: Props,
-  parent: any
 ): Promise<Metadata> {
   const { region } = await searchParams;
-
-  // SEO 메타데이터 빌더 함수 사용
   const baseMeta = buildListingsMetadata(region);
-
-  // robots 태그 추가
   const metaWithRobots = addRobotsToMetadata(baseMeta, {
     googlebot: 'index, follow, max-snippet:-1, max-image-preview:large',
   });
+  const ogImage = getOgImageUrl();
 
   return {
     title: metaWithRobots.title,
@@ -46,7 +42,7 @@ export async function generateMetadata(
       siteName: SITE_CONFIG.businessName,
       images: [
         {
-          url: metaWithRobots.ogImage || `${SITE_CONFIG.url}/og-listings.png`,
+          url: metaWithRobots.ogImage || ogImage,
           width: 1200,
           height: 630,
           alt: `${SITE_CONFIG.businessName} - PC방 매물 목록`,
@@ -58,7 +54,7 @@ export async function generateMetadata(
       card: 'summary_large_image',
       title: metaWithRobots.ogTitle,
       description: metaWithRobots.ogDescription,
-      images: [`${SITE_CONFIG.url}/og-listings.png`],
+      images: [metaWithRobots.ogImage || ogImage],
     },
   };
 }
@@ -74,127 +70,45 @@ export default async function ListingsPage({ searchParams }: Props) {
   const currentPage = Math.max(1, parseInt(page || '1', 10));
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
-  // 전체 개수 조회 (count 전용)
-  const countStart = Date.now();
-  let countQ = supabase
+  let dataQuery = supabase
     .from('listings')
-    .select('id', { count: 'exact', head: true })
+    .select(LISTING_LIST_SELECT, { count: 'exact' })
     .eq('status', 'active');
 
   if (search) {
-    countQ = countQ.ilike('title', `%${search}%`);
+    dataQuery = dataQuery.ilike('title', `%${search}%`);
   }
   if (region && region !== 'all' && region !== 'undefined') {
-    countQ = countQ.eq('region', region);
+    dataQuery = dataQuery.eq('region', region);
   }
 
-  const { count: totalCount } = await countQ;
-  const countDuration = Date.now() - countStart;
+  dataQuery = dataQuery
+    .order('created_at', { ascending: false })
+    .range(offset, offset + ITEMS_PER_PAGE - 1);
 
-  // 매물 조회를 위한 쿼리 빌더 (listing_images 분리)
-  // 임시 테스트: select('*')로 전체 컬럼 조회 - select 컬럼 최적화 문제인지 확인
-  const buildQuery = () => {
-    let q = supabase
-      .from('listings')
-      .select('*')
-      .eq('status', 'active');
-
-    if (search) {
-      q = q.ilike('title', `%${search}%`);
-    }
-
-    if (region && region !== 'all' && region !== 'undefined') {
-      q = q.eq('region', region);
-    }
-
-    // ✅ 정렬을 마지막에 명시적으로 적용 (모든 필터 후)
-    q = q.order('created_at', { ascending: false });
-
-    return q;
-  };
-
-  // 페이지네이션 적용 데이터 조회
-  const dataStart = Date.now();
-  const dataQuery = buildQuery();
-  const { data: allListings, error: dataError } = await dataQuery.range(offset, offset + ITEMS_PER_PAGE - 1);
-  const dataDuration = Date.now() - dataStart;
+  const [{ data: allListings, count: totalCount, error: dataError }, regionCounts] =
+    await Promise.all([dataQuery, getCachedRegionCounts()]);
 
   if (dataError) {
-    console.error('[Listings Page ERROR]', {
-      error: dataError.message,
-      code: dataError.code,
-      details: dataError.details,
-      hint: dataError.hint,
-    });
+    console.error('[Listings Page ERROR]', dataError.message);
   }
 
-  console.log('[Listings Page Performance]', {
-    region: region || 'all',
-    page: currentPage,
-    offset,
-    range: `${offset} to ${offset + ITEMS_PER_PAGE - 1}`,
-    totalCount,
-    resultCount: allListings?.length || 0,
-    hasError: !!dataError,
-    countQueryMs: countDuration,
-    dataQueryMs: dataDuration,
-    totalMs: countDuration + dataDuration,
-    timestamp: new Date().toISOString(),
-  });
+  const listingsWithMeta =
+    allListings?.map((listing) => ({
+      ...listing,
+      commentCount: 0,
+      favoriteCount: 0,
+    })) || [];
 
-  // ✅ 서버에서 반환된 데이터 로깅 (첫 5개만)
-  if (allListings && allListings.length > 0) {
-    console.log('\n[Listings Query Result] 첫 5개:');
-    allListings.slice(0, 5).forEach((l, i) => {
-      console.log(`${i + 1}. idx=${l.idx} | title=${l.title.substring(0, 30)} | created_at=${l.created_at}`);
-    });
-  } else {
-    console.warn('[Listings Query Result] 데이터 없음', { allListings, dataError });
-  }
-
-  // 리스팅에 메타데이터 추가 (댓글/좋아요 카운트는 0으로 설정 - 나중에 클라이언트에서 갱신 가능)
-  const listingsWithMeta = allListings?.map(listing => ({
-    ...listing,
-    commentCount: 0,
-    favoriteCount: 0
-  })) || [];
-
-  // 지역별 개수를 Promise.all 병렬 조회로 복구 (11개 지역 동시 요청)
-  const regionCountsStart = Date.now();
-  const regionCountPromises = REGIONS.map(region =>
-    supabase
-      .from('listings')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'active')
-      .eq('region', region)
-      .then(({ count }) => ({ region, count: count || 0 }))
-      .catch(() => ({ region, count: 0 })) // 실패 시 0 반환
-  );
-
-  const regionResults = await Promise.all(regionCountPromises);
-  const regionCounts: Record<string, number> = {};
-  regionResults.forEach(({ region, count }) => {
-    regionCounts[region] = count;
-  });
-  const regionCountsDuration = Date.now() - regionCountsStart;
-
-  console.log('[Region Counts Performance]', {
-    totalRegions: REGIONS.length,
-    durationMs: regionCountsDuration,
-    counts: regionCounts,
-    timestamp: new Date().toISOString(),
-  });
-
-  const filteredListings = listingsWithMeta || [];
+  const filteredListings = listingsWithMeta;
   const totalPages = Math.ceil((totalCount || 0) / ITEMS_PER_PAGE);
 
-  // CollectionPage 스키마 생성
   const collectionItems = filteredListings.slice(0, 10).map((listing) => ({
     name: listing.title,
     url: `${SITE_CONFIG.url}/listings/${listing.id}`,
-    description: `${listing.region} ${listing.district || ''} - ${listing.price?.toLocaleString() || '상담'}만원`,
+    description: `${listing.region} ${listing.district || ''}`,
   }));
 
   const collectionSchema = buildCollectionPageSchema(
@@ -212,7 +126,6 @@ export default async function ListingsPage({ searchParams }: Props) {
           __html: JSON.stringify(collectionSchema),
         }}
       />
-      {/* Header */}
       <section className="bg-gradient-to-br from-bg-secondary via-bg-primary to-bg-primary border-b border-border-light">
         <div className="max-w-full mx-auto px-4 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3">
@@ -223,7 +136,9 @@ export default async function ListingsPage({ searchParams }: Props) {
               <p className="text-sm text-text-secondary font-light">
                 전체 {totalCount || 0}개 매물
                 {region && region !== 'all' && region !== 'undefined' && (
-                  <span className="ml-2 text-gold-light font-semibold">({region} {filteredListings.length}개 표시 중)</span>
+                  <span className="ml-2 text-gold-light font-semibold">
+                    ({region} {filteredListings.length}개 표시 중)
+                  </span>
                 )}
               </p>
             </div>
@@ -244,27 +159,28 @@ export default async function ListingsPage({ searchParams }: Props) {
                 </button>
               </form>
               <Link href="/listings/new">
-                <Button variant="primary" size="sm">매물 등록</Button>
+                <Button variant="primary" size="sm">
+                  매물 등록
+                </Button>
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Filter Section */}
       <section className="bg-gradient-to-r from-bg-secondary to-bg-tertiary sticky top-16 z-40 border-b border-border-accent backdrop-blur-sm bg-opacity-95">
         <div className="max-w-full mx-auto px-4 lg:px-8 py-2">
-          <h3 className="text-text-primary font-semibold text-xs mb-1.5 uppercase tracking-widest opacity-75">지역</h3>
+          <h3 className="text-text-primary font-semibold text-xs mb-1.5 uppercase tracking-widest opacity-75">
+            지역
+          </h3>
           <RegionFilter selectedRegion={region || 'all'} regionCounts={regionCounts} />
         </div>
       </section>
 
-      {/* Listings Grid */}
       <section className="max-w-full mx-auto px-4 lg:px-8 py-6">
         <ListingGrid listings={filteredListings} />
       </section>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <section className="max-w-full mx-auto px-4 lg:px-8 py-8">
           <div className="flex items-center justify-center gap-2 flex-wrap">
