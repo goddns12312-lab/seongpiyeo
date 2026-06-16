@@ -41,27 +41,29 @@ export function ReportPostButton({ postId }: { postId: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-xs text-text-muted hover:text-red-400 transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border border-border-light text-text-secondary hover:border-red-400/60 hover:text-red-400 hover:bg-red-500/5 transition-colors"
+        aria-label="게시글 신고"
       >
-        신고
+        🚩 신고하기
       </button>
     );
   }
 
   return (
-    <div className="mt-4 p-4 bg-bg-secondary border border-border-light rounded-lg">
-      <p className="text-sm text-text-primary font-medium mb-2">게시글 신고</p>
+    <div className="p-4 bg-bg-secondary border border-red-500/30 rounded-lg">
+      <p className="text-sm text-text-primary font-semibold mb-2">게시글 신고</p>
+      <p className="text-xs text-text-muted mb-3">스팸·욕설·허위정보 등 신고 사유를 적어주세요.</p>
       <textarea
         value={reason}
         onChange={(e) => setReason(e.target.value)}
         placeholder="신고 사유를 입력해주세요"
         rows={3}
-        className="w-full px-3 py-2 bg-bg-primary border border-border-light text-text-primary rounded text-sm mb-2"
+        className="w-full px-3 py-2 bg-bg-primary border border-border-light text-text-primary rounded text-sm mb-2 focus:border-gold outline-none"
       />
       {message && <p className="text-xs text-gold mb-2">{message}</p>}
       <div className="flex gap-2">
         <Button variant="primary" size="sm" isLoading={loading} onClick={handleSubmit}>
-          신고하기
+          신고 접수
         </Button>
         <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
           취소

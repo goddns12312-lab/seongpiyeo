@@ -146,12 +146,15 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
             <CommunityDetailClient postId={id} />
           </div>
 
-          <div className="flex flex-wrap gap-4 text-text-secondary text-sm mb-8 pb-8 border-b border-border-light">
+          <div className="flex flex-wrap items-center gap-4 text-text-secondary text-sm mb-8 pb-8 border-b border-border-light">
             <span>카테고리: {categoryLabel}</span>
             <span>작성자: {authorNickname}</span>
             <span>작성일: {new Date(post.created_at).toLocaleDateString('ko-KR')}</span>
             <span>조회수: {post.view_count || 0}</span>
             <span>댓글: {comments.length}</span>
+            <div className="ml-auto">
+              <ReportPostButton postId={id} />
+            </div>
           </div>
 
           <PostContent content={post.content || ''} />
@@ -160,7 +163,6 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
 
           <div className="bg-bg-secondary border border-border-light rounded-lg p-6 mb-12">
             <CommentSection postId={id} initialComments={comments} />
-            <ReportPostButton postId={id} />
           </div>
 
           {relatedPosts.length > 0 && (
