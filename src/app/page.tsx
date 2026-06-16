@@ -9,6 +9,7 @@ import { Listing, Banner, REGIONS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
 import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 import { getJobPublicPath } from '@/lib/jobs-data';
+import { getCachedRegionCounts } from '@/lib/listing-queries';
 
 export const revalidate = 3600;
 
@@ -67,6 +68,7 @@ export default async function HomePage() {
     { data: latestListings },
     { data: latestJobs },
     { data: latestPosts },
+    regionCounts,
   ] = await Promise.all([
     supabase
       .from('banners')
@@ -89,9 +91,8 @@ export default async function HomePage() {
       .from('listings')
       .select('id, title, price, region, thumbnail_url, main_image_url, price_type')
       .eq('status', 'active')
-      .not('main_image_url', 'is', null)
       .order('created_at', { ascending: false })
-      .limit(6),
+      .limit(12),
     supabase
       .from('jobs')
       .select('id, slug, title, region, category')
@@ -104,6 +105,7 @@ export default async function HomePage() {
       .eq('status', 'active')
       .order('created_at', { ascending: false })
       .limit(6),
+    getCachedRegionCounts(),
   ]);
 
   const baseUsers = 2859;
@@ -227,7 +229,7 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4">
               {latestListings.map((listing: any) => (
                 <Link
                   key={listing.id}
@@ -259,6 +261,33 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
+          </div>
+        </section>
+      )}
+
+      {/* Region Hub Links */}
+      {regionCounts && Object.values(regionCounts).some((count) => count > 0) && (
+        <section className="home-section">
+          <div className="home-section-inner">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-text-primary">지역별 매물</h2>
+              <Link href="/listings" className="text-gold-dark dark:text-gold text-sm font-medium hover:underline transition-colors">
+                전체 보기 →
+              </Link>
+            </div>
+            <nav aria-label="지역별 매물" className="flex flex-wrap gap-2">
+              {REGIONS.filter((region) => (regionCounts[region] || 0) > 0)
+                .sort((a, b) => (regionCounts[b] || 0) - (regionCounts[a] || 0))
+                .map((region) => (
+                  <Link
+                    key={region}
+                    href={`/listings/region/${encodeURIComponent(region)}`}
+                    className="px-3 py-2 rounded-xl border border-border-light text-sm text-text-secondary hover:border-gold hover:text-gold transition-colors"
+                  >
+                    {region} ({regionCounts[region]})
+                  </Link>
+                ))}
+            </nav>
           </div>
         </section>
       )}

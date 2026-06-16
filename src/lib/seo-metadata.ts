@@ -524,6 +524,116 @@ export function buildListingSeoDescription(listing: any): string {
   return desc.length > 160 ? desc.slice(0, 157) + '...' : desc;
 }
 
+function listingContentVariant(id: string): number {
+  return [...id].reduce((acc, char) => acc + char.charCodeAt(0), 0) % 5;
+}
+
+function formatListingPriceLine(listing: Record<string, unknown>): string {
+  const premium = listing.premium_price as number | undefined;
+  const deposit = listing.deposit as number | undefined;
+  const monthly = listing.monthly_rent as number | undefined;
+  const parts: string[] = [];
+
+  if (premium) parts.push(`권리금 ${premium}만원`);
+  if (deposit) parts.push(`보증금 ${deposit}만원`);
+  if (monthly) parts.push(`월세 ${monthly}만원`);
+
+  return parts.length > 0 ? parts.join(', ') : '가격은 상담 후 안내';
+}
+
+function resolveListingLocation(listing: Record<string, unknown>): string {
+  const region = String(listing.region || '');
+  const district = listing.district as string | undefined;
+  const location = listing.location as string | undefined;
+  const address = listing.address as string | undefined;
+
+  if (district) return `${region} ${district}`;
+  if (location) return `${region} ${location}`;
+  if (address) return `${region} ${address}`;
+  return region;
+}
+
+/**
+ * 매물 상세 본문용 고유 요약 (크롤 매물도 description 없이 고유 텍스트 확보)
+ */
+export function buildListingBodySummary(listing: Record<string, unknown>): string[] {
+  const id = String(listing.id || '');
+  const variant = listingContentVariant(id);
+  const locationPart = resolveListingLocation(listing);
+  const title = String(listing.title || `${locationPart} 성인PC 매물`);
+  const priceLine = formatListingPriceLine(listing);
+  const pcCount = listing.pc_count as number | undefined;
+  const areaSqm = listing.area_sqm as number | undefined;
+  const floor = listing.floor as string | undefined;
+  const priceType = listing.price_type as string | undefined;
+  const idx = listing.idx as string | undefined;
+  const monthlyProfit = listing.monthly_profit as number | undefined;
+  const monthlyRevenue = listing.monthly_revenue as number | undefined;
+  const availableDate = listing.available_date as string | undefined;
+  const facilities = listing.facilities as string | undefined;
+  const viewCount = (listing.view_count as number | undefined) ?? 0;
+
+  const dealType =
+    priceType === 'lease' ? '임대' : premium_price_exists(listing) ? '매매·양도양수' : '거래';
+  const paragraphs: string[] = [];
+
+  const introTemplates = [
+    `${locationPart}에 위치한 「${title}」 매물입니다. ${priceLine} 조건의 ${dealType} 정보를 성피요에서 확인할 수 있습니다.`,
+    `성피요 ${locationPart} ${dealType} 매물 「${title}」입니다. 현재 조건은 ${priceLine}이며, 지역 상권과 함께 비교 검토할 수 있습니다.`,
+    `${locationPart} 성인PC ${dealType} 매물 「${title}」을 소개합니다. ${priceLine} 기준으로 창업·인수 검토에 활용해 보세요.`,
+    `「${title}」은 ${locationPart}에서 거래 중인 성인PC 매물입니다. ${priceLine} 조건과 함께 상세 스펙을 확인할 수 있습니다.`,
+    `${locationPart} 지역 성인PC 창업·인수를 검토 중이라면 「${title}」(${priceLine}) 매물 정보를 참고해 보세요.`,
+  ];
+  paragraphs.push(introTemplates[variant]);
+
+  const specParts: string[] = [];
+  if (areaSqm) specParts.push(`면적 ${areaSqm}평`);
+  if (pcCount) specParts.push(`PC ${pcCount}대`);
+  if (floor) specParts.push(`${floor}층`);
+  if (specParts.length > 0) {
+    const specTemplates = [
+      `점포 규모는 ${specParts.join(', ')}입니다. 좌석 수와 공간 활용도를 함께 비교해 보시기 바랍니다.`,
+      `매물 스펙: ${specParts.join(' · ')}. 동일 ${locationPart} 지역의 다른 매물과 나란히 비교할 수 있습니다.`,
+      `${specParts.join(', ')} 조건으로 운영 가능한 ${locationPart} 성인PC 매물입니다.`,
+    ];
+    paragraphs.push(specTemplates[variant % specTemplates.length]);
+  }
+
+  if (monthlyRevenue || monthlyProfit) {
+    const revenueParts: string[] = [];
+    if (monthlyRevenue) revenueParts.push(`월 매출 ${monthlyRevenue}만원`);
+    if (monthlyProfit) revenueParts.push(`월 수익 ${monthlyProfit}만원`);
+    paragraphs.push(
+      `운영 지표로 ${revenueParts.join(', ')} 정보가 제공됩니다. 실제 수익은 상권·운영 방식에 따라 달라질 수 있습니다.`
+    );
+  }
+
+  if (facilities?.trim()) {
+    const facilityText = facilities.trim().slice(0, 120);
+    paragraphs.push(`시설·옵션: ${facilityText}${facilities.length > 120 ? '…' : ''}`);
+  }
+
+  if (availableDate) {
+    paragraphs.push(`입점 가능 시점은 ${availableDate} 기준입니다. 일정 조율이 필요하면 연락처로 문의해 주세요.`);
+  }
+
+  const closingTemplates = [
+    `${locationPart} 성인PC 매물은 성피요 지역 목록에서 추가로 비교할 수 있습니다. 조회수 ${viewCount}회.`,
+    idx
+      ? `성피요 등록번호 ${idx}. ${locationPart} 인근 매물과 함께 검토해 보세요.`
+      : `${locationPart} 인근의 다른 성인PC 매물도 함께 확인해 보세요.`,
+    `권리금·월세·보증금 조건은 변경될 수 있으니, 최신 정보는 이 페이지에서 다시 확인해 주세요.`,
+  ];
+  paragraphs.push(closingTemplates[variant % closingTemplates.length]);
+
+  return paragraphs;
+}
+
+function premium_price_exists(listing: Record<string, unknown>): boolean {
+  const premium = listing.premium_price as number | undefined;
+  return typeof premium === 'number' && premium > 0;
+}
+
 /**
  * Listings 이미지 Alt Text 생성
  * 형식: {지역} {district/location} 성인PC 매물 이미지 - 권리금 {amount}, {면적}평

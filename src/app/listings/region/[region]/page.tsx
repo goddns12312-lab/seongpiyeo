@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Script from 'next/script';
 import { notFound } from 'next/navigation';
 import { createPublicClient } from '@/lib/supabase/public';
-import { LISTING_LIST_SELECT, getRegionListingCount } from '@/lib/listing-queries';
+import { LISTING_LIST_SELECT, getRegionListingCount, getCachedRegionCounts } from '@/lib/listing-queries';
 import { getOgImageUrl } from '@/lib/seo-assets';
 import { ListingGrid } from '@/components/listings/ListingGrid';
 import { Button } from '@/components/ui/Button';
@@ -155,19 +155,26 @@ export default async function RegionListingsPage({ params, searchParams }: Props
 
   const supabase = createPublicClient();
 
-  let dataQuery = supabase
-    .from('listings')
-    .select(LISTING_LIST_SELECT, { count: 'exact' })
-    .eq('status', 'active')
-    .eq('region', decodedRegion);
+  const [listingsResult, regionCounts] = await Promise.all([
+    (async () => {
+      let dataQuery = supabase
+        .from('listings')
+        .select(LISTING_LIST_SELECT, { count: 'exact' })
+        .eq('status', 'active')
+        .eq('region', decodedRegion);
 
-  if (search) {
-    dataQuery = dataQuery.ilike('title', `%${search}%`);
-  }
+      if (search) {
+        dataQuery = dataQuery.ilike('title', `%${search}%`);
+      }
 
-  const { data: allListings, count: totalCount } = await dataQuery
-    .order('created_at', { ascending: false })
-    .range(offset, offset + ITEMS_PER_PAGE - 1);
+      return dataQuery
+        .order('created_at', { ascending: false })
+        .range(offset, offset + ITEMS_PER_PAGE - 1);
+    })(),
+    getCachedRegionCounts(),
+  ]);
+
+  const { data: allListings, count: totalCount } = listingsResult;
 
   const listingsWithMeta =
     allListings?.map((listing) => ({
@@ -387,6 +394,27 @@ export default async function RegionListingsPage({ params, searchParams }: Props
           <div className="text-center mt-4 text-text-secondary text-sm">
             {currentPage} / {totalPages} 페이지
           </div>
+        </section>
+      )}
+
+      {!search && (
+        <section className="max-w-full mx-auto px-4 lg:px-8 py-8 border-t border-border-light">
+          <h2 className="text-lg font-bold text-text-primary mb-4">다른 지역 매물</h2>
+          <nav aria-label="다른 지역 매물" className="flex flex-wrap gap-2">
+            {REGIONS.filter(
+              (region) => region !== decodedRegion && (regionCounts[region] || 0) > 0
+            )
+              .sort((a, b) => (regionCounts[b] || 0) - (regionCounts[a] || 0))
+              .map((region) => (
+                <Link
+                  key={region}
+                  href={`/listings/region/${encodeURIComponent(region)}`}
+                  className="px-3 py-1.5 text-sm rounded-lg border border-border-light text-text-secondary hover:border-gold hover:text-gold transition-colors"
+                >
+                  {region} ({regionCounts[region]})
+                </Link>
+              ))}
+          </nav>
         </section>
       )}
     </div>

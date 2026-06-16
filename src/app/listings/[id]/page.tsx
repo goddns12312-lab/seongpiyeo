@@ -14,7 +14,8 @@ import { buildListingProductSchema, buildBreadcrumbSchema } from '@/lib/seo-sche
 import { buildListingSeoTitle, buildListingSeoDescription } from '@/lib/seo-metadata';
 import { getOgImageUrl } from '@/lib/seo-assets';
 import { RelatedListings } from '@/components/listings/RelatedListings';
-import { AdjacentRegions } from '@/components/listings/AdjacentRegions';
+import { ListingRegionNav } from '@/components/listings/ListingRegionNav';
+import { ListingBodySummary } from '@/components/listings/ListingBodySummary';
 import { createPublicClient } from '@/lib/supabase/public';
 import {
   getListingById,
@@ -174,21 +175,22 @@ export default async function ListingDetailPage({ params }: Props) {
     relatedResult.data,
     id,
     listing.district,
-    6
+    12
   );
-  const currentRegionCount = regionListingCounts[listing.region] || 0;
-
   const productSchema = buildListingProductSchema(listing);
   const breadcrumbItems = [
     { name: '홈', url: SITE_CONFIG.url },
     { name: '매물 목록', url: `${SITE_CONFIG.url}/listings` },
-    { name: listing.region, url: `${SITE_CONFIG.url}/listings?region=${encodeURIComponent(listing.region)}` },
+    {
+      name: listing.region,
+      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(String(listing.region))}`,
+    },
   ];
 
   if (listing.district) {
     breadcrumbItems.push({
       name: listing.district,
-      url: `${SITE_CONFIG.url}/listings?region=${encodeURIComponent(listing.region)}&district=${encodeURIComponent(listing.district)}`,
+      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(String(listing.region))}`,
     });
   }
 
@@ -213,7 +215,7 @@ export default async function ListingDetailPage({ params }: Props) {
       />
 
       <div className="max-w-5xl mx-auto px-4">
-        <nav aria-label="Breadcrumb" className="flex gap-2 text-sm text-text-secondary mb-6">
+        <nav aria-label="Breadcrumb" className="flex gap-2 text-sm text-text-secondary mb-6 flex-wrap">
           <Link href="/" className="hover:text-gold">
             홈
           </Link>
@@ -222,7 +224,18 @@ export default async function ListingDetailPage({ params }: Props) {
             매물
           </Link>
           <span>/</span>
-          <span>{listing.region}</span>
+          <Link
+            href={`/listings/region/${encodeURIComponent(String(listing.region))}`}
+            className="hover:text-gold"
+          >
+            {listing.region}
+          </Link>
+          {listing.district ? (
+            <>
+              <span>/</span>
+              <span>{listing.district}</span>
+            </>
+          ) : null}
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -328,6 +341,8 @@ export default async function ListingDetailPage({ params }: Props) {
               <p>{formatDate(listing.created_at as string)}</p>
             </div>
 
+            <ListingBodySummary listing={listing} />
+
             {listing.description ? (
               <div className="bg-bg-secondary border border-border-light rounded-lg p-6 mb-8">
                 <h2 className="text-text-primary font-semibold text-lg mb-4">💬 추가설명</h2>
@@ -345,10 +360,11 @@ export default async function ListingDetailPage({ params }: Props) {
               currentDistrict={listing.district ?? undefined}
             />
 
-            <AdjacentRegions
+            <ListingRegionNav
               currentRegion={listing.region}
-              currentListingCount={currentRegionCount}
               regionListingCounts={regionListingCounts}
+              premiumPrice={premiumPrice}
+              monthlyRent={listing.monthly_rent as number | undefined}
             />
           </div>
 

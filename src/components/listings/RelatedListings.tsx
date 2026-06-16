@@ -116,9 +116,7 @@ export function RelatedListings({
       {listings.length > 0 && (
         <div className="mt-6 flex justify-center">
           <Link
-            href={`/listings?region=${encodeURIComponent(currentRegion)}${
-              currentDistrict ? `&district=${encodeURIComponent(currentDistrict)}` : ''
-            }`}
+            href={`/listings/region/${encodeURIComponent(currentRegion)}`}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gold-dark dark:text-gold hover:bg-gold/10 rounded-lg transition-colors"
           >
             {locationDisplay} 전체 매물 보기
