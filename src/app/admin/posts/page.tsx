@@ -96,9 +96,19 @@ function AdminPostsContent() {
               </tr>
             </thead>
             <tbody>
-              {posts.map((post) => (
+              {posts.map((post) => {
+                const viewHref =
+                  post.category === 'exchange'
+                    ? `/exchange-info/${post.id}`
+                    : `/community/${post.id}`;
+
+                return (
                 <tr key={post.id} className="border-b border-border-light hover:bg-bg-tertiary transition-colors">
-                  <td className="px-6 py-3 text-text-primary line-clamp-1">{post.title}</td>
+                  <td className="px-6 py-3 text-text-primary line-clamp-1">
+                    <Link href={viewHref} className="hover:text-gold transition-colors" target="_blank">
+                      {post.title}
+                    </Link>
+                  </td>
                   <td className="px-6 py-3">
                     <Badge variant="secondary">
                       {CATEGORY_LABELS[post.category as keyof typeof CATEGORY_LABELS]}
@@ -120,7 +130,8 @@ function AdminPostsContent() {
                     )}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

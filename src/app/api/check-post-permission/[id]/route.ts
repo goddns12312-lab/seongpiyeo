@@ -1,4 +1,5 @@
-import { canDeletePost } from '@/lib/permissions';
+import { createServiceRoleClient, getSessionFromRequest } from '@/lib/admin-session';
+import { canEditPostWithSession } from '@/lib/post-permissions';
 
 export async function GET(
   request: Request,
@@ -6,26 +7,21 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
+    const session = await getSessionFromRequest(request);
 
-    // Authorization 헤더에서 토큰 추출
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '');
+    if (!session?.id) {
+      return Response.json({ postId: id, canEdit: false, canDelete: false });
+    }
 
-    const canDelete = token ? await canDeletePost(id, token) : false;
+    const canEdit = await canEditPostWithSession(session, id);
 
     return Response.json({
       postId: id,
-      canDelete,
-      timestamp: new Date().toISOString(),
+      canEdit,
+      canDelete: canEdit,
     });
   } catch (error) {
-    console.error('[api/check-post-permission] 오류:', error);
-    return Response.json(
-      {
-        error: '권한 확인 실패',
-        canDelete: false,
-      },
-      { status: 500 }
-    );
+    console.error('[api/check-post-permission]', error);
+    return Response.json({ canEdit: false, canDelete: false }, { status: 500 });
   }
 }

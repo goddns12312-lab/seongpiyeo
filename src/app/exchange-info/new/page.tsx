@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { getSession } from '@/lib/auth-session';
+import { compressImageFile } from '@/lib/image-upload';
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -62,6 +63,24 @@ export default function NewPostPage() {
     handleImageSelect(e.dataTransfer.files);
   };
 
+  const uploadImages = async (): Promise<string[]> => {
+    if (!images.length) return [];
+    const urls: string[] = [];
+    for (const file of images) {
+      const compressed = await compressImageFile(file);
+      const formData = new FormData();
+      formData.append('file', compressed);
+      const res = await fetch('/api/upload-post-image', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.url) urls.push(data.url);
+    }
+    return urls;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
@@ -88,10 +107,13 @@ export default function NewPostPage() {
         return;
       }
 
+      const imageUrls = await uploadImages();
+
       const postData = {
         title,
         category,
         content,
+        imageUrls,
         status: 'active',
       };
 

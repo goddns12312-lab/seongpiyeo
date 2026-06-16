@@ -2,13 +2,17 @@ import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import Script from 'next/script';
 import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
 import { createPublicClient } from '@/lib/supabase/public';
 import { getCategoryInfo } from '@/lib/community-categories';
 import { buildArticleSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
 import { getOgImageUrl } from '@/lib/seo-assets';
+import { fetchPostComments } from '@/lib/posts-data';
 import CommunityDetailClient from './community-detail-client';
+import { CommentSection } from '@/components/community/CommentSection';
+import { PostContent } from '@/components/community/PostContent';
+import { PostViewTracker } from '@/components/community/PostViewTracker';
+import { ReportPostButton } from '@/components/community/ReportPostButton';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -32,6 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const categoryLabel = getCategoryInfo(post.category)?.label || '커뮤니티';
     const cleanContent = (post.content || '')
       .replace(/<[^>]*>/g, '')
+      .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
       .replace(/\n/g, ' ')
       .trim();
     const description = cleanContent.substring(0, 160);
@@ -89,14 +94,28 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
 
   const categoryLabel = getCategoryInfo(post.category)?.label || '커뮤니티';
 
-  const { data: relatedPosts } = await supabase
-    .from('posts')
-    .select('id, title, category, created_at')
-    .eq('status', 'active')
-    .eq('category', post.category)
-    .neq('id', id)
-    .order('created_at', { ascending: false })
-    .limit(4);
+  let authorNickname = '익명';
+  if (post.user_id) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('nickname')
+      .eq('id', post.user_id)
+      .maybeSingle();
+    if (profile?.nickname) authorNickname = profile.nickname;
+  }
+
+  const [relatedPosts, comments] = await Promise.all([
+    supabase
+      .from('posts')
+      .select('id, title, category, created_at')
+      .eq('status', 'active')
+      .eq('category', post.category)
+      .neq('id', id)
+      .order('created_at', { ascending: false })
+      .limit(4)
+      .then((r) => r.data || []),
+    fetchPostComments(id),
+  ]);
 
   const pageUrl = `${SITE_CONFIG.url}/community/${id}`;
   const articleSchema = buildArticleSchema({
@@ -114,6 +133,7 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="min-h-screen bg-bg-primary py-12">
+      <PostViewTracker postId={id} />
       <div className="max-w-3xl mx-auto px-4">
         <Link href="/community" className="inline-flex items-center text-gold hover:text-gold-light mb-6">
           ← 목록으로
@@ -127,40 +147,20 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
 
           <div className="flex flex-wrap gap-4 text-text-secondary text-sm mb-8 pb-8 border-b border-border-light">
             <span>카테고리: {categoryLabel}</span>
+            <span>작성자: {authorNickname}</span>
             <span>작성일: {new Date(post.created_at).toLocaleDateString('ko-KR')}</span>
             <span>조회수: {post.view_count || 0}</span>
+            <span>댓글: {comments.length}</span>
           </div>
 
-          <div className="prose prose-invert max-w-none mb-12 text-text-secondary">
-            {(post.content || '').split('\n').map((line, idx) => (
-              <div key={idx}>
-                {line.startsWith('## ') ? (
-                  <h2 className="text-2xl font-bold text-text-primary mt-6 mb-3">
-                    {line.replace('## ', '')}
-                  </h2>
-                ) : line.startsWith('- ') ? (
-                  <li className="ml-6 my-2">{line.replace('- ', '')}</li>
-                ) : (
-                  <p className="my-2">{line}</p>
-                )}
-              </div>
-            ))}
-          </div>
+          <PostContent content={post.content || ''} />
 
           <div className="bg-bg-secondary border border-border-light rounded-lg p-6 mb-12">
-            <h3 className="text-xl font-bold text-text-primary mb-4">댓글 (0)</h3>
-            <div className="space-y-4 mb-6 text-text-secondary text-sm">
-              첫 번째 댓글을 달아보세요!
-            </div>
-            <textarea
-              placeholder="댓글을 입력하세요..."
-              className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary placeholder-text-secondary/50 mb-3"
-              rows={3}
-            />
-            <Button variant="primary">댓글 작성</Button>
+            <CommentSection postId={id} initialComments={comments} />
+            <ReportPostButton postId={id} />
           </div>
 
-          {relatedPosts && relatedPosts.length > 0 && (
+          {relatedPosts.length > 0 && (
             <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
               <h2 className="text-xl font-bold text-text-primary mb-4">📰 다른 게시글</h2>
               <div className="space-y-3">
@@ -183,9 +183,9 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
                   </Link>
                 ))}
               </div>
-              <Link href="/community" className="block mt-4">
+              <Link href={`/community/category/${post.category}`} className="block mt-4">
                 <button className="w-full bg-bg-tertiary hover:bg-gold/10 text-text-primary font-semibold py-2 rounded transition-colors text-sm">
-                  전체 게시글 보기
+                  {categoryLabel} 전체 보기
                 </button>
               </Link>
             </div>

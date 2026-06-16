@@ -99,7 +99,7 @@ export default function MyPage() {
           .select(MY_POST_SELECT)
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
-          .limit(5),
+          .limit(50),
       ]);
 
       if (!cancelled && listingsRes.data) {

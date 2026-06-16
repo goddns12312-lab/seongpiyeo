@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { updatePost } from '@/lib/actions';
 
 interface Props {
   postId: string;
@@ -34,16 +33,25 @@ export default function ExchangeEditClient({ postId, initialData }: Props) {
       return;
     }
 
-    const result = await updatePost(postId, {
-      title,
-      content,
-    });
+    try {
+      const res = await fetch('/api/posts/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ postId, title: title.trim(), content: content.trim() }),
+      });
+      const result = await res.json();
 
-    if (result.error) {
-      setError(result.error);
-      setIsSaving(false);
-    } else if (result.success) {
+      if (!res.ok) {
+        setError(result.error || '수정 실패');
+        setIsSaving(false);
+        return;
+      }
+
       router.push(`/exchange-info/${postId}`);
+    } catch {
+      setError('수정 중 오류가 발생했습니다');
+      setIsSaving(false);
     }
   };
 
@@ -56,44 +64,36 @@ export default function ExchangeEditClient({ postId, initialData }: Props) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title */}
         <div>
           <label className="block text-text-primary font-semibold mb-2">제목</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="게시글 제목을 입력하세요"
-            className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary placeholder-text-secondary/50 focus:border-gold outline-none transition"
+            className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary focus:border-gold outline-none transition"
           />
         </div>
 
-        {/* Content */}
         <div>
           <label className="block text-text-primary font-semibold mb-2">내용</label>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="게시글 내용을 입력하세요"
-            className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary placeholder-text-secondary/50 focus:border-gold outline-none transition"
+            className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary focus:border-gold outline-none transition"
             rows={10}
           />
-          <p className="text-xs text-text-secondary mt-2">## 제목, - 목록 마크다운 문법을 사용할 수 있습니다</p>
         </div>
 
-        {/* Buttons */}
         <div className="flex gap-3 pt-4">
           <button
             type="submit"
             disabled={isSaving}
-            className="flex-1 bg-gold hover:bg-gold-light disabled:bg-gold/50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded transition"
+            className="flex-1 bg-gold hover:bg-gold-light disabled:bg-gold/50 text-white font-semibold py-3 rounded transition"
           >
             {isSaving ? '저장 중...' : '수정 완료'}
           </button>
           <Link href={`/exchange-info/${postId}`} className="flex-1">
-            <Button variant="secondary" className="w-full" disabled={isSaving}>
-              취소
-            </Button>
+            <Button variant="secondary" className="w-full" disabled={isSaving}>취소</Button>
           </Link>
         </div>
       </form>

@@ -2,7 +2,6 @@
 
 import { FormEvent, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { getSession, AuthSession } from '@/lib/auth-session';
 import { Button } from '@/components/ui/Button';
 import { formatDateTime } from '@/lib/utils';
@@ -21,8 +20,7 @@ export function CommentSection({ postId, initialComments }: CommentSectionProps)
   const [user, setUser] = useState<AuthSession | null>(null);
 
   useEffect(() => {
-    const session = getSession();
-    setUser(session);
+    setUser(getSession());
   }, []);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -35,30 +33,25 @@ export function CommentSection({ postId, initialComments }: CommentSectionProps)
     setLoading(true);
 
     try {
-      const supabase = createClient();
+      const res = await fetch('/api/posts/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ postId, content: content.trim() }),
+      });
 
-      const { data, error } = await supabase
-        .from('comments')
-        .insert({
-          post_id: postId,
-          user_id: user.id,
-          content,
-          status: 'active',
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Comment error:', error);
+      const data = await res.json();
+      if (!res.ok) {
+        console.error('[CommentSection]', data.error);
         return;
       }
 
-      if (data) {
-        setComments([...comments, data]);
+      if (data.comment) {
+        setComments([...comments, data.comment]);
         setContent('');
       }
     } catch (err) {
-      console.error('Comment submission error:', err);
+      console.error('[CommentSection]', err);
     } finally {
       setLoading(false);
     }
@@ -68,7 +61,6 @@ export function CommentSection({ postId, initialComments }: CommentSectionProps)
     <div className="mt-8">
       <h2 className="text-text-primary font-semibold text-lg mb-6">댓글 ({comments.length})</h2>
 
-      {/* Comment Form */}
       {user ? (
         <form onSubmit={handleSubmit} className="mb-8 bg-bg-secondary border border-border-light rounded-lg p-4">
           <textarea
@@ -89,7 +81,6 @@ export function CommentSection({ postId, initialComments }: CommentSectionProps)
         </div>
       )}
 
-      {/* Comments List */}
       <div className="space-y-4">
         {comments.length === 0 ? (
           <p className="text-text-secondary text-sm text-center py-8">아직 댓글이 없습니다.</p>
@@ -98,7 +89,7 @@ export function CommentSection({ postId, initialComments }: CommentSectionProps)
             <div key={comment.id} className="bg-bg-secondary border border-border-light rounded-lg p-4">
               <div className="flex justify-between items-start mb-2">
                 <span className="text-text-primary font-semibold text-sm">
-                  {(comment as any).profiles?.nickname || '익명'}
+                  {comment.profiles?.nickname || '익명'}
                 </span>
                 <span className="text-text-secondary text-xs">
                   {formatDateTime(comment.created_at)}

@@ -53,11 +53,11 @@ export type ListingImage = {
 export type Post = {
   id: string;
   user_id: string;
-  category: 'free' | 'startup' | 'interior' | 'equipment' | 'recruitment';
+  category: 'free' | 'startup' | 'interior' | 'equipment' | 'exchange' | 'recruitment';
   title: string;
   content: string;
   view_count: number;
-  status: 'active' | 'hidden';
+  status: 'active' | 'hidden' | 'deleted';
   created_at: string;
   updated_at?: string;
 };
@@ -117,9 +117,10 @@ export const REGIONS = [
 
 export const CATEGORY_LABELS: Record<string, string> = {
   free: '자유게시판',
-  startup: '창업질문',
-  interior: '인테리어',
-  equipment: '장비',
+  startup: '창업 & 사업',
+  interior: '인테리어 & 시설',
+  equipment: '장비 & 기자재',
+  exchange: '환수정보',
   recruitment: '구인구직',
 };
 

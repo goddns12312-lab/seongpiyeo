@@ -28,6 +28,13 @@ export const COMMUNITY_CATEGORIES = {
 
 export type CommunityCategory = keyof typeof COMMUNITY_CATEGORIES;
 
+export const COMMUNITY_CATEGORY_ICONS: Record<CommunityCategory, string> = {
+  free: '💬',
+  startup: '🚀',
+  interior: '🏗️',
+  equipment: '🖥️',
+};
+
 export function getCategoryInfo(category: string) {
   return COMMUNITY_CATEGORIES[category as CommunityCategory];
 }

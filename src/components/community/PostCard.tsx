@@ -8,8 +8,11 @@ interface PostCardProps {
 }
 
 export function PostCard({ post }: PostCardProps) {
+  const href =
+    post.category === 'exchange' ? `/exchange-info/${post.id}` : `/community/${post.id}`;
+
   return (
-    <Link href={`/community/${post.id}`}>
+    <Link href={href}>
       <div className="bg-bg-secondary border border-border-light rounded-lg p-4 hover:border-gold transition-colors group cursor-pointer">
         <div className="flex items-start justify-between mb-2">
           <Badge variant="info">{CATEGORY_LABELS[post.category]}</Badge>

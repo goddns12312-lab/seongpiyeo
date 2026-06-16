@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { updatePost } from '@/lib/actions';
 
 interface Props {
   postId: string;
@@ -34,17 +33,25 @@ export default function CommunityEditClient({ postId, initialData }: Props) {
       return;
     }
 
-    const result = await updatePost(postId, {
-      title,
-      content,
-    });
+    try {
+      const res = await fetch('/api/posts/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ postId, title: title.trim(), content: content.trim() }),
+      });
+      const result = await res.json();
 
-    if (result.error) {
-      setError(result.error);
-      setIsSaving(false);
-    } else if (result.success) {
-      // 상세 페이지로 이동
+      if (!res.ok) {
+        setError(result.error || '수정 실패');
+        setIsSaving(false);
+        return;
+      }
+
       router.push(`/community/${postId}`);
+    } catch {
+      setError('수정 중 오류가 발생했습니다');
+      setIsSaving(false);
     }
   };
 
@@ -57,7 +64,6 @@ export default function CommunityEditClient({ postId, initialData }: Props) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title */}
         <div>
           <label className="block text-text-primary font-semibold mb-2">제목</label>
           <input
@@ -69,7 +75,6 @@ export default function CommunityEditClient({ postId, initialData }: Props) {
           />
         </div>
 
-        {/* Content */}
         <div>
           <label className="block text-text-primary font-semibold mb-2">내용</label>
           <textarea
@@ -82,7 +87,6 @@ export default function CommunityEditClient({ postId, initialData }: Props) {
           <p className="text-xs text-text-secondary mt-2">## 제목, - 목록 마크다운 문법을 사용할 수 있습니다</p>
         </div>
 
-        {/* Buttons */}
         <div className="flex gap-3 pt-4">
           <button
             type="submit"

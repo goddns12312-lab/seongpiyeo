@@ -2,12 +2,16 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
 import { createPublicClient } from '@/lib/supabase/public';
 import { buildArticleSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
 import { getOgImageUrl } from '@/lib/seo-assets';
+import { fetchPostComments } from '@/lib/posts-data';
 import ExchangeDetailClient from './exchange-detail-client';
+import { CommentSection } from '@/components/community/CommentSection';
+import { PostContent } from '@/components/community/PostContent';
+import { PostViewTracker } from '@/components/community/PostViewTracker';
+import { ReportPostButton } from '@/components/community/ReportPostButton';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -27,6 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
     const cleanContent = (post.content || '')
       .replace(/<[^>]*>/g, '')
+      .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
       .replace(/\n/g, ' ')
       .trim();
     const description = cleanContent.substring(0, 160);
@@ -76,6 +81,18 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
     notFound();
   }
 
+  let authorNickname = '익명';
+  if (post.user_id) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('nickname')
+      .eq('id', post.user_id)
+      .maybeSingle();
+    if (profile?.nickname) authorNickname = profile.nickname;
+  }
+
+  const comments = await fetchPostComments(id);
+
   const pageUrl = `${SITE_CONFIG.url}/exchange-info/${id}`;
   const articleSchema = buildArticleSchema({
     title: post.title,
@@ -92,6 +109,7 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="min-h-screen bg-bg-primary py-12">
+      <PostViewTracker postId={id} />
       <div className="max-w-3xl mx-auto px-4">
         <Link href="/exchange-info" className="inline-flex items-center text-gold hover:text-gold-light mb-6">
           ← 목록으로
@@ -104,37 +122,17 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
           </div>
 
           <div className="flex flex-wrap gap-4 text-text-secondary text-sm mb-8 pb-8 border-b border-border-light">
+            <span>작성자: {authorNickname}</span>
             <span>작성일: {new Date(post.created_at).toLocaleDateString('ko-KR')}</span>
             <span>조회수: {post.view_count || 0}</span>
+            <span>댓글: {comments.length}</span>
           </div>
 
-          <div className="prose prose-invert max-w-none mb-12 text-text-secondary">
-            {(post.content || '').split('\n').map((line: string, idx: number) => (
-              <div key={idx}>
-                {line.startsWith('## ') ? (
-                  <h2 className="text-2xl font-bold text-text-primary mt-6 mb-3">
-                    {line.replace('## ', '')}
-                  </h2>
-                ) : line.startsWith('- ') ? (
-                  <li className="ml-6 my-2">{line.replace('- ', '')}</li>
-                ) : (
-                  <p className="my-2">{line}</p>
-                )}
-              </div>
-            ))}
-          </div>
+          <PostContent content={post.content || ''} />
 
           <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
-            <h3 className="text-xl font-bold text-text-primary mb-4">댓글 (0)</h3>
-            <div className="space-y-4 mb-6 text-text-secondary text-sm">
-              첫 번째 댓글을 달아보세요!
-            </div>
-            <textarea
-              placeholder="댓글을 입력하세요..."
-              className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary placeholder-text-secondary/50 mb-3"
-              rows={3}
-            />
-            <Button variant="primary">댓글 작성</Button>
+            <CommentSection postId={id} initialComments={comments} />
+            <ReportPostButton postId={id} />
           </div>
         </article>
 

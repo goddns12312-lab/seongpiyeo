@@ -1,5 +1,8 @@
-import { createClient } from '@/lib/supabase/server';
-import { getSessionFromRequest } from '@/lib/admin-session';
+import { createServiceRoleClient, getSessionFromRequest } from '@/lib/admin-session';
+import {
+  appendImagesToContent,
+  isCommunityCategory,
+} from '@/lib/post-permissions';
 import { sanitizePostBeforeSave } from '@/lib/seo-title-auto-fix';
 import { revalidatePath } from 'next/cache';
 
@@ -10,15 +13,25 @@ export async function POST(request: Request) {
       return Response.json({ error: '로그인이 필요합니다' }, { status: 401 });
     }
 
-    const supabase = await createClient();
     const data = await request.json();
+    const category = data.category as string;
 
-    const sanitized = sanitizePostBeforeSave(data);
+    if (!isCommunityCategory(category)) {
+      return Response.json({ error: '유효하지 않은 카테고리입니다' }, { status: 400 });
+    }
+
+    const sanitized = sanitizePostBeforeSave({
+      ...data,
+      category,
+      content: appendImagesToContent(data.content || '', data.imageUrls || []),
+    });
     const { _seoApplied, _seoChanges, ...postData } = sanitized;
 
+    const supabase = createServiceRoleClient();
     const finalData = {
       ...postData,
       user_id: session.id,
+      status: 'active',
     };
 
     const { data: post, error: postError } = await supabase
@@ -39,6 +52,7 @@ export async function POST(request: Request) {
 
     revalidatePath('/');
     revalidatePath('/community');
+    revalidatePath(`/community/category/${category}`);
     revalidatePath(`/community/${newPost.id}`);
 
     return Response.json({ success: true, postId: newPost.id });

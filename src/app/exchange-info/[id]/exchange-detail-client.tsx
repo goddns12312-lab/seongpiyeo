@@ -10,32 +10,20 @@ interface Props {
 }
 
 export default function ExchangeDetailClient({ postId }: Props) {
-  const [canDelete, setCanDelete] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function checkPermission() {
-      try {
-        const response = await fetch(`/api/check-post-permission/${postId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setCanDelete(data.canDelete);
-        }
-      } catch (error) {
-        console.error('[ExchangeDetailClient] 권한 확인 오류:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    checkPermission();
+    fetch(`/api/check-post-permission/${postId}`, { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.canEdit) setCanEdit(true);
+      })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
   }, [postId]);
 
-  if (isLoading) {
-    return null;
-  }
-
-  if (!canDelete) {
+  if (isLoading || !canEdit) {
     return null;
   }
 
@@ -44,7 +32,7 @@ export default function ExchangeDetailClient({ postId }: Props) {
       <Link href={`/exchange-info/${postId}/edit`}>
         <Button variant="secondary" size="sm">수정</Button>
       </Link>
-      <DeletePostButton postId={postId} />
+      <DeletePostButton postId={postId} redirectTo="/exchange-info" />
     </div>
   );
 }

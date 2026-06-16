@@ -4,47 +4,27 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import DeletePostButton from '@/components/DeletePostButton';
-import { createClient } from '@/lib/supabase/client';
 
 interface Props {
   postId: string;
+  redirectTo?: string;
 }
 
-export default function CommunityDetailClient({ postId }: Props) {
-  const [canDelete, setCanDelete] = useState(false);
+export default function CommunityDetailClient({ postId, redirectTo = '/community' }: Props) {
+  const [canEdit, setCanEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function checkPermission() {
-      try {
-        const supabase = createClient();
-        const { data: { session } } = await supabase.auth.getSession();
-
-        const headers: HeadersInit = {};
-        if (session?.access_token) {
-          headers['Authorization'] = `Bearer ${session.access_token}`;
-        }
-
-        const response = await fetch(`/api/check-post-permission/${postId}`, { headers });
-        if (response.ok) {
-          const data = await response.json();
-          setCanDelete(data.canDelete);
-        }
-      } catch (error) {
-        console.error('[CommunityDetailClient] 권한 확인 오류:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    checkPermission();
+    fetch(`/api/check-post-permission/${postId}`, { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.canEdit) setCanEdit(true);
+      })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
   }, [postId]);
 
-  if (isLoading) {
-    return null;
-  }
-
-  if (!canDelete) {
+  if (isLoading || !canEdit) {
     return null;
   }
 
@@ -53,7 +33,7 @@ export default function CommunityDetailClient({ postId }: Props) {
       <Link href={`/community/${postId}/edit`}>
         <Button variant="secondary" size="sm">수정</Button>
       </Link>
-      <DeletePostButton postId={postId} />
+      <DeletePostButton postId={postId} redirectTo={redirectTo} />
     </div>
   );
 }

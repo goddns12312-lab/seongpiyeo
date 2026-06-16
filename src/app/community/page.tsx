@@ -1,6 +1,6 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { createPublicClient } from '@/lib/supabase/public';
 import {
   PageShell,
   PageHero,
@@ -10,38 +10,45 @@ import {
   SurfaceCard,
   EmptyState,
 } from '@/components/layout/PageShell';
+import {
+  COMMUNITY_CATEGORIES,
+  COMMUNITY_CATEGORY_ICONS,
+  CommunityCategory,
+} from '@/lib/community-categories';
+import { fetchCommunityPosts, POSTS_PAGE_SIZE } from '@/lib/posts-data';
+import { CommunitySearchBar, CommunityPagination } from '@/components/community/CommunitySearchBar';
+import { getCategoryInfo } from '@/lib/community-categories';
 
-export default async function CommunityPage() {
-  let postsWithAuthor: any[] = [];
+type Props = {
+  searchParams: Promise<{ page?: string; q?: string }>;
+};
 
-  try {
-    const supabase = createPublicClient();
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { page, q } = await searchParams;
+  const pageNum = parseInt(page || '1', 10);
 
-    // 모든 active 게시글 조회
-    const { data: posts, error } = await supabase
-      .from('posts')
-      .select('id, title, created_at, status, category')
-      .eq('status', 'active')
-      .neq('category', 'exchange')
-      .order('created_at', { ascending: false })
-      .limit(6);
-
-    if (error) {
-      console.error('Failed to fetch posts:', error);
-      postsWithAuthor = [];
-    } else if (posts && posts.length > 0) {
-      postsWithAuthor = posts.map((post: any) => ({
-        ...post,
-        author: '작성자',
-        date: new Date(post.created_at).toLocaleDateString('ko-KR'),
-        views: 0,
-        comments: 0,
-      }));
-    }
-  } catch (err) {
-    console.error('Community page error:', err);
-    postsWithAuthor = [];
+  if (pageNum > 1 || q) {
+    return {
+      robots: { index: false, follow: true },
+    };
   }
+
+  return {};
+}
+
+export default async function CommunityPage({ searchParams }: Props) {
+  const { page, q } = await searchParams;
+  const currentPage = Math.max(1, parseInt(page || '1', 10) || 1);
+  const searchQuery = q?.trim() || '';
+
+  const { posts, total } = await fetchCommunityPosts({
+    excludeExchange: true,
+    page: currentPage,
+    limit: POSTS_PAGE_SIZE,
+    search: searchQuery || undefined,
+  });
+
+  const totalPages = Math.max(1, Math.ceil(total / POSTS_PAGE_SIZE));
 
   return (
     <PageShell>
@@ -58,65 +65,93 @@ export default async function CommunityPage() {
 
       <PageContainer className="py-10 md:py-12">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-          {[
-            { icon: '💡', title: '정보공유', desc: '운영 노하우' },
-            { icon: '❓', title: '질문답변', desc: '궁금한 점 물어보기' },
-            { icon: '🎉', title: '이벤트', desc: '커뮤니티 이벤트' },
-            { icon: '🤝', title: '거래후기', desc: '만족스러운 거래' },
-          ].map((cat) => (
-            <SurfaceCard key={cat.title} hover className="p-5 text-center">
-              <div className="text-3xl mb-3">{cat.icon}</div>
-              <h3 className="font-semibold text-text-primary mb-1">{cat.title}</h3>
-              <p className="text-xs text-text-secondary">{cat.desc}</p>
-            </SurfaceCard>
-          ))}
+          {(Object.entries(COMMUNITY_CATEGORIES) as [CommunityCategory, (typeof COMMUNITY_CATEGORIES)[CommunityCategory]][]).map(
+            ([key, cat]) => (
+              <Link key={key} href={`/community/category/${key}`}>
+                <SurfaceCard hover className="p-5 text-center h-full">
+                  <div className="text-3xl mb-3">{COMMUNITY_CATEGORY_ICONS[key]}</div>
+                  <h3 className="font-semibold text-text-primary mb-1">{cat.label}</h3>
+                  <p className="text-xs text-text-secondary line-clamp-2">{cat.description}</p>
+                </SurfaceCard>
+              </Link>
+            )
+          )}
         </div>
 
         <div className="grid md:grid-cols-3 gap-4 mb-12">
-          <StatCard label="총 게시글" value={postsWithAuthor.length || '—'} />
+          <StatCard label="총 게시글" value={total || '—'} />
           <StatCard label="카테고리" value="4" accent="default" />
           <StatCard label="커뮤니티" value="활성" accent="default" />
         </div>
 
-        <SectionHeader title="최신 게시글" />
+        <CommunitySearchBar defaultQuery={searchQuery} />
 
-        {postsWithAuthor.length > 0 ? (
-          <div className="space-y-3 mb-12">
-            {postsWithAuthor.map((post, index) => (
-              <SurfaceCard key={post.id} hover className="p-5" as="article">
-                <div className="flex items-start gap-4">
-                  <span className="text-text-muted font-semibold text-sm w-8 shrink-0 tabular-nums">
-                    {postsWithAuthor.length - index}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <Link
-                      href={`/community/${post.id}`}
-                      className="text-text-primary hover:text-gold font-semibold transition-colors block truncate mb-2"
-                    >
-                      {post.title}
-                    </Link>
-                    <div className="flex flex-wrap gap-4 text-xs text-text-muted">
-                      <span>{post.author}</span>
-                      <time>{post.date}</time>
+        <SectionHeader title={searchQuery ? `"${searchQuery}" 검색 결과` : '최신 게시글'} />
+
+        {posts.length > 0 ? (
+          <>
+            <div className="space-y-3 mb-4">
+              {posts.map((post, index) => {
+                const catInfo = getCategoryInfo(post.category);
+                return (
+                  <SurfaceCard key={post.id} hover className="p-5" as="article">
+                    <div className="flex items-start gap-4">
+                      <span className="text-text-muted font-semibold text-sm w-8 shrink-0 tabular-nums">
+                        {total - ((currentPage - 1) * POSTS_PAGE_SIZE + index)}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          {catInfo && (
+                            <span className={`text-xs font-medium ${catInfo.color}`}>
+                              {catInfo.label}
+                            </span>
+                          )}
+                        </div>
+                        <Link
+                          href={`/community/${post.id}`}
+                          className="text-text-primary hover:text-gold font-semibold transition-colors block truncate mb-2"
+                        >
+                          {post.title}
+                        </Link>
+                        <div className="flex flex-wrap gap-4 text-xs text-text-muted">
+                          <span>{post.authorNickname}</span>
+                          <time dateTime={post.created_at}>
+                            {new Date(post.created_at).toLocaleDateString('ko-KR')}
+                          </time>
+                          <span>조회 {post.view_count || 0}</span>
+                          <span>댓글 {post.commentCount}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </SurfaceCard>
-            ))}
-          </div>
+                  </SurfaceCard>
+                );
+              })}
+            </div>
+            <CommunityPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              q={searchQuery || undefined}
+            />
+          </>
         ) : (
           <EmptyState
-            title="등록된 게시글이 없습니다"
-            description="첫 번째 글을 작성해 커뮤니티를 시작해 보세요"
+            title={searchQuery ? '검색 결과가 없습니다' : '등록된 게시글이 없습니다'}
+            description={
+              searchQuery
+                ? '다른 검색어로 시도해 보세요'
+                : '첫 번째 글을 작성해 커뮤니티를 시작해 보세요'
+            }
             action={
-              <Link href="/community/new">
-                <Button variant="primary">첫 게시글 작성하기</Button>
-              </Link>
+              !searchQuery ? (
+                <Link href="/community/new">
+                  <Button variant="primary">첫 게시글 작성하기</Button>
+                </Link>
+              ) : undefined
             }
           />
         )}
 
-        <SurfaceCard className="p-8 mb-8">
+        <SurfaceCard className="p-8 mt-12 mb-8">
           <h2 className="section-heading mb-6">커뮤니티 규칙</h2>
           <ul className="space-y-3 text-text-secondary text-sm leading-relaxed">
             {[

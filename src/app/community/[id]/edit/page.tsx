@@ -1,6 +1,7 @@
 import { notFound, redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { canDeletePost } from '@/lib/permissions';
+import { createPublicClient } from '@/lib/supabase/public';
+import { getSessionFromRequest } from '@/lib/admin-session';
+import { canEditPostWithSession } from '@/lib/post-permissions';
 import CommunityEditClient from './community-edit-client';
 
 interface Props {
@@ -9,54 +10,29 @@ interface Props {
 
 export default async function CommunityEditPage({ params }: Props) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
-  // 현재 로그인한 사용자 확인
-  const { data: { user } } = await supabase.auth.getUser();
-
-  // 게시글 조회
-  const { data: posts, error } = await supabase
+  const { data: post, error } = await supabase
     .from('posts')
     .select('id, title, content, category, user_id, status, created_at')
     .eq('id', id)
-    .eq('category', 'free')
-    .limit(1);
-
-  const post = posts?.[0];
+    .neq('category', 'exchange')
+    .single();
 
   if (error || !post) {
     notFound();
   }
 
-  // 삭제된 게시글은 수정 불가
-  if (post.status === 'deleted') {
+  if (post.status === 'deleted' || post.status === 'hidden') {
     notFound();
   }
 
-  // 권한 확인
-  if (!user) {
-    // 비로그인은 로그인 페이지로
+  const session = await getSessionFromRequest();
+  if (!session) {
     redirect(`/login?redirect=/community/${id}/edit`);
   }
 
-  // 로그인한 사용자의 권한 확인
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  const isAdmin = profile?.role === 'admin';
-  const isAuthor = post.user_id === user.id;
-  const isNullOwner = post.user_id === null;
-
-  // user_id가 NULL이면 관리자만 수정 가능
-  if (isNullOwner && !isAdmin) {
-    notFound();
-  }
-
-  // user_id가 있으면 관리자 또는 작성자만
-  if (!isNullOwner && !isAdmin && !isAuthor) {
+  if (!(await canEditPostWithSession(session, id))) {
     notFound();
   }
 

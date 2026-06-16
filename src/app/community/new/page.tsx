@@ -1,15 +1,68 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { getSession } from '@/lib/auth-session';
+import { COMMUNITY_CATEGORIES, CommunityCategory } from '@/lib/community-categories';
+import { compressImageFile } from '@/lib/image-upload';
 
 export default function NewPostPage() {
   const router = useRouter();
+  const [category, setCategory] = useState<CommunityCategory>('free');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get('category');
+    if (cat && cat in COMMUNITY_CATEGORIES) {
+      setCategory(cat as CommunityCategory);
+    }
+  }, []);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
+
+  const handleImageSelect = (files: FileList | null) => {
+    if (!files) return;
+    const newFiles = Array.from(files).slice(0, 5 - images.length);
+    setImages((prev) => [...prev, ...newFiles]);
+    newFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => setPreviews((prev) => [...prev, reader.result as string]);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadImages = async (sessionId: string): Promise<string[]> => {
+    if (!images.length) return [];
+    setUploadingImages(true);
+    const urls: string[] = [];
+
+    for (const file of images) {
+      const compressed = await compressImageFile(file);
+      const formData = new FormData();
+      formData.append('file', compressed);
+      const res = await fetch('/api/upload-post-image', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.url) urls.push(data.url);
+    }
+
+    setUploadingImages(false);
+    return urls;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,7 +74,6 @@ export default function NewPostPage() {
     const category = formData.get('category') as string;
     const content = formData.get('content') as string;
 
-    // 유효성 검사
     if (!title || !category || !content) {
       setError('제목, 카테고리, 내용은 필수입니다');
       setIsSubmitting(false);
@@ -29,7 +81,6 @@ export default function NewPostPage() {
     }
 
     try {
-      // pc_bang_session 쿠키 확인 (Supabase auth 아님)
       const session = getSession();
       if (!session) {
         setError('로그인이 필요합니다');
@@ -37,21 +88,19 @@ export default function NewPostPage() {
         return;
       }
 
-      const postData = {
-        title,
-        category: 'free',
-        content,
-        status: 'active',
-      };
+      const imageUrls = await uploadImages(session.id);
 
       const response = await fetch('/api/posts/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-User-ID': session.id,
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(postData),
+        body: JSON.stringify({
+          title,
+          category,
+          content,
+          imageUrls,
+          status: 'active',
+        }),
       });
 
       const result = await response.json();
@@ -59,7 +108,6 @@ export default function NewPostPage() {
       if (!response.ok) {
         setError(result.error || '게시글 작성에 실패했습니다');
       } else if (result.success && result.postId) {
-        // 성공 후 상세 페이지로 이동
         router.push(`/community/${result.postId}`);
       } else {
         setError('게시글 작성에 실패했습니다');
@@ -75,12 +123,10 @@ export default function NewPostPage() {
   return (
     <div className="min-h-screen bg-bg-primary py-12">
       <div className="max-w-2xl mx-auto px-4">
-        {/* Back Button */}
         <Link href="/community" className="inline-flex items-center text-gold hover:text-gold-light mb-6">
           ← 목록으로
         </Link>
 
-        {/* Form */}
         <div className="bg-bg-secondary border border-border-light rounded-lg p-8">
           <h1 className="text-3xl font-bold text-text-primary mb-8">게시글 작성</h1>
 
@@ -91,7 +137,6 @@ export default function NewPostPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Title */}
             <div>
               <label className="block text-text-primary font-semibold mb-2">제목</label>
               <input
@@ -102,19 +147,24 @@ export default function NewPostPage() {
               />
             </div>
 
-            {/* Category */}
             <div>
               <label className="block text-text-primary font-semibold mb-2">카테고리</label>
-              <select name="category" className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary focus:border-gold outline-none transition">
-                <option value="">카테고리를 선택하세요</option>
-                <option value="info">💡 정보공유</option>
-                <option value="qa">❓ 질문답변</option>
-                <option value="event">🎉 이벤트</option>
-                <option value="review">🤝 거래후기</option>
+              <select
+                name="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value as CommunityCategory)}
+                className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary focus:border-gold outline-none transition"
+              >
+                {(Object.entries(COMMUNITY_CATEGORIES) as [CommunityCategory, (typeof COMMUNITY_CATEGORIES)[CommunityCategory]][]).map(
+                  ([key, cat]) => (
+                    <option key={key} value={key}>
+                      {cat.label}
+                    </option>
+                  )
+                )}
               </select>
             </div>
 
-            {/* Content */}
             <div>
               <label className="block text-text-primary font-semibold mb-2">내용</label>
               <textarea
@@ -126,11 +176,39 @@ export default function NewPostPage() {
               <p className="text-xs text-text-secondary mt-2">## 제목, - 목록 마크다운 문법을 사용할 수 있습니다</p>
             </div>
 
-            {/* Buttons */}
+            <div>
+              <label className="block text-text-primary font-semibold mb-2">
+                사진 (선택) {images.length > 0 && <span className="text-gold text-sm">({images.length}/5)</span>}
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => handleImageSelect(e.target.files)}
+                className="w-full text-sm text-text-secondary"
+              />
+              {previews.length > 0 && (
+                <div className="grid grid-cols-4 gap-2 mt-3">
+                  {previews.map((preview, index) => (
+                    <div key={index} className="relative">
+                      <img src={preview} alt="" className="w-full h-20 object-cover rounded border border-border-light" />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="flex gap-3 pt-4">
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || uploadingImages}
                 className="flex-1 bg-gold hover:bg-gold-light disabled:bg-gold/50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded transition"
               >
                 {isSubmitting ? '작성 중...' : '작성 완료'}
