@@ -9,11 +9,13 @@ import { formatDateTime } from '@/lib/utils';
 
 type ReportRow = {
   id: string;
-  post_id: string;
+  targetType: 'post' | 'listing';
+  targetId: string;
   reason: string;
   status: string;
   created_at: string;
   post: { id: string; title: string; category: string; status: string } | null;
+  listing: { id: string; title: string; status: string } | null;
 };
 
 export default function AdminReportsPage() {
@@ -39,24 +41,53 @@ export default function AdminReportsPage() {
     })();
   }, [router, fetchReports]);
 
-  const handleReview = async (reportId: string, hidePost: boolean) => {
+  const handleReview = async (report: ReportRow, hideTarget: boolean) => {
     await fetch('/api/admin/reports', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ reportId, status: 'reviewed', hidePost }),
+      body: JSON.stringify({
+        reportId: report.id,
+        targetType: report.targetType,
+        status: 'reviewed',
+        hidePost: report.targetType === 'post' && hideTarget,
+        hideListing: report.targetType === 'listing' && hideTarget,
+      }),
     });
     fetchReports();
   };
 
-  const handleDismiss = async (reportId: string) => {
+  const handleDismiss = async (report: ReportRow) => {
     await fetch('/api/admin/reports', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ reportId, status: 'dismissed', hidePost: false }),
+      body: JSON.stringify({
+        reportId: report.id,
+        targetType: report.targetType,
+        status: 'dismissed',
+        hidePost: false,
+        hideListing: false,
+      }),
     });
     fetchReports();
+  };
+
+  const getReportLink = (report: ReportRow) => {
+    if (report.targetType === 'listing') {
+      return `/listings/${report.targetId}`;
+    }
+    if (report.post?.category === 'exchange') {
+      return `/exchange-info/${report.targetId}`;
+    }
+    return `/community/${report.targetId}`;
+  };
+
+  const getReportTitle = (report: ReportRow) => {
+    if (report.targetType === 'listing') {
+      return report.listing?.title || report.targetId;
+    }
+    return report.post?.title || report.targetId;
   };
 
   if (loading) {
@@ -75,34 +106,37 @@ export default function AdminReportsPage() {
           <p className="text-text-secondary">대기 중인 신고가 없습니다.</p>
         ) : (
           <div className="space-y-4">
-            {reports.map((r) => {
-              const href =
-                r.post?.category === 'exchange'
-                  ? `/exchange-info/${r.post_id}`
-                  : `/community/${r.post_id}`;
-              return (
-                <div key={r.id} className="bg-bg-secondary border border-border-light rounded-lg p-5">
-                  <div className="flex justify-between gap-4 mb-2">
-                    <Link href={href} target="_blank" className="font-semibold text-text-primary hover:text-gold">
-                      {r.post?.title || r.post_id}
+            {reports.map((r) => (
+              <div key={`${r.targetType}-${r.id}`} className="bg-bg-secondary border border-border-light rounded-lg p-5">
+                <div className="flex justify-between gap-4 mb-2">
+                  <div className="min-w-0">
+                    <span className="text-xs text-text-muted mr-2">
+                      {r.targetType === 'listing' ? '매물' : '게시글'}
+                    </span>
+                    <Link
+                      href={getReportLink(r)}
+                      target="_blank"
+                      className="font-semibold text-text-primary hover:text-gold"
+                    >
+                      {getReportTitle(r)}
                     </Link>
-                    <span className="text-xs text-text-muted shrink-0">{formatDateTime(r.created_at)}</span>
                   </div>
-                  <p className="text-sm text-text-secondary mb-4">{r.reason}</p>
-                  <div className="flex gap-2">
-                    <Button variant="danger" size="sm" onClick={() => handleReview(r.id, true)}>
-                      숨김 처리
-                    </Button>
-                    <Button variant="secondary" size="sm" onClick={() => handleReview(r.id, false)}>
-                      확인만
-                    </Button>
-                    <Button variant="secondary" size="sm" onClick={() => handleDismiss(r.id)}>
-                      기각
-                    </Button>
-                  </div>
+                  <span className="text-xs text-text-muted shrink-0">{formatDateTime(r.created_at)}</span>
                 </div>
-              );
-            })}
+                <p className="text-sm text-text-secondary mb-4">{r.reason}</p>
+                <div className="flex gap-2">
+                  <Button variant="danger" size="sm" onClick={() => handleReview(r, true)}>
+                    숨김 처리
+                  </Button>
+                  <Button variant="secondary" size="sm" onClick={() => handleReview(r, false)}>
+                    확인만
+                  </Button>
+                  <Button variant="secondary" size="sm" onClick={() => handleDismiss(r)}>
+                    기각
+                  </Button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

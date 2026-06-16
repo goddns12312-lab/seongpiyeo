@@ -9,6 +9,7 @@ import { ImageGallery } from '@/components/listings/ImageGallery';
 import { ListingActions } from '@/components/listings/ListingActions';
 import { LikeButton } from '@/components/listings/LikeButton';
 import ListingCommentSection from '@/components/listings/ListingCommentSection';
+import { ReportButton } from '@/components/community/ReportButton';
 import { buildListingProductSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
 import { buildListingSeoTitle, buildListingSeoDescription } from '@/lib/seo-metadata';
 import { getOgImageUrl } from '@/lib/seo-assets';
@@ -237,8 +238,9 @@ export default async function ListingDetailPage({ params }: Props) {
                 <h1 className="text-2xl md:text-3xl font-bold text-text-primary break-words">
                   {listing.title}
                 </h1>
-                <div className="flex gap-2 items-center flex-shrink-0">
+                <div className="flex gap-2 items-center flex-shrink-0 flex-wrap">
                   <LikeButton listingId={listing.id} />
+                  <ReportButton targetId={listing.id} type="listing" />
                   <ListingActions listingId={listing.id} userId={listing.user_id as string | undefined} />
                 </div>
               </div>
