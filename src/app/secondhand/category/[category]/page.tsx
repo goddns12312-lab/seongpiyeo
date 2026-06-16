@@ -35,8 +35,9 @@ export default function SecondhandCategoryPage({ params }: { params: { category:
 
       const { data, error } = await supabase
         .from('secondhand_items')
-        .select('id, title, region, price, status, created_at, main_image_url')
+        .select('id, title, region, price, status, created_at, main_image_url, category')
         .eq('status', 'active')
+        .eq('category', category)
         .order('created_at', { ascending: false });
 
       if (error) throw error;

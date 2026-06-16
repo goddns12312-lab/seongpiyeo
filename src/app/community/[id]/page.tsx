@@ -13,6 +13,7 @@ import { CommentSection } from '@/components/community/CommentSection';
 import { PostContent } from '@/components/community/PostContent';
 import { PostViewTracker } from '@/components/community/PostViewTracker';
 import { ReportPostButton } from '@/components/community/ReportPostButton';
+import { PostSocialActions } from '@/components/community/PostSocialActions';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -154,6 +155,8 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
           </div>
 
           <PostContent content={post.content || ''} />
+
+          <PostSocialActions postId={id} />
 
           <div className="bg-bg-secondary border border-border-light rounded-lg p-6 mb-12">
             <CommentSection postId={id} initialComments={comments} />

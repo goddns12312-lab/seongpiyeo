@@ -101,6 +101,12 @@ export default async function CommunityPage({ searchParams }: Props) {
                       </span>
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
+                          {post.is_notice && (
+                            <span className="text-xs font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded">공지</span>
+                          )}
+                          {post.is_pinned && (
+                            <span className="text-xs font-bold text-gold bg-gold/10 px-2 py-0.5 rounded">📌 고정</span>
+                          )}
                           {catInfo && (
                             <span className={`text-xs font-medium ${catInfo.color}`}>
                               {catInfo.label}
@@ -119,6 +125,7 @@ export default async function CommunityPage({ searchParams }: Props) {
                             {new Date(post.created_at).toLocaleDateString('ko-KR')}
                           </time>
                           <span>조회 {post.view_count || 0}</span>
+                          <span>♥ {post.likeCount}</span>
                           <span>댓글 {post.commentCount}</span>
                         </div>
                       </div>

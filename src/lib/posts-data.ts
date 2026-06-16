@@ -12,6 +12,9 @@ export type PostListItem = {
   user_id: string | null;
   authorNickname: string;
   commentCount: number;
+  likeCount: number;
+  is_pinned: boolean;
+  is_notice: boolean;
 };
 
 export async function fetchCommunityPosts(options: {
@@ -28,7 +31,7 @@ export async function fetchCommunityPosts(options: {
 
   let query = supabase
     .from('posts')
-    .select('id, title, content, category, view_count, created_at, user_id', { count: 'exact' })
+    .select('id, title, content, category, view_count, created_at, user_id, is_pinned, is_notice', { count: 'exact' })
     .eq('status', 'active');
 
   if (options.category) {
@@ -43,6 +46,8 @@ export async function fetchCommunityPosts(options: {
   }
 
   const { data: posts, count, error } = await query
+    .order('is_pinned', { ascending: false })
+    .order('is_notice', { ascending: false })
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -53,11 +58,12 @@ export async function fetchCommunityPosts(options: {
   const userIds = [...new Set(posts.map((p) => p.user_id).filter(Boolean))] as string[];
   const postIds = posts.map((p) => p.id);
 
-  const [profilesRes, commentsRes] = await Promise.all([
+  const [profilesRes, commentsRes, likesRes] = await Promise.all([
     userIds.length
       ? supabase.from('profiles').select('id, nickname').in('id', userIds)
       : Promise.resolve({ data: [] as { id: string; nickname: string }[] }),
     supabase.from('comments').select('post_id').eq('status', 'active').in('post_id', postIds),
+    supabase.from('post_likes').select('post_id').in('post_id', postIds),
   ]);
 
   const nicknameMap = new Map(
@@ -67,11 +73,20 @@ export async function fetchCommunityPosts(options: {
   for (const c of commentsRes.data || []) {
     commentCounts.set(c.post_id, (commentCounts.get(c.post_id) || 0) + 1);
   }
+  const likeCounts = new Map<string, number>();
+  if (!likesRes.error && likesRes.data) {
+    for (const l of likesRes.data) {
+      likeCounts.set(l.post_id, (likeCounts.get(l.post_id) || 0) + 1);
+    }
+  }
 
   const enriched: PostListItem[] = posts.map((post) => ({
     ...post,
+    is_pinned: post.is_pinned ?? false,
+    is_notice: post.is_notice ?? false,
     authorNickname: post.user_id ? nicknameMap.get(post.user_id) || '익명' : '익명',
     commentCount: commentCounts.get(post.id) || 0,
+    likeCount: likeCounts.get(post.id) || 0,
   }));
 
   return { posts: enriched, total: count ?? enriched.length };
@@ -81,7 +96,7 @@ export async function fetchPostComments(postId: string) {
   const supabase = createPublicClient();
   const { data: comments } = await supabase
     .from('comments')
-    .select('id, post_id, user_id, content, status, created_at')
+    .select('id, post_id, user_id, parent_id, content, status, created_at')
     .eq('post_id', postId)
     .eq('status', 'active')
     .order('created_at', { ascending: true });

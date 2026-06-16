@@ -18,7 +18,8 @@ export default function SecondhandNewPage() {
     title: '',
     description: '',
     price: '',
-    region: '서울'
+    region: '서울',
+    category: 'other',
   });
 
   const [images, setImages] = useState<File[]>([]);
@@ -93,6 +94,7 @@ export default function SecondhandNewPage() {
           description: formData.description,
           price: formData.price,
           region: formData.region,
+          category: formData.category,
           imageUrls: uploadedImages,
         }),
       });
@@ -164,6 +166,22 @@ export default function SecondhandNewPage() {
               className="w-full bg-bg-tertiary border border-border-light rounded-lg px-4 py-2 text-text-primary placeholder-text-secondary focus:outline-none focus:border-gold"
               required
             />
+          </div>
+
+          {/* 카테고리 */}
+          <div className="mb-6">
+            <label className="block text-text-primary font-semibold mb-2">카테고리 *</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              className="w-full bg-bg-tertiary border border-border-light rounded-lg px-4 py-2 text-text-primary focus:outline-none focus:border-gold"
+            >
+              <option value="equipment">장비</option>
+              <option value="furniture">가구</option>
+              <option value="supplies">소모품</option>
+              <option value="other">기타</option>
+            </select>
           </div>
 
           {/* 지역 */}

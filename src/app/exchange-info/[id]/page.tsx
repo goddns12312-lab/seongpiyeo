@@ -11,6 +11,7 @@ import ExchangeDetailClient from './exchange-detail-client';
 import { CommentSection } from '@/components/community/CommentSection';
 import { PostContent } from '@/components/community/PostContent';
 import { PostViewTracker } from '@/components/community/PostViewTracker';
+import { PostSocialActions } from '@/components/community/PostSocialActions';
 import { ReportPostButton } from '@/components/community/ReportPostButton';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
@@ -129,6 +130,8 @@ export default async function DetailPage({ params }: { params: Promise<{ id: str
           </div>
 
           <PostContent content={post.content || ''} />
+
+          <PostSocialActions postId={id} />
 
           <div className="bg-bg-secondary border border-border-light rounded-lg p-6">
             <CommentSection postId={id} initialComments={comments} />

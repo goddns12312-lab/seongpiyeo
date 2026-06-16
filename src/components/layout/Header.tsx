@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { getSession, logout, AuthSession } from '@/lib/auth-session';
 import { Button } from '@/components/ui/Button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { NotificationBell } from '@/components/community/NotificationBell';
 import { SITE_CONFIG } from '@/lib/site';
 
 export function Header() {
@@ -162,6 +163,7 @@ export function Header() {
 
           {/* Auth Section */}
           <div className="hidden md:flex gap-1 lg:gap-2 items-center">
+            {user && <NotificationBell />}
             <ThemeToggle />
             {!mounted ? (
               <div className="w-36 h-8 bg-bg-tertiary rounded-lg animate-pulse" aria-hidden="true" />

@@ -16,13 +16,16 @@ export async function POST(request: Request) {
     const data = await request.json();
     const category = data.category as string;
 
-    if (!isCommunityCategory(category)) {
+    if (!isCommunityCategory(category) && data.status !== 'draft') {
       return Response.json({ error: '유효하지 않은 카테고리입니다' }, { status: 400 });
     }
 
+    const postStatus = data.status === 'draft' ? 'draft' : 'active';
+    const categoryValue = isCommunityCategory(category) ? category : 'free';
+
     const sanitized = sanitizePostBeforeSave({
       ...data,
-      category,
+      category: categoryValue,
       content: appendImagesToContent(data.content || '', data.imageUrls || []),
     });
     const { _seoApplied, _seoChanges, ...postData } = sanitized;
@@ -31,7 +34,7 @@ export async function POST(request: Request) {
     const finalData = {
       ...postData,
       user_id: session.id,
-      status: 'active',
+      status: postStatus,
     };
 
     const { data: post, error: postError } = await supabase

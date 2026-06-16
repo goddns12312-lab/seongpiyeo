@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { getSession } from '@/lib/auth-session';
 import { COMMUNITY_CATEGORIES, CommunityCategory } from '@/lib/community-categories';
+import { PostEditor } from '@/components/community/PostEditor';
 import { compressImageFile } from '@/lib/image-upload';
 
 export default function NewPostPage() {
@@ -25,6 +26,7 @@ export default function NewPostPage() {
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleImageSelect = (files: FileList | null) => {
     if (!files) return;
@@ -64,17 +66,17 @@ export default function NewPostPage() {
     return urls;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, asDraft = false) => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
 
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(formRef.current || e.currentTarget);
     const title = formData.get('title') as string;
     const category = formData.get('category') as string;
     const content = formData.get('content') as string;
 
-    if (!title || !category || !content) {
+    if (!asDraft && (!title || !category || !content)) {
       setError('제목, 카테고리, 내용은 필수입니다');
       setIsSubmitting(false);
       return;
@@ -99,7 +101,7 @@ export default function NewPostPage() {
           category,
           content,
           imageUrls,
-          status: 'active',
+          status: asDraft ? 'draft' : 'active',
         }),
       });
 
@@ -108,7 +110,13 @@ export default function NewPostPage() {
       if (!response.ok) {
         setError(result.error || '게시글 작성에 실패했습니다');
       } else if (result.success && result.postId) {
-        router.push(`/community/${result.postId}`);
+        if (asDraft) {
+          localStorage.removeItem('community-draft-new');
+          router.push('/mypage');
+        } else {
+          localStorage.removeItem('community-draft-new');
+          router.push(`/community/${result.postId}`);
+        }
       } else {
         setError('게시글 작성에 실패했습니다');
       }
@@ -136,7 +144,7 @@ export default function NewPostPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form ref={formRef} onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
             <div>
               <label className="block text-text-primary font-semibold mb-2">제목</label>
               <input
@@ -167,13 +175,7 @@ export default function NewPostPage() {
 
             <div>
               <label className="block text-text-primary font-semibold mb-2">내용</label>
-              <textarea
-                name="content"
-                placeholder="게시글 내용을 입력하세요"
-                className="w-full bg-bg-primary border border-border-light rounded px-4 py-3 text-text-primary placeholder-text-secondary/50 focus:border-gold outline-none transition"
-                rows={10}
-              />
-              <p className="text-xs text-text-secondary mt-2">## 제목, - 목록 마크다운 문법을 사용할 수 있습니다</p>
+              <PostEditor storageKey="community-draft-new" />
             </div>
 
             <div>
@@ -212,6 +214,18 @@ export default function NewPostPage() {
                 className="flex-1 bg-gold hover:bg-gold-light disabled:bg-gold/50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded transition"
               >
                 {isSubmitting ? '작성 중...' : '작성 완료'}
+              </button>
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={() => {
+                  if (formRef.current) {
+                    handleSubmit({ preventDefault: () => {} } as React.FormEvent<HTMLFormElement>, true);
+                  }
+                }}
+                className="px-4 py-3 bg-bg-tertiary border border-border-light text-text-primary rounded font-semibold text-sm hover:border-gold"
+              >
+                임시저장
               </button>
               <Link href="/community" className="flex-1">
                 <Button variant="secondary" className="w-full" disabled={isSubmitting}>취소</Button>

@@ -1,5 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
-import { getSessionFromRequest } from '@/lib/admin-session';
+import { createServiceRoleClient, getSessionFromRequest } from '@/lib/admin-session';
 import { revalidatePath } from 'next/cache';
 
 export async function POST(request: Request) {
@@ -9,14 +8,14 @@ export async function POST(request: Request) {
       return Response.json({ error: '로그인이 필요합니다' }, { status: 401 });
     }
 
-    const supabase = await createClient();
     const data = await request.json();
-    const { title, description, price, region, imageUrls = [] } = data;
+    const { title, description, price, region, category = 'other', imageUrls = [] } = data;
 
     if (!title || !price) {
       return Response.json({ error: '제목과 가격은 필수입니다' }, { status: 400 });
     }
 
+    const supabase = createServiceRoleClient();
     const { data: item, error: itemError } = await supabase
       .from('secondhand_items')
       .insert([
@@ -26,6 +25,7 @@ export async function POST(request: Request) {
           description: description || '',
           price: parseInt(price, 10),
           region,
+          category,
           main_image_url: imageUrls[0] || null,
           status: 'active',
         },

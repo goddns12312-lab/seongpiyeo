@@ -66,6 +66,7 @@ export type Comment = {
   id: string;
   post_id: string;
   user_id: string;
+  parent_id?: string | null;
   content: string;
   status: 'active' | 'hidden';
   created_at: string;

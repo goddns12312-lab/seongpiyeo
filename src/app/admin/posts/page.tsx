@@ -57,6 +57,26 @@ function AdminPostsContent() {
     fetchPosts();
   };
 
+  const handlePin = async (postId: string, is_pinned: boolean) => {
+    await fetch('/api/admin/posts/pin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ postId, is_pinned }),
+    });
+    fetchPosts();
+  };
+
+  const handleNotice = async (postId: string, is_notice: boolean) => {
+    await fetch('/api/admin/posts/pin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ postId, is_notice }),
+    });
+    fetchPosts();
+  };
+
   if (loading) {
     return <div className="text-center py-12">로딩 중...</div>;
   }
@@ -123,11 +143,21 @@ function AdminPostsContent() {
                     {formatDate(post.created_at)}
                   </td>
                   <td className="px-6 py-3">
-                    {post.status === 'active' && (
-                      <Button variant="danger" size="sm" onClick={() => handleHide(post.id)}>
-                        숨김
-                      </Button>
-                    )}
+                    <div className="flex flex-wrap gap-1">
+                      {post.status === 'active' && (
+                        <>
+                          <Button variant="secondary" size="sm" onClick={() => handlePin(post.id, true)}>
+                            고정
+                          </Button>
+                          <Button variant="secondary" size="sm" onClick={() => handleNotice(post.id, true)}>
+                            공지
+                          </Button>
+                          <Button variant="danger" size="sm" onClick={() => handleHide(post.id)}>
+                            숨김
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
                 );
