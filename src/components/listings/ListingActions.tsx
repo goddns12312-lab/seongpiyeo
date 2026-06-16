@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button';
 
 interface ListingActionsProps {
   listingId: string;
-  userId: string;
+  userId?: string;
 }
 
 export function ListingActions({ listingId, userId }: ListingActionsProps) {
@@ -22,7 +22,7 @@ export function ListingActions({ listingId, userId }: ListingActionsProps) {
   useEffect(() => {
     setIsHydrated(true);
     const session = getSession();
-    setIsOwner(!!session && (session.id === userId || session.role === 'admin'));
+    setIsOwner(!!session && (!!userId && (session.id === userId || session.role === 'admin')));
   }, [userId]);
 
   const handleDelete = async () => {

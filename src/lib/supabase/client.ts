@@ -1,6 +1,6 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseClient, type SupabaseClient } from '@supabase/supabase-js'
 
-let supabaseClient: ReturnType<typeof createSupabaseClient> | null = null;
+let supabaseClient: SupabaseClient<any, 'public', any> | null = null;
 
 function initializeClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -17,10 +17,9 @@ function initializeClient() {
   return createSupabaseClient(url!, key!);
 }
 
-export const createClient = () => {
-  // Return singleton instance
+export const createClient = (): SupabaseClient<any, 'public', any> => {
   if (!supabaseClient) {
     supabaseClient = initializeClient();
   }
   return supabaseClient;
-}
+};

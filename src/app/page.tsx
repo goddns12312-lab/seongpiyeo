@@ -8,6 +8,7 @@ import { getBannerImageUrl, getOptimizedImageUrl } from '@/lib/image-url';
 import { Listing, Banner, REGIONS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
 import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
+import { getJobPublicPath } from '@/lib/jobs-data';
 
 export const revalidate = 3600;
 
@@ -93,7 +94,7 @@ export default async function HomePage() {
       .limit(6),
     supabase
       .from('jobs')
-      .select('id, title, region, category')
+      .select('id, slug, title, region, category')
       .eq('status', 'active')
       .order('created_at', { ascending: false })
       .limit(6),
@@ -111,39 +112,6 @@ export default async function HomePage() {
   const daysPassed = Math.floor((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
   const userCount = baseUsers + Math.floor(daysPassed * 59);
 
-  // FAQ Schema
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: '성인PC 성인피씨 매물은 어떻게 거래하나요?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: '성피요에서는 성인PC 성인피씨 창업에 필요한 모든 매물 정보를 제공합니다. 지역별로 성인피씨방 매매 및 임대 정보를 쉽게 찾을 수 있습니다.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '성인피씨창업에 필요한 정보는?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: '성피요는 성인피시 창업을 위한 매물 정보, 커뮤니티, 상담 등 모든 정보를 제공하는 전문 플랫폼입니다.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '성피요는 안전한가요?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: '성피요는 회원 인증, 신뢰도 시스템, 거래 내역 기록을 통해 안전한 성인PC 거래 환경을 제공합니다.',
-        },
-      },
-    ],
-  };
-
-
   return (
     <div className="page-shell">
       {topBanners && topBanners.length > 0 && (
@@ -154,12 +122,6 @@ export default async function HomePage() {
           fetchPriority="high"
         />
       )}
-      {/* JSON-LD Scripts */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-
       {/* Top Banners */}
       {topBanners && topBanners.length > 0 && (
         <section className="border-b border-border-light relative py-5 md:py-6" aria-label="프로모션 배너">
@@ -174,7 +136,7 @@ export default async function HomePage() {
                 >
                   <Image
                     src={getBannerImageUrl(banner.image_url)}
-                    alt=""
+                    alt={banner.title || '프로모션 배너'}
                     width={1509}
                     height={430}
                     className="w-full h-auto"
@@ -313,10 +275,10 @@ export default async function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {latestJobs.map((job: any) => (
+              {latestJobs.filter((job: { slug?: string | null }) => job.slug).map((job: any) => (
                 <Link
                   key={job.id}
-                  href={`/jobs/${job.id}`}
+                  href={getJobPublicPath(job.slug)}
                   className="p-4 home-card hover-lift"
                 >
                   <div className="flex items-start justify-between mb-2">
@@ -427,7 +389,7 @@ export default async function HomePage() {
                 >
                   <Image
                     src={getBannerImageUrl(banner.image_url)}
-                    alt=""
+                    alt={banner.title || '하단 배너'}
                     width={1509}
                     height={430}
                     className="w-full h-auto"

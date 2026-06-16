@@ -63,6 +63,9 @@ crawlers-test/
 /check-*.js
 /final-*.js
 /debug-*.js
+lighthouse-report*.json
+*-screenshot.png
+tsconfig.tsbuildinfo
 *.log
 build-output.txt
 build.log

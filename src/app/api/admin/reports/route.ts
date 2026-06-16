@@ -81,21 +81,31 @@ export async function PATCH(request: Request) {
   }
 
   const supabase = createServiceRoleClient();
-  const table = targetType === 'listing' ? 'listing_reports' : 'post_reports';
-  const idColumn = targetType === 'listing' ? 'listing_id' : 'post_id';
 
-  const { data: report } = await supabase
-    .from(table)
-    .select(idColumn)
-    .eq('id', reportId)
-    .single();
+  if (targetType === 'listing') {
+    const { data: report } = await supabase
+      .from('listing_reports')
+      .select('listing_id')
+      .eq('id', reportId)
+      .single();
 
-  await supabase.from(table).update({ status }).eq('id', reportId);
+    await supabase.from('listing_reports').update({ status }).eq('id', reportId);
 
-  if (targetType === 'listing' && hideListing && report?.listing_id) {
-    await supabase.from('listings').update({ status: 'hidden' }).eq('id', report.listing_id);
-  } else if (hidePost && report?.post_id) {
-    await supabase.from('posts').update({ status: 'hidden' }).eq('id', report.post_id);
+    if (hideListing && report?.listing_id) {
+      await supabase.from('listings').update({ status: 'hidden' }).eq('id', report.listing_id);
+    }
+  } else {
+    const { data: report } = await supabase
+      .from('post_reports')
+      .select('post_id')
+      .eq('id', reportId)
+      .single();
+
+    await supabase.from('post_reports').update({ status }).eq('id', reportId);
+
+    if (hidePost && report?.post_id) {
+      await supabase.from('posts').update({ status: 'hidden' }).eq('id', report.post_id);
+    }
   }
 
   return Response.json({ success: true });

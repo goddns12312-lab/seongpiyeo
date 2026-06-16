@@ -342,7 +342,7 @@ export default async function ListingDetailPage({ params }: Props) {
             <RelatedListings
               listings={relatedListings}
               currentRegion={listing.region}
-              currentDistrict={listing.district}
+              currentDistrict={listing.district ?? undefined}
             />
 
             <AdjacentRegions

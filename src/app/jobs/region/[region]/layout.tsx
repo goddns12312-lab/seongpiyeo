@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
+import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 import { createPublicClient } from '@/lib/supabase/public';
 
 interface Props {
@@ -52,8 +53,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  // 1~2개: noindex (하지만 follow)
-  if (jobCount < 3) {
+  // 1~4개: noindex (하지만 follow)
+  if (jobCount < 5) {
     return {
       title: buildRegionTitle(decodedRegion, jobCount),
       description: buildRegionDescription(decodedRegion, jobCount),
@@ -67,10 +68,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  // 3개 이상: index + 상세 메타데이터
+  // 5개 이상: index + 상세 메타데이터
   const title = buildRegionTitle(decodedRegion, jobCount);
   const description = buildRegionDescription(decodedRegion, jobCount);
   const keywords = buildRegionKeywords(decodedRegion);
+  const ogImageEntry = buildOgImageEntry(`${decodedRegion} PC방 구인 - 성피요`);
 
   return {
     title,
@@ -96,20 +98,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'website',
       url: `${SITE_CONFIG.url}/jobs/region/${encodeURIComponent(decodedRegion)}`,
       siteName: SITE_CONFIG.businessName,
-      images: [
-        {
-          url: `${SITE_CONFIG.url}/og-jobs.png`,
-          width: 1200,
-          height: 630,
-          alt: `${decodedRegion} PC방 구인 - 성피요`,
-        },
-      ],
+      images: [ogImageEntry],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [`${SITE_CONFIG.url}/og-jobs.png`],
+      images: [getOgImageUrl()],
     },
   };
 }

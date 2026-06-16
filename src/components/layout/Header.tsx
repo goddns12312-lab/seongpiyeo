@@ -73,7 +73,7 @@ export function Header() {
           >
             <Image
               src="/logo.webp"
-              alt=""
+              alt={SITE_CONFIG.businessName}
               width={80}
               height={52}
               sizes="80px"

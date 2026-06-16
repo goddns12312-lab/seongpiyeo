@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Script from 'next/script';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense, useMemo } from 'react';
-import { getSession } from '@/lib/auth-session';
+import { getSession, type AuthSession } from '@/lib/auth-session';
 import type { Job } from '@/types';
 import { JobCard } from '@/components/jobs/JobCard';
 import { JobFilters } from '@/components/jobs/JobFilters';
@@ -19,7 +19,7 @@ type Props = {
 function JobsContent({ initialJobs, totalCount }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<AuthSession | null>(null);
 
   const selectedCategory = useMemo(
     () => (searchParams.get('category') || 'recruitment') as 'recruitment' | 'job_seeker',

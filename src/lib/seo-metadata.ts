@@ -213,10 +213,10 @@ export function buildSecondhandMetadata(item: any): SEOMetadataOptions {
 /**
  * 일자리 메타데이터 생성
  */
-export function buildJobMetadata(job: any): SEOMetadataOptions {
-  const { title, region, id } = job;
+export function buildJobMetadata(job: { title: string; region: string; slug: string }): SEOMetadataOptions {
+  const { title, region, slug } = job;
+  const jobPath = `/jobs/${encodeURIComponent(slug)}`;
 
-  // 키워드 포함: 지역 + PC방 + 구인 + 직급
   const seoTitle = `${region} 성인피씨 ${title} 구인 | 성인pc 구직정보`;
   const seoDescription = `성인피시 구인구직: ${title} in ${region}. ${SITE_CONFIG.businessName}에서 채용공고를 확인하세요.`.slice(0, 160);
 
@@ -237,7 +237,10 @@ export function buildJobMetadata(job: any): SEOMetadataOptions {
     ],
     ogTitle: seoTitle,
     ogDescription: seoDescription,
-    canonicalUrl: createCanonicalUrl(`/jobs/${id}`),
+    canonicalUrl: createCanonicalUrl(jobPath),
+    alternates: {
+      canonical: createCanonicalUrl(jobPath),
+    },
   };
 }
 

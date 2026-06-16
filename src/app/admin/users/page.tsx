@@ -139,11 +139,11 @@ export default function AdminUsersPage() {
       setMigrationHint(
         'account_status 컬럼이 없습니다. Supabase SQL Editor에서 013_profiles_account_status.sql을 실행하면 정지·탈퇴 기능을 사용할 수 있습니다.'
       );
-      usersRes = await supabase
+      usersRes = (await supabase
         .from('profiles')
         .select('id, nickname, username, phone, role, created_at')
         .order('created_at', { ascending: false })
-        .limit(ADMIN_USERS_LIMIT);
+        .limit(ADMIN_USERS_LIMIT)) as typeof usersRes;
     } else if (usersRes.error) {
       setMigrationHint(usersRes.error.message);
     } else {

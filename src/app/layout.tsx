@@ -41,9 +41,6 @@ export const metadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
-    other: {
-      'bingbot': 'index, follow',
-    },
   },
   openGraph: {
     type: 'website',
@@ -76,8 +73,12 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
-    naver: process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION || '',
+    ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+      : {}),
+    ...(process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION
+      ? { naver: process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION }
+      : {}),
   },
   manifest: '/manifest.json',
   icons: {
@@ -111,8 +112,6 @@ export default function RootLayout({
         <meta charSet="utf-8" />
         <meta name="theme-color" content="#c8a96b" />
         <meta name="format-detection" content="telephone=yes" />
-        <link rel="alternate" hrefLang="ko-KR" href={SITE_CONFIG.url} />
-        <link rel="alternate" hrefLang="x-default" href={SITE_CONFIG.url} />
         <link rel="dns-prefetch" href="https://cdn.imweb.me" />
         {process.env.NEXT_PUBLIC_SUPABASE_URL && (
           <>

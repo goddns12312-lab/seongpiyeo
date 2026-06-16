@@ -76,8 +76,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     };
   }
 
-  // 1~2개: noindex (하지만 follow)
-  if (listingCount < 3) {
+  // 1~4개: noindex (하지만 follow)
+  if (listingCount < 5) {
     return {
       title: buildRegionTitle(decodedRegion, listingCount),
       description: buildRegionDescription(decodedRegion, listingCount),
@@ -91,7 +91,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     };
   }
 
-  // 3개 이상: index + 상세 메타데이터
+  // 5개 이상: index + 상세 메타데이터
   const title = buildRegionTitle(decodedRegion, listingCount);
   const description = buildRegionDescription(decodedRegion, listingCount);
   const keywords = buildRegionKeywords(decodedRegion);
@@ -276,7 +276,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
               )}
               {search && (
                 <p className="text-sm text-text-secondary font-light">
-                  "{search}" 검색 결과 {listingCount}개
+                  &ldquo;{search}&rdquo; 검색 결과 {listingCount}개
                 </p>
               )}
             </div>

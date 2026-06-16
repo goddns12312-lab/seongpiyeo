@@ -44,7 +44,7 @@ export default function NewPostPage() {
     setPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const uploadImages = async (sessionId: string): Promise<string[]> => {
+  const uploadImages = async (_sessionId: string): Promise<string[]> => {
     if (!images.length) return [];
     setUploadingImages(true);
     const urls: string[] = [];

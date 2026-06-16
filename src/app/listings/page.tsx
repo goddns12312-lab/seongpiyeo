@@ -17,7 +17,15 @@ export const revalidate = 120;
 export async function generateMetadata(
   { searchParams }: Props,
 ): Promise<Metadata> {
-  const { region } = await searchParams;
+  const { region, page, search } = await searchParams;
+  const currentPage = Math.max(1, parseInt(page || '1', 10));
+  const hasRegionFilter = region && region !== 'all' && region !== 'undefined';
+  const hasFilters = !!hasRegionFilter || !!search || currentPage > 1;
+
+  if (hasFilters) {
+    return { robots: { index: false, follow: true } };
+  }
+
   const baseMeta = buildListingsMetadata(region);
   const metaWithRobots = addRobotsToMetadata(baseMeta, {
     googlebot: 'index, follow, max-snippet:-1, max-image-preview:large',

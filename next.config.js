@@ -117,7 +117,7 @@ const nextConfig = {
 
   // 번들 분석 (선택사항)
   experimental: {
-    optimizePackageImports: ['@supabase/supabase-js'],
+    optimizePackageImports: ['@supabase/supabase-js', 'bcryptjs'],
   },
 
   // ESLint 무시 (필요시)

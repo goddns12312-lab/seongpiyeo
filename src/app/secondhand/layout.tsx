@@ -4,6 +4,7 @@ import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 import { getOgImageUrl } from '@/lib/seo-assets';
 import { buildCollectionPageSchema } from '@/lib/seo-schema';
+import { fetchSecondhandItems } from '@/lib/secondhand-data';
 
 const ogImage = getOgImageUrl();
 
@@ -41,14 +42,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SecondhandLayout({
+export default async function SecondhandLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const items = await fetchSecondhandItems({ limit: 8 });
+
+  const collectionItems = items.map((item) => ({
+    name: item.title,
+    url: `${SITE_CONFIG.url}/secondhand/${item.id}`,
+    description: `${item.region} - ${item.price}만원`,
+  }));
+
   const collectionSchema = buildCollectionPageSchema(
     'PC방 중고장터',
-    [],
+    collectionItems,
     `${SITE_CONFIG.url}/secondhand`
   );
 

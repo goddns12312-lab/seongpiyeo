@@ -13,7 +13,11 @@ type Props = {
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const sp = await searchParams;
-  const hasFilters = sp.region || sp.search || (Array.isArray(sp.employment_type) ? sp.employment_type.length : sp.employment_type);
+  const hasFilters =
+    sp.category ||
+    sp.region ||
+    sp.search ||
+    (Array.isArray(sp.employment_type) ? sp.employment_type.length : sp.employment_type);
   if (hasFilters) {
     return { robots: { index: false, follow: true } };
   }

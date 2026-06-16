@@ -5,8 +5,10 @@ import { ListingImage } from '@/types';
 import { buildListingImageAlt } from '@/lib/seo-metadata';
 import { getOptimizedImageUrl } from '@/lib/image-url';
 
+type GalleryImage = Pick<ListingImage, 'id' | 'url' | 'order_num'> & Partial<ListingImage>;
+
 interface ImageGalleryProps {
-  images: ListingImage[];
+  images: GalleryImage[];
   title: string;
   listing?: any;
 }

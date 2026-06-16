@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       console.error('[api/upload-job-image]', uploadError.message);
       return NextResponse.json(
         { error: uploadError.message || '업로드 실패' },
-        { status: uploadError.statusCode || 500 }
+        { status: typeof uploadError.statusCode === 'number' ? uploadError.statusCode : 500 }
       );
     }
 

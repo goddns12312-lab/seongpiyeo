@@ -1,4 +1,4 @@
-import { createServiceRoleClient, getSessionFromRequest } from '@/lib/admin-session';
+import { getSessionFromRequest } from '@/lib/admin-session';
 import { canEditPostWithSession } from '@/lib/post-permissions';
 
 export async function GET(

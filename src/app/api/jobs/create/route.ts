@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const sanitized = sanitizeJobBeforeSave({
       title: payload.title,
       region: payload.region,
-      employment_type: payload.employment_type,
+      employment_type: payload.employment_type ?? undefined,
     });
 
     const { data: job, error: insertErr } = await supabase

@@ -5,7 +5,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { slug: string } }
 ) {
   try {
@@ -20,7 +20,7 @@ export async function GET(
     let error = null;
 
     // 먼저 ID로 조회 시도
-    const { data: jobById, error: errorById } = await supabase
+    const { data: jobById } = await supabase
       .from('jobs')
       .select('*')
       .eq('id', decodedSlug)
@@ -31,8 +31,7 @@ export async function GET(
     if (jobById) {
       job = jobById;
     } else {
-      // ID가 없으면 slug로 조회 (하위호환성)
-      const { data: jobBySlug, error: errorBySlug } = await supabase
+      const { data: jobBySlug, error: slugError } = await supabase
         .from('jobs')
         .select('*')
         .eq('slug', decodedSlug)
@@ -41,7 +40,7 @@ export async function GET(
         .single();
 
       job = jobBySlug;
-      error = errorBySlug;
+      error = slugError;
     }
 
     if (error || !job) {

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { memo } from 'react';
 import { getOptimizedImageUrl } from '@/lib/image-url';
+import { getJobPublicPath } from '@/lib/jobs-data';
 import { Job } from '@/types';
 import { EMPLOYMENT_TYPE_LABELS } from '@/types';
 
@@ -18,13 +19,17 @@ function getPrimaryImage(job: Job): string | null {
 }
 
 function JobCardComponent({ job }: JobCardProps) {
+  if (!job.slug) {
+    return null;
+  }
+
   const isRecruitement = job.category === 'recruitment';
   const relativeTime = getRelativeTime(new Date(job.created_at));
 
   const imageUrl = getPrimaryImage(job);
   const imageSrc = imageUrl ? getOptimizedImageUrl(imageUrl, 400, 75) : PLACEHOLDER_IMAGE;
 
-  const href = job.slug ? `/jobs/${job.slug}` : `/jobs/${job.id}`;
+  const href = getJobPublicPath(job.slug);
 
   return (
     <Link href={href}>

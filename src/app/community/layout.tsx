@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import { SITE_CONFIG } from '@/lib/site';
 import { getOgImageUrl } from '@/lib/seo-assets';
+import { createPublicClient } from '@/lib/supabase/public';
 
 const ogImage = getOgImageUrl();
 
@@ -41,11 +42,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CommunityLayout({
+export default async function CommunityLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = createPublicClient();
+  const { data: posts } = await supabase
+    .from('posts')
+    .select('id, title')
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+    .limit(8);
+
   const communityCollectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -55,7 +64,12 @@ export default function CommunityLayout({
     url: `${SITE_CONFIG.url}/community`,
     mainEntity: {
       '@type': 'ItemList',
-      itemListElement: [],
+      itemListElement: (posts || []).map((post, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        url: `${SITE_CONFIG.url}/community/${post.id}`,
+        name: post.title,
+      })),
     },
   };
 

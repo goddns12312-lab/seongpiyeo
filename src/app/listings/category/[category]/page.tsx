@@ -1,8 +1,6 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/client';
+import { notFound } from 'next/navigation';
+import { createPublicClient } from '@/lib/supabase/public';
 import { LISTING_LIST_SELECT } from '@/lib/listing-queries';
 
 const LISTING_CATEGORIES = {
@@ -17,66 +15,40 @@ function isCategoryValid(category: string): category is ListingCategory {
   return category in LISTING_CATEGORIES;
 }
 
-export default function ListingCategoryPage({ params }: { params: { category: string } }) {
-  const [listings, setListings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+interface Props {
+  params: Promise<{ category: string }>;
+}
 
-  const category = params.category as ListingCategory;
-  const categoryInfo = LISTING_CATEGORIES[category];
+export default async function ListingCategoryPage({ params }: Props) {
+  const { category } = await params;
 
-  useEffect(() => {
-    fetchListings();
-  }, [category]);
-
-  const fetchListings = async () => {
-    try {
-      const supabase = createClient();
-      if (!supabase) throw new Error('Supabase not initialized');
-
-      const priceType = category === 'rent' ? 'monthly_rent' : 'premium_price';
-
-      const { data, error } = await supabase
-        .from('listings')
-        .select(LISTING_LIST_SELECT, { count: 'exact' })
-        .eq('status', 'active')
-        .gt(priceType, 0)
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      if (error) throw error;
-      setListings(data || []);
-    } catch (error) {
-      console.error('Failed to fetch listings:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (!categoryInfo) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-text-secondary mb-4">카테고리를 찾을 수 없습니다.</p>
-          <Link href="/listings">
-            <button className="text-gold hover:text-gold/80 font-semibold">
-              ← 매물 목록으로 돌아가기
-            </button>
-          </Link>
-        </div>
-      </div>
-    );
+  if (!isCategoryValid(category)) {
+    notFound();
   }
+
+  const categoryInfo = LISTING_CATEGORIES[category];
+  const priceType = category === 'rent' ? 'monthly_rent' : 'premium_price';
+
+  const supabase = createPublicClient();
+  const { data: listings } = await supabase
+    .from('listings')
+    .select(LISTING_LIST_SELECT)
+    .eq('status', 'active')
+    .gt(priceType, 0)
+    .order('created_at', { ascending: false })
+    .limit(100);
 
   return (
     <div className="bg-bg-primary min-h-screen py-8 lg:py-12">
       <div className="max-w-6xl mx-auto px-4 lg:px-8">
-        {/* Navigation */}
-        <Link href="/listings" className="inline-flex items-center gap-2 text-gold hover:text-gold/80 text-sm font-medium mb-8 transition-colors">
+        <Link
+          href="/listings"
+          className="inline-flex items-center gap-2 text-gold hover:text-gold/80 text-sm font-medium mb-8 transition-colors"
+        >
           <span>←</span>
           <span>매물 목록으로</span>
         </Link>
 
-        {/* Header */}
         <div className="bg-gradient-to-r from-bg-secondary to-bg-tertiary rounded-xl p-6 lg:p-8 mb-8">
           <p className="text-gold text-sm font-semibold uppercase tracking-widest mb-2">성인PC 매물</p>
           <h1 className={`text-3xl lg:text-4xl font-bold mb-2 ${categoryInfo.color}`}>
@@ -87,10 +59,7 @@ export default function ListingCategoryPage({ params }: { params: { category: st
           </p>
         </div>
 
-        {/* Listings Grid */}
-        {loading ? (
-          <div className="text-center py-12 text-text-secondary">로딩 중...</div>
-        ) : listings.length === 0 ? (
+        {!listings || listings.length === 0 ? (
           <div className="bg-bg-secondary border border-border-light rounded-xl p-12 text-center">
             <p className="text-text-secondary text-lg mb-4">아직 {categoryInfo.label} 매물이 없습니다.</p>
             <Link href="/listings">
@@ -101,10 +70,9 @@ export default function ListingCategoryPage({ params }: { params: { category: st
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {listings.map(listing => (
+            {listings.map((listing) => (
               <Link key={listing.id} href={`/listings/${listing.id}`}>
                 <div className="bg-bg-secondary border border-border-light rounded-lg overflow-hidden hover:border-gold hover:shadow-lg transition-all cursor-pointer">
-                  {/* Image */}
                   <div className="relative w-full aspect-video bg-bg-tertiary overflow-hidden">
                     {listing.main_image_url ? (
                       <img
@@ -120,23 +88,19 @@ export default function ListingCategoryPage({ params }: { params: { category: st
                     )}
                   </div>
 
-                  {/* Info */}
                   <div className="p-4">
-                    {/* Price */}
                     <p className="text-gold font-bold text-lg mb-2">
                       {category === 'rent' && listing.monthly_rent
                         ? `월세 ${listing.monthly_rent.toLocaleString()}만원`
                         : category === 'sale' && listing.premium_price
-                        ? `권리금 ${listing.premium_price.toLocaleString()}만원`
-                        : '문의'}
+                          ? `권리금 ${listing.premium_price.toLocaleString()}만원`
+                          : '문의'}
                     </p>
 
-                    {/* Title */}
                     <h3 className="text-text-primary font-semibold line-clamp-2 hover:text-gold transition-colors mb-2">
                       {listing.title}
                     </h3>
 
-                    {/* Meta */}
                     <div className="flex items-center justify-between text-text-muted text-xs">
                       <span>📍 {listing.region}</span>
                       <span>조회 {listing.view_count || 0}</span>
