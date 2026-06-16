@@ -228,12 +228,6 @@ export async function createCommunityPost(data: any) {
 
   // SEO 제목 자동 보정 적용
   const sanitized = sanitizePostBeforeSave(data);
-  console.log('[SEO] Community post title auto-fix applied:', {
-    original: data.title,
-    fixed: sanitized.title,
-    applied: sanitized._seoApplied,
-  });
-
   // 내부용 필드 제거 (_ 로 시작하는 모든 필드)
   const cleanPostData = Object.fromEntries(
     Object.entries(sanitized).filter(([key]) => !key.startsWith('_'))
@@ -282,12 +276,6 @@ export async function createSecondhandItem(data: any) {
 
   // SEO 제목 자동 보정 적용
   const sanitized = sanitizeSecondhandBeforeSave(data);
-  console.log('[SEO] Secondhand item title auto-fix applied:', {
-    original: data.title,
-    fixed: sanitized.title,
-    applied: sanitized._seoApplied,
-  });
-
   // 내부용 필드 제거 (_ 로 시작하는 모든 필드)
   const cleanItemData = Object.fromEntries(
     Object.entries(sanitized).filter(([key]) => !key.startsWith('_'))
@@ -337,12 +325,6 @@ export async function createExchangeInfoPost(data: any) {
   // SEO 제목 자동 보정 적용 (category: 'exchange' 추가)
   const exchangeData = { ...data, category: 'exchange' };
   const sanitized = sanitizePostBeforeSave(exchangeData);
-  console.log('[SEO] Exchange-info post title auto-fix applied:', {
-    original: data.title,
-    fixed: sanitized.title,
-    applied: sanitized._seoApplied,
-  });
-
   // 내부용 필드 제거 (_ 로 시작하는 모든 필드)
   const cleanPostData = Object.fromEntries(
     Object.entries(sanitized).filter(([key]) => !key.startsWith('_'))

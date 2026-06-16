@@ -29,11 +29,9 @@ export function ListingForm({ initialData, mode = 'create', listingId, existingI
   useEffect(() => {
     const session = getSession();
     if (!session) {
-      console.log('[ListingForm] 로그인 세션 없음, /login으로 이동');
       router.push('/login');
       return;
     }
-    console.log('[ListingForm] 로그인 세션 확인:', session.username);
     setIsAuthenticated(true);
     setIsCheckingAuth(false);
   }, [router]);
@@ -69,7 +67,6 @@ export function ListingForm({ initialData, mode = 'create', listingId, existingI
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files.length) return;
 
-    console.log('이미지 업로드 시작:', e.target.files.length, '개');
     setUploadingImages(true);
     setError('');
 
@@ -80,7 +77,6 @@ export function ListingForm({ initialData, mode = 'create', listingId, existingI
 
       for (const file of files) {
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}-${file.name}`;
-        console.log('파일 업로드 중:', fileName);
 
         const { data, error } = await supabase.storage
           .from('listings')
@@ -97,12 +93,10 @@ export function ListingForm({ initialData, mode = 'create', listingId, existingI
             .from('listings')
             .getPublicUrl(`images/${fileName}`);
 
-          console.log('업로드 완료:', urlData.publicUrl);
           uploadedUrls.push(urlData.publicUrl);
         }
       }
 
-      console.log('최종 업로드된 이미지:', uploadedUrls.length, '개');
       setUploadedImages((prev) => [...prev, ...uploadedUrls]);
       e.target.value = '';
     } catch (err) {

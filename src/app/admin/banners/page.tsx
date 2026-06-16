@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { createBanner, updateBanner, deleteBanner } from '@/lib/actions';
 import { ensureAdminClient } from '@/lib/admin-client';
 import { ADMIN_BANNER_SELECT } from '@/lib/account-queries';
-import { uploadFilesToStorage } from '@/lib/image-upload';
+import { uploadFilesToStorage, compressBannerFile } from '@/lib/image-upload';
 import { Button } from '@/components/ui/Button';
 
 interface Banner {
@@ -144,7 +144,8 @@ export default function BannersPage() {
 
     try {
       const supabase = createClient();
-      const [url] = await uploadFilesToStorage(supabase, 'listings', [file], 'banners');
+      const compressed = await compressBannerFile(file);
+      const [url] = await uploadFilesToStorage(supabase, 'listings', [compressed], 'banners');
 
       if (!url) {
         alert('이미지 업로드 실패');
@@ -216,6 +217,9 @@ export default function BannersPage() {
                 />
                 {uploading && <span className="text-gold text-sm">업로드 중...</span>}
               </div>
+              <p className="text-text-muted text-xs">
+                GIF·대용량 파일은 업로드 시 가로 1200px JPEG로 자동 압축됩니다. 기존 GIF 배너는 재업로드하면 로딩 속도가 개선됩니다.
+              </p>
               <p className="text-text-muted text-xs">또는 URL 직접 입력:</p>
               <input
                 type="url"

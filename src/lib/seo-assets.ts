@@ -7,6 +7,16 @@ export function getOgImageUrl(path: string = DEFAULT_OG_IMAGE_PATH): string {
   return `${SITE_CONFIG.url}${path}`;
 }
 
+export function buildOgImageEntry(alt: string) {
+  return {
+    url: getOgImageUrl(),
+    width: 1200,
+    height: 630,
+    alt,
+    type: 'image/png' as const,
+  };
+}
+
 export const SEO_OG_IMAGES = {
   default: DEFAULT_OG_IMAGE_PATH,
   listings: DEFAULT_OG_IMAGE_PATH,

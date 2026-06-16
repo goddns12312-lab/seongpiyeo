@@ -7,6 +7,7 @@ import { formatPrice, formatDate } from '@/lib/utils';
 import { getBannerImageUrl, getOptimizedImageUrl } from '@/lib/image-url';
 import { Listing, Banner, REGIONS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
+import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 
 export const revalidate = 3600;
 
@@ -44,21 +45,13 @@ export const metadata: Metadata = {
     url: SITE_CONFIG.url,
     siteName: SITE_CONFIG.businessName,
     locale: 'ko_KR',
-    images: [
-      {
-        url: `${SITE_CONFIG.url}/423432.png`,
-        width: 1200,
-        height: 630,
-        alt: '성피요 성인PC 매물 플랫폼',
-        type: 'image/png',
-      },
-    ],
+    images: [buildOgImageEntry('성피요 성인PC 매물 플랫폼')],
   },
   twitter: {
     card: 'summary_large_image',
     title: '성인PC 성인피씨 성인피시 창업',
     description: '성인PC 성인피씨 성인피시 창업 정보 및 매물 거래',
-    images: [`${SITE_CONFIG.url}/423432.png`],
+    images: [getOgImageUrl()],
   },
 };
 

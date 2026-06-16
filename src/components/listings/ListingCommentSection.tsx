@@ -59,13 +59,6 @@ export default function ListingCommentSection({
       const nickname = user?.nickname || '익명';
       const user_id = user?.id || null;
 
-      console.log('댓글 등록 요청:', {
-        listing_id: listingId,
-        user_id,
-        nickname,
-        content: content.trim()
-      });
-
       const { data, error: err } = await supabase
         .from('listing_comments')
         .insert([
@@ -79,8 +72,6 @@ export default function ListingCommentSection({
         ])
         .select()
         .single();
-
-      console.log('응답:', { data, err });
 
       if (err) {
         console.error('Supabase 오류:', err);

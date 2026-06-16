@@ -99,22 +99,11 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
   });
 
   useEffect(() => {
-    console.log('[ListingFormNew useEffect] 초기 세션 확인 시작');
-    console.log('[ListingFormNew useEffect] 1. localStorage pc_bang_session:', localStorage.getItem('pc_bang_session') || 'null');
-
     const session = getSession();
-    console.log('[ListingFormNew useEffect] 2. getSession() 결과:', {
-      sessionExists: !!session,
-      sessionId: session?.id || 'null',
-      sessionUsername: session?.username || 'null',
-    });
-
     if (!session) {
-      console.log('[ListingFormNew useEffect] 3. 세션 없음 - /login으로 리다이렉트');
       router.push('/login');
       return;
     }
-    console.log('[ListingFormNew useEffect] 3-1. 세션 있음 - 진행');
     setIsAuthenticated(true);
     setIsCheckingAuth(false);
 
@@ -311,11 +300,6 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
 
     try {
       const session = getSession();
-      console.log('[ListingFormNew handleSubmit] 1. getSession() 결과:', {
-        sessionExists: !!session,
-        sessionId: session?.id || 'null',
-        sessionAll: session,
-      });
       if (!session) {
         router.push('/login');
         setLoading(false);
@@ -392,13 +376,6 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
           main_image_url: uploadedImages.length > 0 ? uploadedImages[0] : null,
           thumbnail_url: uploadedImages.length > 0 ? uploadedImages[0] : null,
         };
-        console.log('[ListingFormNew handleSubmit] 2. dataToSend keys:', Object.keys(dataToSend));
-        console.log('[ListingFormNew handleSubmit] 2. dataToSend 전체:', JSON.stringify(dataToSend, null, 2));
-        console.log('[ListingFormNew handleSubmit] 2. createListing 호출 데이터:', {
-          user_id: dataToSend.user_id,
-          title: dataToSend.title,
-          keys: Object.keys(dataToSend),
-        });
         const createResult = await createListing(dataToSend);
 
         if (createResult.error) {

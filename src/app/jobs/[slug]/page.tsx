@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
 import { buildJobPostingSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
 import { buildJobMetadata, addRobotsToMetadata, buildOptimizedJobTitle } from '@/lib/seo-metadata';
+import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 import { createClient } from '@/lib/supabase/server';
 
 interface Props {
@@ -60,21 +61,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         url: `${SITE_CONFIG.url}/jobs/${job.id}`,
         siteName: SITE_CONFIG.businessName,
         locale: 'ko_KR',
-        images: [
-          {
-            url: `${SITE_CONFIG.url}/423432.png`,
-            width: 1200,
-            height: 630,
-            alt: `${job.title} - ${job.region || '전국'} PC방 구인`,
-            type: 'image/png',
-          },
-        ],
+        images: [buildOgImageEntry(`${job.title} - ${job.region || '전국'} PC방 구인`)],
       },
       twitter: {
         card: 'summary_large_image',
         title: metaWithRobots.ogTitle,
         description: metaWithRobots.ogDescription,
-        images: [`${SITE_CONFIG.url}/423432.png`],
+        images: [getOgImageUrl()],
       },
     };
   } catch (err) {

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
+import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 
 export const metadata: Metadata = {
   title: 'PC방 구인구직 | 성인피씨 채용정보',
@@ -26,21 +27,13 @@ export const metadata: Metadata = {
     url: `${SITE_CONFIG.url}/jobs`,
     siteName: SITE_CONFIG.businessName,
     locale: 'ko_KR',
-    images: [
-      {
-        url: `${SITE_CONFIG.url}/423432.png`,
-        width: 1200,
-        height: 630,
-        alt: '성피요 PC방 구인구직',
-        type: 'image/png',
-      },
-    ],
+    images: [buildOgImageEntry('성피요 PC방 구인구직')],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'PC방 구인구직',
     description: '성인PC방 구인구직 채용정보',
-    images: [`${SITE_CONFIG.url}/423432.png`],
+    images: [getOgImageUrl()],
   },
 };
 

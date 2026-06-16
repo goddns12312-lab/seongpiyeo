@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
+import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 import {
   buildCategoryTitle,
   buildCategoryDescription,
@@ -53,21 +54,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url,
       siteName: SITE_CONFIG.businessName,
       locale: 'ko_KR',
-      images: [
-        {
-          url: `${SITE_CONFIG.url}/423432.png`,
-          width: 1200,
-          height: 630,
-          alt: title,
-          type: 'image/png',
-        },
-      ],
+      images: [buildOgImageEntry(title)],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [`${SITE_CONFIG.url}/423432.png`],
+      images: [getOgImageUrl()],
     },
   };
 }

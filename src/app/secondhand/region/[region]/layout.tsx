@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
 import { createPublicClient } from '@/lib/supabase/public';
+import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 
 interface Props {
   params: Promise<{ region: string }>;
@@ -94,20 +95,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'website',
       url: `${SITE_CONFIG.url}/secondhand/region/${encodeURIComponent(decodedRegion)}`,
       siteName: SITE_CONFIG.businessName,
-      images: [
-        {
-          url: `${SITE_CONFIG.url}/423432.png`,
-          width: 1200,
-          height: 630,
-          alt: `${decodedRegion} 중고 PC방 용품 - 성피요`,
-        },
-      ],
+      images: [buildOgImageEntry(`${decodedRegion} 중고 PC방 용품 - 성피요`)],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [`${SITE_CONFIG.url}/423432.png`],
+      images: [getOgImageUrl()],
     },
   };
 }

@@ -48,6 +48,51 @@ export async function compressImageFile(file: File): Promise<File> {
   }
 }
 
+const BANNER_MAX_WIDTH = 1200;
+const BANNER_JPEG_QUALITY = 0.78;
+
+/** 배너 전용: GIF/PNG 포함 항상 JPEG로 변환·리사이즈 (Lighthouse 용량 개선) */
+export async function compressBannerFile(file: File): Promise<File> {
+  if (!file.type.startsWith('image/')) {
+    return file;
+  }
+
+  try {
+    const bitmap = await createImageBitmap(file);
+    let { width, height } = bitmap;
+
+    if (width > BANNER_MAX_WIDTH) {
+      height = Math.round(height * (BANNER_MAX_WIDTH / width));
+      width = BANNER_MAX_WIDTH;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      bitmap.close();
+      return file;
+    }
+
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, 'image/jpeg', BANNER_JPEG_QUALITY)
+    );
+
+    if (!blob) {
+      return file;
+    }
+
+    const baseName = file.name.replace(/\.[^.]+$/, '') || 'banner';
+    return new File([blob], `${baseName}.jpg`, { type: 'image/jpeg' });
+  } catch {
+    return file;
+  }
+}
+
 /** Supabase Storage에 파일을 병렬 업로드 */
 export async function uploadFilesToStorage(
   supabase: SupabaseClient,

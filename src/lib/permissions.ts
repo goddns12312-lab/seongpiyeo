@@ -62,14 +62,8 @@ export async function canEditPost(postId: string, token?: string): Promise<boole
     }
 
     if (!user) {
-      console.log('[canEditPost] 비로그인 사용자 (user === null)');
       return false;
     }
-
-    console.log('[canEditPost] 로그인 사용자 확인:', {
-      userId: user.id?.substring(0, 8),
-      userEmail: user.email,
-    });
 
     // 사용자 프로필 조회
     const { data: profile, error: profileError } = await supabase
@@ -88,20 +82,9 @@ export async function canEditPost(postId: string, token?: string): Promise<boole
       return false;
     }
 
-    console.log('[canEditPost] 프로필 조회 완료:', {
-      profileId: profile.id?.substring(0, 8),
-      profileUsername: profile.username,
-      profileRole: profile.role,
-      roleType: typeof profile.role,
-    });
-
     const isAdmin = profile?.role === 'admin';
 
     if (isAdmin) {
-      console.log('[canEditPost] ✅ 관리자 권한 확인됨', {
-        userId: user.id?.substring(0, 8),
-        postId: postId.substring(0, 8),
-      });
       return true;
     }
 
@@ -118,14 +101,6 @@ export async function canEditPost(postId: string, token?: string): Promise<boole
     }
 
     const isAuthor = post?.user_id === user.id;
-
-    console.log('[canEditPost] 권한 검증:', {
-      userId: user.id?.substring(0, 8),
-      postUserId: post?.user_id?.substring(0, 8),
-      isAdmin,
-      isAuthor,
-      canEdit: isAuthor,
-    });
 
     return isAuthor;
   } catch (error) {
@@ -156,7 +131,6 @@ export async function canEditSecondhand(itemId: string): Promise<boolean> {
     }
 
     if (!user) {
-      console.log('[canEditSecondhand] 비로그인 사용자');
       return false;
     }
 
@@ -174,7 +148,6 @@ export async function canEditSecondhand(itemId: string): Promise<boolean> {
     const isAdmin = profile?.role === 'admin';
 
     if (isAdmin) {
-      console.log('[canEditSecondhand] ✅ 관리자 권한 확인됨');
       return true;
     }
 
@@ -190,7 +163,6 @@ export async function canEditSecondhand(itemId: string): Promise<boolean> {
     }
 
     const isAuthor = item?.user_id === user.id;
-    console.log('[canEditSecondhand] 작성자 권한:', { isAuthor, userId: user.id?.substring(0, 8), itemUserId: item?.user_id?.substring(0, 8) });
 
     return isAuthor;
   } catch (error) {
@@ -223,7 +195,6 @@ export async function canEditListing(listingId: string, token?: string): Promise
     }
 
     if (!user) {
-      console.log('[canEditListing] 비로그인 사용자');
       return false;
     }
 
@@ -241,7 +212,6 @@ export async function canEditListing(listingId: string, token?: string): Promise
     const isAdmin = profile?.role === 'admin';
 
     if (isAdmin) {
-      console.log('[canEditListing] ✅ 관리자 권한 확인됨');
       return true;
     }
 
@@ -257,7 +227,6 @@ export async function canEditListing(listingId: string, token?: string): Promise
     }
 
     const isAuthor = listing?.user_id === user.id;
-    console.log('[canEditListing] 작성자 권한:', { isAuthor, userId: user.id?.substring(0, 8), listingUserId: listing?.user_id?.substring(0, 8) });
 
     return isAuthor;
   } catch (error) {

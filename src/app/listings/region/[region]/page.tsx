@@ -238,7 +238,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
     description: `${decodedRegion} 지역의 성인 PC방 매물 ${listingCount}개`,
     url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
     telephone: SITE_CONFIG.phone,
-    image: `${SITE_CONFIG.url}/423432.png`,
+    image: getOgImageUrl(),
     areaServed: decodedRegion,
     priceRange: '**',
   };

@@ -34,31 +34,17 @@ export default function NewJobPage() {
 
   useEffect(() => {
     const session = getSession();
-    console.log('[jobs/new] 페이지 로드 - 세션 확인:', session ? `로그인됨 (${session.id})` : '미로그인');
-
     if (!session) {
-      console.log('[jobs/new] 로그인되지 않았습니다. /login으로 이동합니다.');
       router.push('/login?redirect=/jobs/new');
-    } else {
-      console.log('[jobs/new] 로그인 확인됨:', {
-        userId: session.id,
-        username: session.username,
-        nickname: session.nickname,
-        role: session.role,
-      });
-
-      // ⭐ 쿠키 복구 로직: localStorage에 세션이 있으면 쿠키도 설정
-      console.log('[jobs/new] 쿠키 복구 시도...');
-      const maxAge = 7 * 24 * 60 * 60; // 7일
-      const cookieValue = encodeURIComponent(JSON.stringify(session));
-      document.cookie = `pc_bang_session=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax`;
-      console.log('[jobs/new] ✓ 쿠키 설정 완료:', {
-        userId: session.id,
-        cookieLength: cookieValue.length,
-      });
-
-      setUser(session);
+      setLoading(false);
+      return;
     }
+
+    const maxAge = 7 * 24 * 60 * 60;
+    const cookieValue = encodeURIComponent(JSON.stringify(session));
+    document.cookie = `pc_bang_session=${cookieValue}; max-age=${maxAge}; path=/; SameSite=Lax`;
+
+    setUser(session);
     setLoading(false);
   }, [router]);
 
@@ -163,14 +149,6 @@ export default function NewJobPage() {
         return;
       }
 
-      console.log('[공고 등록] ✓ 사용자 확인됨:', {
-        userId: user.id,
-        username: user.username,
-        nickname: user.nickname,
-        userIdType: typeof user.id,
-        userIdLength: user.id.length,
-      });
-
       // Validation
       if (!title.trim()) {
         setError('제목을 입력해주세요.');
@@ -196,16 +174,11 @@ export default function NewJobPage() {
         return;
       }
 
-      console.log('[공고 등록] 기본 검증 통과');
-
-      // Upload images if provided
       let images: Array<{ url: string; order: number; is_primary: boolean }> = [];
       if (imageFiles.length > 0) {
-        console.log(`[공고 등록] ${imageFiles.length}개 이미지 업로드 시작`);
         showToast(`${imageFiles.length}개 이미지 업로드 중...`, 'info');
 
         images = await uploadImages(imageFiles, user.id);
-        console.log(`[공고 등록] 업로드 완료:`, images.length, '개 성공');
 
         if (images.length === 0 && imageFiles.length > 0) {
           const msg = '모든 이미지 업로드에 실패했습니다. 파일 크기나 형식을 확인해주세요.';
@@ -224,18 +197,6 @@ export default function NewJobPage() {
 
       // Generate slug from title and region
       const slug = generateSlug(title.trim(), region);
-
-      console.log('[공고 등록] 등록 정보:', {
-        userId: user.id,
-        category,
-        slug,
-        title: title.trim(),
-        region,
-        imageCount: images.length,
-      });
-
-      // ⭐ API를 통해 공고 등록 (RLS 정책 우회)
-      console.log('[공고 등록] API 호출: POST /api/jobs/create');
 
       const createResponse = await fetch('/api/jobs/create', {
         method: 'POST',
@@ -259,8 +220,6 @@ export default function NewJobPage() {
         }),
       });
 
-      console.log('[공고 등록] API 응답 상태:', createResponse.status);
-
       if (!createResponse.ok) {
         const errorData = await createResponse.json();
         const errorMsg = errorData?.error || errorData?.details || '공고 등록에 실패했습니다';
@@ -273,12 +232,7 @@ export default function NewJobPage() {
       }
 
       const createResult = await createResponse.json();
-      console.log('[공고 등록] ✓ 성공:', {
-        jobId: createResult.jobId,
-        message: createResult.message,
-      });
 
-      // Success message
       showToast('공고가 등록되었습니다!', 'success');
 
       // Redirect to jobs page after short delay
