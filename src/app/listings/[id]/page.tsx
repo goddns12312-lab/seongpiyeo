@@ -152,7 +152,7 @@ export default async function ListingDetailPage({ params }: Props) {
       getCachedSidebarBanners(),
       supabase
         .from('listing_comments')
-        .select('id, listing_id, user_id, content, created_at, updated_at, status')
+        .select('id, listing_id, user_id, nickname, content, created_at, status')
         .eq('listing_id', id)
         .eq('status', 'active')
         .order('created_at', { ascending: true }),

@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useCallback, useEffect, useState } from 'react';
 import { getSession } from '@/lib/auth-session';
 import Link from 'next/link';
 
@@ -34,55 +33,63 @@ function formatRelativeTime(dateString: string): string {
 
 export default function ListingCommentSection({
   listingId,
-  initialComments
+  initialComments,
 }: ListingCommentSectionProps) {
   const [comments, setComments] = useState<ListingComment[]>(initialComments);
   const [content, setContent] = useState('');
   const [user, setUser] = useState<{ id: string; nickname: string } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState('');
 
+  const fetchComments = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/listings/comments?listingId=${listingId}`, {
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.comments)) {
+        setComments(data.comments);
+      }
+    } catch (err) {
+      console.error('댓글 불러오기 실패:', err);
+    } finally {
+      setIsFetching(false);
+    }
+  }, [listingId]);
+
   useEffect(() => {
-    const session = getSession();
-    setUser(session);
-  }, []);
+    setUser(getSession());
+    fetchComments();
+  }, [fetchComments]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    if (!content.trim() || !user) return;
 
     setIsLoading(true);
     setError('');
 
     try {
-      const supabase = createClient();
-      const nickname = user?.nickname || '익명';
-      const user_id = user?.id || null;
+      const res = await fetch('/api/listings/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          listingId,
+          content: content.trim(),
+        }),
+      });
+      const data = await res.json();
 
-      const { data, error: err } = await supabase
-        .from('listing_comments')
-        .insert([
-          {
-            listing_id: listingId,
-            user_id: user_id,
-            nickname: nickname,
-            content: content.trim(),
-            status: 'active'
-          }
-        ])
-        .select()
-        .single();
-
-      if (err) {
-        console.error('Supabase 오류:', err);
-        setError(`댓글 등록 실패: ${err.message || '알 수 없는 오류'}`);
+      if (!res.ok) {
+        setError(data.error || '댓글 등록 실패');
         return;
       }
 
-      if (data) {
-        setComments([...comments, data as ListingComment]);
+      if (data.comment) {
+        setComments((prev) => [...prev, data.comment as ListingComment]);
         setContent('');
-        setError('');
       }
     } catch (err) {
       console.error('예외 발생:', err);
@@ -94,7 +101,6 @@ export default function ListingCommentSection({
 
   return (
     <div className="bg-bg-secondary border border-border-light rounded-lg p-4 space-y-4">
-      {/* 제목 */}
       <div className="flex items-center gap-2">
         <span className="text-lg">💬</span>
         <h3 className="text-sm font-semibold text-text-primary">
@@ -102,15 +108,14 @@ export default function ListingCommentSection({
         </h3>
       </div>
 
-      {/* 댓글 목록 */}
-      {comments.length > 0 ? (
+      {isFetching ? (
+        <p className="text-xs text-text-muted py-4 text-center">댓글 불러오는 중...</p>
+      ) : comments.length > 0 ? (
         <div className="space-y-3 border-t border-border-light pt-4">
           {comments.map((comment) => (
             <div key={comment.id} className="space-y-1">
               <div className="flex items-center gap-2 text-xs text-text-secondary">
-                <span className="font-medium text-gold">
-                  {comment.nickname}
-                </span>
+                <span className="font-medium text-gold">{comment.nickname}</span>
                 <span>·</span>
                 <span>{formatRelativeTime(comment.created_at)}</span>
               </div>
@@ -121,12 +126,9 @@ export default function ListingCommentSection({
           ))}
         </div>
       ) : (
-        <p className="text-xs text-text-muted py-4 text-center">
-          아직 댓글이 없습니다.
-        </p>
+        <p className="text-xs text-text-muted py-4 text-center">아직 댓글이 없습니다.</p>
       )}
 
-      {/* 댓글 입력 폼 */}
       <div className="border-t border-border-light pt-4 space-y-3">
         {!user ? (
           <div className="bg-bg-primary rounded p-3 text-center">
@@ -150,9 +152,7 @@ export default function ListingCommentSection({
               className="w-full bg-bg-tertiary border border-border-light rounded px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold resize-none"
               disabled={isLoading}
             />
-            {error && (
-              <p className="text-xs text-red-500">{error}</p>
-            )}
+            {error && <p className="text-xs text-red-500">{error}</p>}
             <div className="flex justify-end">
               <button
                 type="submit"
