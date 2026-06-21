@@ -125,7 +125,7 @@ function JobsContent({ initialJobs, totalCount }: Props) {
           searchQuery={searchQuery}
         />
 
-        <section className="mt-8">
+        <section className="mt-8 mb-12">
           {initialJobs.length > 0 ? (
             <>
               <div className="mb-4 text-text-secondary text-sm">
@@ -150,6 +150,25 @@ function JobsContent({ initialJobs, totalCount }: Props) {
               </button>
             </div>
           )}
+        </section>
+
+        <section className="bg-bg-secondary border border-border-light rounded-lg p-8">
+          <h2 className="text-2xl font-bold text-text-primary mb-6 text-center">
+            지역별 매물 확인
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {['서울', '경기도', '인천', '부산', '대구'].map((region) => (
+              <Link
+                key={region}
+                href={`/listings/region/${region}`}
+                className="block p-4 bg-bg-tertiary hover:bg-gold/20 border border-border-light hover:border-gold rounded-lg text-center transition-colors"
+              >
+                <span className="font-semibold text-text-primary hover:text-gold">
+                  {region}
+                </span>
+              </Link>
+            ))}
+          </div>
         </section>
       </div>
     </div>

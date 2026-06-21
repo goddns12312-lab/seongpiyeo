@@ -60,7 +60,7 @@ export default function GuidePage() {
           ))}
         </div>
 
-        <div className="bg-gradient-to-r from-gold/10 to-gold/5 border border-gold/20 rounded-lg p-8 text-center">
+        <div className="bg-gradient-to-r from-gold/10 to-gold/5 border border-gold/20 rounded-lg p-8 text-center mb-12">
           <h2 className="text-2xl font-bold text-text-primary mb-3">
             더 자세한 정보가 필요하신가요?
           </h2>
@@ -80,6 +80,25 @@ export default function GuidePage() {
             >
               전국 PC방 매물 보기
             </Link>
+          </div>
+        </div>
+
+        <div className="bg-bg-secondary border border-border-light rounded-lg p-8">
+          <h2 className="text-2xl font-bold text-text-primary mb-6 text-center">
+            지역별 매물 확인
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {['서울', '경기도', '인천', '부산', '대구'].map((region) => (
+              <Link
+                key={region}
+                href={`/listings/region/${region}`}
+                className="block p-4 bg-bg-tertiary hover:bg-gold/20 border border-border-light hover:border-gold rounded-lg text-center transition-colors"
+              >
+                <span className="font-semibold text-text-primary hover:text-gold">
+                  {region}
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </div>

@@ -116,7 +116,7 @@ export default function FAQPage() {
       <PageContainer narrow className="py-10 md:py-12">
         <FAQAccordion faqs={faqs} />
 
-        <SurfaceCard className="cta-banner mt-16">
+        <SurfaceCard className="cta-banner mt-16 mb-8">
           <h2 className="text-2xl font-bold text-text-primary mb-3">
             더 많은 매물을 확인하고 싶으신가요?
           </h2>
@@ -129,6 +129,25 @@ export default function FAQPage() {
           >
             전체 매물 보기
           </Link>
+        </SurfaceCard>
+
+        <SurfaceCard>
+          <h2 className="text-2xl font-bold text-text-primary mb-6 text-center">
+            지역별 매물 확인
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            {['서울', '경기도', '인천', '부산', '대구'].map((region) => (
+              <Link
+                key={region}
+                href={`/listings/region/${region}`}
+                className="block p-4 bg-bg-tertiary hover:bg-gold/20 border border-border-light hover:border-gold rounded-lg text-center transition-colors"
+              >
+                <span className="font-semibold text-text-primary hover:text-gold">
+                  {region}
+                </span>
+              </Link>
+            ))}
+          </div>
         </SurfaceCard>
       </PageContainer>
     </PageShell>
