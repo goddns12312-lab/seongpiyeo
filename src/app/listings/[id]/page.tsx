@@ -18,6 +18,7 @@ import { RelatedListings } from '@/components/listings/RelatedListings';
 import { ListingRegionNav } from '@/components/listings/ListingRegionNav';
 import { ListingBodySummary } from '@/components/listings/ListingBodySummary';
 import { ListingGuideLinks } from '@/components/listings/ListingGuideLinks';
+import { shouldShowListingUserDescription } from '@/lib/listing-content';
 import { pickGuidesForListing } from '@/lib/guide-content';
 import { createPublicClient } from '@/lib/supabase/public';
 import {
@@ -367,7 +368,7 @@ export default async function ListingDetailPage({ params }: Props) {
 
             <ListingBodySummary listing={listing} />
 
-            {listing.description ? (
+            {shouldShowListingUserDescription(listing) ? (
               <div className="bg-bg-secondary border border-border-light rounded-lg p-6 mb-8">
                 <h2 className="text-text-primary font-semibold text-lg mb-4">💬 추가설명</h2>
                 <div className="bg-bg-tertiary rounded p-4 overflow-x-auto">

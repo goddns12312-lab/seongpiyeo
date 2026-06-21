@@ -1,4 +1,5 @@
 import { buildListingBodySummary } from '@/lib/seo-metadata';
+import { resolveListingLocation } from '@/lib/listing-location';
 
 interface ListingBodySummaryProps {
   listing: Record<string, unknown>;
@@ -6,7 +7,8 @@ interface ListingBodySummaryProps {
 
 export function ListingBodySummary({ listing }: ListingBodySummaryProps) {
   const paragraphs = buildListingBodySummary(listing);
-  const location = [listing.region, listing.district].filter(Boolean).join(' ');
+  const resolved = resolveListingLocation(listing);
+  const location = resolved.displayLocation;
 
   return (
     <section className="bg-bg-secondary border border-border-light rounded-lg p-6 mb-8">

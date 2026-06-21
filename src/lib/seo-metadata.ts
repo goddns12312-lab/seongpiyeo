@@ -729,12 +729,9 @@ export function buildListingBodySummary(listing: Record<string, unknown>): strin
   const variant = listingContentVariant(id);
   const resolved = resolveListingLocationData(listing);
   const locationPart = resolved.displayLocation;
-  const title = String(listing.title || `${locationPart} 성인PC 매물`);
-  const priceLine = formatListingPriceLine(listing);
   const pcCount = listing.pc_count as number | undefined;
   const areaSqm = listing.area_sqm as number | undefined;
   const floor = listing.floor as string | undefined;
-  const priceType = listing.price_type as string | undefined;
   const idx = listing.idx as string | undefined;
   const monthlyProfit = listing.monthly_profit as number | undefined;
   const monthlyRevenue = listing.monthly_revenue as number | undefined;
@@ -742,18 +739,7 @@ export function buildListingBodySummary(listing: Record<string, unknown>): strin
   const facilities = listing.facilities as string | undefined;
   const viewCount = (listing.view_count as number | undefined) ?? 0;
 
-  const dealType =
-    priceType === 'lease' ? '임대' : premium_price_exists(listing) ? '매매·양도양수' : '거래';
-  const paragraphs: string[] = [];
-
-  const introTemplates = [
-    `${locationPart}에 위치한 「${title}」 매물입니다. ${priceLine} 조건의 ${dealType} 정보를 성피요에서 확인할 수 있습니다.`,
-    `성피요 ${locationPart} ${dealType} 매물 「${title}」입니다. 현재 조건은 ${priceLine}이며, 지역 상권과 함께 비교 검토할 수 있습니다.`,
-    `${locationPart} 성인PC ${dealType} 매물 「${title}」을 소개합니다. ${priceLine} 기준으로 창업·인수 검토에 활용해 보세요.`,
-    `「${title}」은 ${locationPart}에서 거래 중인 성인PC 매물입니다. ${priceLine} 조건과 함께 상세 스펙을 확인할 수 있습니다.`,
-    `${locationPart} 지역 성인PC 창업·인수를 검토 중이라면 「${title}」(${priceLine}) 매물 정보를 참고해 보세요.`,
-  ];
-  paragraphs.push(introTemplates[variant]);
+  const paragraphs: string[] = [buildListingSeoDescription(listing)];
 
   const specParts: string[] = [];
   if (areaSqm) specParts.push(`면적 ${areaSqm}평`);

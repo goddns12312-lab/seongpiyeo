@@ -1,6 +1,7 @@
 import { SITE_CONFIG } from './site';
 import { getOgImageUrl } from './seo-assets';
 import { resolveListingLocation } from './listing-location';
+import { buildListingSeoDescription } from './seo-metadata';
 
 /**
  * JSON-LD 구조화된 데이터 생성 함수 모음
@@ -79,7 +80,6 @@ function resolveListingOfferPrice(listing: Record<string, unknown>): number {
 export function buildListingProductSchema(listing: Record<string, unknown>): object {
   const {
     title,
-    description,
     area_sqm,
     pc_count,
     deposit,
@@ -95,6 +95,7 @@ export function buildListingProductSchema(listing: Record<string, unknown>): obj
 
   const resolved = resolveListingLocation(listing);
   const location = resolved.displayLocation;
+  const seoDescription = buildListingSeoDescription(listing);
   const offerPrice = resolveListingOfferPrice(listing);
   const imageUrl = main_image_url || thumbnail_url || getOgImageUrl();
 
@@ -102,7 +103,7 @@ export function buildListingProductSchema(listing: Record<string, unknown>): obj
     '@context': 'https://schema.org',
     '@type': 'RealEstateListing',
     name: title,
-    description: description || location,
+    description: seoDescription || location,
     image: imageUrl,
     url: `${SITE_CONFIG.url}/listings/${id}`,
     datePosted: created_at,
