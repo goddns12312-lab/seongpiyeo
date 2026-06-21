@@ -1,5 +1,6 @@
 import { SITE_CONFIG } from './site';
 import { getOgImageUrl } from './seo-assets';
+import { resolveListingLocation } from './listing-location';
 
 /**
  * JSON-LD 구조화된 데이터 생성 함수 모음
@@ -79,8 +80,6 @@ export function buildListingProductSchema(listing: Record<string, unknown>): obj
   const {
     title,
     description,
-    region,
-    district,
     area_sqm,
     pc_count,
     deposit,
@@ -94,7 +93,8 @@ export function buildListingProductSchema(listing: Record<string, unknown>): obj
     price_type,
   } = listing;
 
-  const location = district ? `${region} ${district}` : String(region || '');
+  const resolved = resolveListingLocation(listing);
+  const location = resolved.displayLocation;
   const offerPrice = resolveListingOfferPrice(listing);
   const imageUrl = main_image_url || thumbnail_url || getOgImageUrl();
 
@@ -108,8 +108,8 @@ export function buildListingProductSchema(listing: Record<string, unknown>): obj
     datePosted: created_at,
     address: {
       '@type': 'PostalAddress',
-      addressRegion: region,
-      addressLocality: district || region,
+      addressRegion: resolved.region,
+      addressLocality: resolved.district || resolved.locality || resolved.region,
       addressCountry: 'KR',
     },
     offers: {

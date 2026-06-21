@@ -12,6 +12,7 @@ import ListingCommentSection from '@/components/listings/ListingCommentSection';
 import { ReportButton } from '@/components/community/ReportButton';
 import { buildListingProductSchema, buildBreadcrumbSchema } from '@/lib/seo-schema';
 import { buildListingSeoTitle, buildListingSeoDescription } from '@/lib/seo-metadata';
+import { resolveListingLocation } from '@/lib/listing-location';
 import { getOgImageUrl } from '@/lib/seo-assets';
 import { RelatedListings } from '@/components/listings/RelatedListings';
 import { ListingRegionNav } from '@/components/listings/ListingRegionNav';
@@ -35,8 +36,8 @@ interface Props {
 }
 
 function buildKeywords(listing: Record<string, unknown>, location: string): string {
-  const region = String(listing.region || '');
-  const district = listing.district as string | undefined;
+  const resolved = resolveListingLocation(listing);
+  const { region, district, locality } = resolved;
   const base = [
     '성인피씨',
     '성인피시',
@@ -53,6 +54,7 @@ function buildKeywords(listing: Record<string, unknown>, location: string): stri
     'PC방 매매',
   ];
   if (district) base.push(`${district} PC방`, `${district} 성인PC`);
+  if (locality) base.push(`${locality} PC방`, `${locality} 성인PC`);
   return base.join(', ');
 }
 
@@ -85,7 +87,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const location = [listing.region, listing.district].filter(Boolean).join(' ');
+  const resolved = resolveListingLocation(listing);
+  const location = resolved.displayLocation;
   const title = buildListingSeoTitle(listing);
   const description = buildListingSeoDescription(listing);
   const keywords = buildKeywords(listing, location);
@@ -143,6 +146,11 @@ export default async function ListingDetailPage({ params }: Props) {
     notFound();
   }
 
+  const resolved = resolveListingLocation(listing);
+  const displayRegion = resolved.region;
+  const displayDistrict = resolved.district;
+  const displayLocality = resolved.locality;
+
   const displayImages = buildDisplayImages(listing, id, listing.listing_images || []);
   const supabase = createPublicClient();
 
@@ -163,7 +171,7 @@ export default async function ListingDetailPage({ params }: Props) {
       supabase
         .from('listings')
         .select(RELATED_LISTING_SELECT)
-        .eq('region', listing.region)
+        .eq('region', displayRegion)
         .eq('status', 'active')
         .neq('id', id)
         .order('created_at', { ascending: false })
@@ -176,7 +184,7 @@ export default async function ListingDetailPage({ params }: Props) {
   const relatedListings = pickRelatedListings(
     relatedResult.data,
     id,
-    listing.district,
+    displayDistrict ?? displayLocality,
     12
   );
   const productSchema = buildListingProductSchema(listing);
@@ -184,15 +192,20 @@ export default async function ListingDetailPage({ params }: Props) {
     { name: '홈', url: SITE_CONFIG.url },
     { name: '매물 목록', url: `${SITE_CONFIG.url}/listings` },
     {
-      name: listing.region,
-      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(String(listing.region))}`,
+      name: displayRegion,
+      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(displayRegion)}`,
     },
   ];
 
-  if (listing.district) {
+  if (displayDistrict) {
     breadcrumbItems.push({
-      name: listing.district,
-      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(String(listing.region))}`,
+      name: displayDistrict,
+      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(displayRegion)}`,
+    });
+  } else if (displayLocality) {
+    breadcrumbItems.push({
+      name: displayLocality,
+      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(displayRegion)}`,
     });
   }
 
@@ -228,15 +241,20 @@ export default async function ListingDetailPage({ params }: Props) {
           </Link>
           <span>/</span>
           <Link
-            href={`/listings/region/${encodeURIComponent(String(listing.region))}`}
+            href={`/listings/region/${encodeURIComponent(displayRegion)}`}
             className="hover:text-gold"
           >
-            {listing.region}
+            {displayRegion}
           </Link>
-          {listing.district ? (
+          {displayDistrict ? (
             <>
               <span>/</span>
-              <span>{listing.district}</span>
+              <span>{displayDistrict}</span>
+            </>
+          ) : displayLocality ? (
+            <>
+              <span>/</span>
+              <span>{displayLocality}</span>
             </>
           ) : null}
         </nav>
@@ -247,8 +265,11 @@ export default async function ListingDetailPage({ params }: Props) {
 
             <div className="mb-4">
               <div className="flex gap-2 mb-2 flex-wrap">
-                <Badge variant="secondary">{listing.region}</Badge>
-                {listing.district && <Badge variant="secondary">{listing.district}</Badge>}
+                <Badge variant="secondary">{displayRegion}</Badge>
+                {displayDistrict && <Badge variant="secondary">{displayDistrict}</Badge>}
+                {!displayDistrict && displayLocality && (
+                  <Badge variant="secondary">{displayLocality}</Badge>
+                )}
               </div>
               <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 md:gap-4">
                 <h1 className="text-2xl md:text-3xl font-bold text-text-primary break-words">
@@ -359,18 +380,18 @@ export default async function ListingDetailPage({ params }: Props) {
 
             <RelatedListings
               listings={relatedListings}
-              currentRegion={listing.region}
-              currentDistrict={listing.district ?? undefined}
+              currentRegion={displayRegion}
+              currentDistrict={displayDistrict ?? displayLocality}
             />
 
             <ListingRegionNav
-              currentRegion={listing.region}
+              currentRegion={displayRegion}
               regionListingCounts={regionListingCounts}
               premiumPrice={premiumPrice}
               monthlyRent={listing.monthly_rent as number | undefined}
             />
 
-            <ListingGuideLinks guides={relatedGuides} region={listing.region} />
+            <ListingGuideLinks guides={relatedGuides} region={displayRegion} />
           </div>
 
           <div>

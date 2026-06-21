@@ -2,6 +2,7 @@ import { SITE_CONFIG } from './site';
 import { createCanonicalUrl, createCanonicalUrlWithSegment } from './url-utils';
 import { getOgImageUrl } from './seo-assets';
 import { autoFixTitleByType, ContentMetadata } from './seo-title-auto-fix';
+import { resolveListingLocation as resolveListingLocationData } from './listing-location';
 
 /**
  * SEO 메타데이터 생성 함수 모음
@@ -567,10 +568,9 @@ function extractTitleKeyword(originalTitle: string): string {
  * // "서울 답십리 성인PC | 권리금 1100만·월세 80만 | 독점 | 성피요"
  */
 export function buildListingSeoTitle(listing: any, businessName: string = SITE_CONFIG.businessName): string {
-  const { region, district, location, premium_price, deposit, monthly_rent, title: originalTitle } = listing;
-
-  const locationPart = district || location || '';
-  const fullLocation = locationPart ? `${region} ${locationPart}` : region;
+  const { premium_price, deposit, monthly_rent, title: originalTitle } = listing;
+  const resolved = resolveListingLocationData(listing);
+  const fullLocation = resolved.displayLocation;
 
   const priceParts: string[] = [];
   if (premium_price) priceParts.push(`권리금 ${premium_price}만`);
@@ -615,9 +615,9 @@ export function buildListingSeoTitle(listing: any, businessName: string = SITE_C
  * 목표: 100% 고유성 + 데이터 기반 + 120~160자 달성
  */
 export function buildListingSeoDescription(listing: any): string {
-  const { region, district, location, premium_price, deposit, monthly_rent, area_sqm, pc_count } = listing;
-
-  const locationPart = district ? `${region} ${district}` : location ? `${region} ${location}` : region;
+  const resolved = resolveListingLocationData(listing);
+  const locationPart = resolved.displayLocation;
+  const { premium_price, deposit, monthly_rent, area_sqm, pc_count } = listing;
 
   // 핵심 가격 (중복 최소화)
   let priceInfo = '';
@@ -653,10 +653,10 @@ export function buildListingSeoDescription(listing: any): string {
   // 상권 정보 추가로 길이 확대
   const remainingChars = 160 - desc.length;
   if (remainingChars > 35) {
-    if (district) {
-      desc += ` ${district} 상권의 성인PC 사업 정보를 성피요에서 확인해보세요.`;
+    if (resolved.district) {
+      desc += ` ${resolved.district} 상권의 성인PC 사업 정보를 성피요에서 확인해보세요.`;
     } else {
-      desc += ` ${region} 지역 성인PC 매물과 사업 정보를 성피요에서 확인해보세요.`;
+      desc += ` ${resolved.region} 지역 성인PC 매물과 사업 정보를 성피요에서 확인해보세요.`;
     }
   } else if (remainingChars > 20) {
     desc += ` 상세 정보는 성피요에서 확인하세요.`;
@@ -684,25 +684,14 @@ function formatListingPriceLine(listing: Record<string, unknown>): string {
   return parts.length > 0 ? parts.join(', ') : '가격은 상담 후 안내';
 }
 
-function resolveListingLocation(listing: Record<string, unknown>): string {
-  const region = String(listing.region || '');
-  const district = listing.district as string | undefined;
-  const location = listing.location as string | undefined;
-  const address = listing.address as string | undefined;
-
-  if (district) return `${region} ${district}`;
-  if (location) return `${region} ${location}`;
-  if (address) return `${region} ${address}`;
-  return region;
-}
-
 /**
  * 매물 상세 본문용 고유 요약 (크롤 매물도 description 없이 고유 텍스트 확보)
  */
 export function buildListingBodySummary(listing: Record<string, unknown>): string[] {
   const id = String(listing.id || '');
   const variant = listingContentVariant(id);
-  const locationPart = resolveListingLocation(listing);
+  const resolved = resolveListingLocationData(listing);
+  const locationPart = resolved.displayLocation;
   const title = String(listing.title || `${locationPart} 성인PC 매물`);
   const priceLine = formatListingPriceLine(listing);
   const pcCount = listing.pc_count as number | undefined;
@@ -788,10 +777,9 @@ function premium_price_exists(listing: Record<string, unknown>): boolean {
  * buildListingImageAlt(listing) // "서울 강남구 성인PC 매물 이미지 - 권리금 1500만원, 20평"
  */
 export function buildListingImageAlt(listing: any): string {
-  const { region, district, location, premium_price, area_sqm } = listing;
-
-  // 지역 정보
-  const locationPart = district ? `${region} ${district}` : location ? `${region} ${location}` : region;
+  const { premium_price, area_sqm } = listing;
+  const resolved = resolveListingLocationData(listing);
+  const locationPart = resolved.displayLocation;
   let alt = `${locationPart} 성인PC 매물 이미지`;
 
   // 추가 정보
