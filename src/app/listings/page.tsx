@@ -10,7 +10,7 @@ import { buildCollectionPageSchema } from '@/lib/seo-schema';
 import { createCanonicalUrl } from '@/lib/url-utils';
 import { getOgImageUrl } from '@/lib/seo-assets';
 import { createPublicClient } from '@/lib/supabase/public';
-import { getCachedRegionCounts, LISTING_LIST_SELECT } from '@/lib/listing-queries';
+import { getCachedRegionCounts, LISTING_LIST_SELECT, getActiveListingCount, getRegionListingCount } from '@/lib/listing-queries';
 
 export const revalidate = 120;
 
@@ -26,7 +26,11 @@ export async function generateMetadata(
     return { robots: { index: false, follow: true } };
   }
 
-  const baseMeta = buildListingsMetadata(region);
+  const listingCount = hasRegionFilter
+    ? await getRegionListingCount(region!)
+    : await getActiveListingCount();
+
+  const baseMeta = buildListingsMetadata(hasRegionFilter ? region : undefined, listingCount);
   const metaWithRobots = addRobotsToMetadata(baseMeta, {
     googlebot: 'index, follow, max-snippet:-1, max-image-preview:large',
   });

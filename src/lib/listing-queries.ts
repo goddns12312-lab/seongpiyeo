@@ -7,6 +7,47 @@ import { createPublicClient } from '@/lib/supabase/public';
 export const LISTING_LIST_SELECT =
   'id, idx, title, price_type, deposit, monthly_rent, premium_price, region, district, area_sqm, pc_count, floor, available_date, main_image_url, thumbnail_url, view_count, created_at, status';
 
+/** SEO 타이틀용 active 매물·허브 카운트 (캐시 2분) */
+export const getSeoHubCounts = unstable_cache(
+  async () => {
+    const supabase = createPublicClient();
+    const [listings, jobs, posts, secondhand, exchange] = await Promise.all([
+      supabase.from('listings').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+      supabase
+        .from('jobs')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'active')
+        .is('deleted_at', null),
+      supabase
+        .from('posts')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'active')
+        .neq('category', 'exchange'),
+      supabase.from('secondhand_items').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+      supabase
+        .from('posts')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'active')
+        .eq('category', 'exchange'),
+    ]);
+
+    return {
+      listings: listings.count || 0,
+      jobs: jobs.count || 0,
+      posts: posts.count || 0,
+      secondhand: secondhand.count || 0,
+      exchange: exchange.count || 0,
+    };
+  },
+  ['seo-hub-counts'],
+  { revalidate: 120 }
+);
+
+export const getActiveListingCount = cache(async (): Promise<number> => {
+  const { listings } = await getSeoHubCounts();
+  return listings;
+});
+
 export const getRegionListingCount = cache(async (region: string): Promise<number> => {
   const supabase = createPublicClient();
   const { count } = await supabase

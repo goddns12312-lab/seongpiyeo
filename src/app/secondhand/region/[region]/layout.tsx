@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
+import { formatSeoCount } from '@/lib/seo-metadata';
 import { createPublicClient } from '@/lib/supabase/public';
 import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 
@@ -8,7 +9,7 @@ interface Props {
 }
 
 function buildRegionTitle(region: string, count: number): string {
-  return `${region} 중고 PC방 용품 ${count}개`;
+  return `${region} PC방 중고 ${formatSeoCount(count)} | 장비·용품`;
 }
 
 function buildRegionDescription(region: string, count: number): string {

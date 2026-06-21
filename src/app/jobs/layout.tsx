@@ -1,41 +1,46 @@
 import { Metadata } from 'next';
-import { SITE_CONFIG } from '@/lib/site';
-import { createCanonicalUrl } from '@/lib/url-utils';
+import { buildJobsHubMetadata } from '@/lib/seo-metadata';
+import { getSeoHubCounts } from '@/lib/listing-queries';
 import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 
-export const metadata: Metadata = {
-  title: 'PC방 구인구직 | 성인피씨 채용정보',
-  description: '성인PC방 구인구직 정보. 채용공고 및 일자리 정보를 한눈에 검색하고 지원하세요. 성피요에서 안전한 거래를 경험하세요.',
-  keywords: ['구인', '구직', '성인피씨', '성인피시', 'PC방', '채용', '일자리', 'PC방구인'],
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+export async function generateMetadata(): Promise<Metadata> {
+  const { jobs } = await getSeoHubCounts();
+  const meta = buildJobsHubMetadata(jobs);
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    keywords: meta.keywords,
+    robots: {
       index: true,
       follow: true,
-      'max-snippet': -1,
-      'max-image-preview': 'large',
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-snippet': -1,
+        'max-image-preview': 'large',
+      },
     },
-  },
-  alternates: {
-    canonical: createCanonicalUrl('/jobs'),
-  },
-  openGraph: {
-    title: 'PC방 구인구직 | 성피요',
-    description: '성인PC방 구인구직 채용정보',
-    type: 'website',
-    url: `${SITE_CONFIG.url}/jobs`,
-    siteName: SITE_CONFIG.businessName,
-    locale: 'ko_KR',
-    images: [buildOgImageEntry('성피요 PC방 구인구직')],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'PC방 구인구직',
-    description: '성인PC방 구인구직 채용정보',
-    images: [getOgImageUrl()],
-  },
-};
+    alternates: {
+      canonical: meta.canonicalUrl,
+    },
+    openGraph: {
+      title: meta.ogTitle || meta.title,
+      description: meta.ogDescription || meta.description,
+      type: 'website',
+      url: meta.canonicalUrl,
+      siteName: '성피요',
+      locale: 'ko_KR',
+      images: [buildOgImageEntry('성피요 PC방 구인구직')],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: meta.ogTitle || meta.title,
+      description: meta.ogDescription || meta.description,
+      images: [getOgImageUrl()],
+    },
+  };
+}
 
 export default function JobsLayout({
   children,

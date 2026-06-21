@@ -6,7 +6,7 @@ import { getOgImageUrl } from '@/lib/seo-assets';
 const ogImage = getOgImageUrl();
 
 export const metadata: Metadata = {
-  title: '성인PC 창업 자주 묻는 질문 | PC방 매물 비용 법규',
+  title: 'PC방 창업 FAQ | 비용·법규·매물·권리금',
   description: '성인PC방 창업 비용, 법규, 거래 방법, 구인구직 등 자주 묻는 질문(FAQ)을 한 곳에서 확인하세요. 초기비용 5,000만원~2억원, 월순이익 500~1,500만원.',
   keywords: [
     '성인PC FAQ',

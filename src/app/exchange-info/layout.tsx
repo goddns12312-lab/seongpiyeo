@@ -2,34 +2,36 @@ import type { Metadata } from 'next';
 import Script from 'next/script';
 import { SITE_CONFIG } from '@/lib/site';
 import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
+import { buildExchangeHubMetadata } from '@/lib/seo-metadata';
+import { getSeoHubCounts } from '@/lib/listing-queries';
 
-export const metadata: Metadata = {
-  title: '환수 및 정보게시판 | 성인PC 운영정보',
-  description: '성인PC 환수율, 운영정보, 거래 팁 등을 공유하는 게시판. PC방 창업자들의 경험과 정보를 한 곳에서 확인하세요.',
-  keywords: ['성인PC', '환수율', '운영정보', 'PC방 정보', 'PC방 운영팁', '환수정보'],
-  robots: {
-    index: true,
-    follow: true,
-  },
-  alternates: {
-    canonical: `${SITE_CONFIG.url}/exchange-info`,
-  },
-  openGraph: {
-    title: '환수 및 정보게시판 | 성인PC 운영정보',
-    description: '성인PC 환수율 및 운영정보를 공유하는 게시판',
-    type: 'website',
-    url: `${SITE_CONFIG.url}/exchange-info`,
-    siteName: SITE_CONFIG.businessName,
-    locale: 'ko_KR',
-    images: [buildOgImageEntry('환수 및 정보게시판')],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '환수 및 정보게시판 | 성인PC 운영정보',
-    description: '성인PC 환수율 및 운영정보를 공유하는 게시판',
-    images: [getOgImageUrl()],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { exchange } = await getSeoHubCounts();
+  const meta = buildExchangeHubMetadata(exchange);
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    keywords: meta.keywords,
+    robots: { index: true, follow: true },
+    alternates: { canonical: `${SITE_CONFIG.url}/exchange-info` },
+    openGraph: {
+      title: meta.ogTitle || meta.title,
+      description: meta.ogDescription || meta.description,
+      type: 'website',
+      url: `${SITE_CONFIG.url}/exchange-info`,
+      siteName: SITE_CONFIG.businessName,
+      locale: 'ko_KR',
+      images: [buildOgImageEntry('환수 및 정보게시판')],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: meta.ogTitle || meta.title,
+      description: meta.ogDescription || meta.description,
+      images: [getOgImageUrl()],
+    },
+  };
+}
 
 export default function ExchangeInfoLayout({
   children,

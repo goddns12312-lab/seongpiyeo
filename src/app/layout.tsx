@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_BASE_URL || 'https://xn--oj4bo2hu1o.com'
   ),
   title: {
-    default: `성인PC 성인피씨 성인피시 창업 정보 | ${SITE_CONFIG.businessName}`,
+    default: `PC방 매매 사이트 | 성인PC방 매물 | ${SITE_CONFIG.businessName}`,
     template: `%s | ${SITE_CONFIG.businessName}`,
   },
   description: SITE_CONFIG.description,
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     locale: 'ko_KR',
     url: SITE_CONFIG.url,
     siteName: SITE_CONFIG.businessName,
-    title: `성인PC 성인피씨 성인피시 창업 | ${SITE_CONFIG.businessName}`,
+    title: `PC방 매매 | ${SITE_CONFIG.businessName}`,
     description: SITE_CONFIG.description,
     images: [
       {
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `성인PC 성인피씨 성인피시 창업 | ${SITE_CONFIG.businessName}`,
+    title: `PC방 매매 | ${SITE_CONFIG.businessName}`,
     description: SITE_CONFIG.description,
     images: [getOgImageUrl()],
   },

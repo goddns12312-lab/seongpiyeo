@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
 import { createPublicClient } from '@/lib/supabase/public';
 import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
+import { formatSeoCount } from '@/lib/seo-metadata';
 
 interface Props {
   params: Promise<{ region: string; category: string }>;
@@ -16,7 +17,7 @@ const PRICE_TYPE_LABELS: Record<string, string> = {
 
 function buildTitle(region: string, category: string, count: number): string {
   const categoryLabel = PRICE_TYPE_LABELS[category] || category;
-  return `${region} 성인PC ${categoryLabel} 매물 ${count}개`;
+  return `${region} 성인PC ${categoryLabel} 매물 ${formatSeoCount(count)}`;
 }
 
 function buildDescription(region: string, category: string, count: number): string {

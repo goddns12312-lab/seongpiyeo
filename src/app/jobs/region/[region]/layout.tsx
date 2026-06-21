@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
+import { formatSeoCount } from '@/lib/seo-metadata';
 import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 import { createPublicClient } from '@/lib/supabase/public';
 
@@ -8,7 +9,7 @@ interface Props {
 }
 
 function buildRegionTitle(region: string, count: number): string {
-  return `${region} 성인PC방 구인구직 공고 ${count}개`;
+  return `${region} PC방 구인구직 ${formatSeoCount(count)} | 채용·알바`;
 }
 
 function buildRegionDescription(region: string, count: number): string {

@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
+import { formatSeoCount } from '@/lib/seo-metadata';
+import { createPublicClient } from '@/lib/supabase/public';
 
 const LISTING_CATEGORIES = {
   rent: {
@@ -44,7 +46,18 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
   }
 
   const info = LISTING_CATEGORIES[category];
-  const title = `성인PC ${info.label} 매물 | 성인PC 가게 ${info.label} 정보`;
+  const supabase = createPublicClient();
+  const priceField = category === 'rent' ? 'monthly_rent' : 'premium_price';
+
+  const { count } = await supabase
+    .from('listings')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .gt(priceField, 0);
+
+  const listingCount = count || 0;
+  const countLabel = formatSeoCount(listingCount);
+  const title = `성인PC ${info.label} 매물 ${countLabel} | 권리금·월세·양도양수`;
   const description = info.description;
   const keywords = [
     '성인PC',

@@ -11,51 +11,60 @@ import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 import { getJobPublicPath } from '@/lib/jobs-data';
 import { getCachedRegionCounts } from '@/lib/listing-queries';
 
+import { buildHomeSeoMetadata } from '@/lib/seo-metadata';
+import { getActiveListingCount } from '@/lib/listing-queries';
+
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: '성인PC 성인피씨 성인피시 창업 정보 거래 | 성피요',
-  description: '성인PC 성인피씨 성인피시 창업 정보와 매물 거래를 한곳에서! 안전한 성인PC방 매매 플랫폼 성피요',
-  keywords: ['성인PC', '성인피씨', '성인피시', '성인피씨창업', 'PC방창업정보', 'PC방매물', '성인피시방', '피씨방', 'PC방창업', 'PC방거래', '성인PC방매물', 'PC방임대', '성인피씨방'],
-  authors: [{ name: '성피요', url: SITE_CONFIG.url }],
-  creator: '성피요',
-  publisher: '성피요',
-  robots: {
-    index: true,
-    follow: true,
-    nocache: false,
-    googleBot: {
+export async function generateMetadata(): Promise<Metadata> {
+  const listingCount = await getActiveListingCount();
+  const meta = buildHomeSeoMetadata(listingCount);
+  const ogImage = getOgImageUrl();
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    keywords: meta.keywords,
+    authors: [{ name: '성피요', url: SITE_CONFIG.url }],
+    creator: '성피요',
+    publisher: '성피요',
+    robots: {
       index: true,
       follow: true,
-      noimageindex: false,
-      'max-snippet': -1,
-      'max-image-preview': 'large',
-      'max-video-preview': -1,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: false,
+        'max-snippet': -1,
+        'max-image-preview': 'large',
+        'max-video-preview': -1,
+      },
     },
-  },
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
-    naver: process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION || '',
-  },
-  alternates: {
-    canonical: SITE_CONFIG.url,
-  },
-  openGraph: {
-    title: '성인PC 성인피씨 성인피시 창업 정보 | 성피요',
-    description: '전국 성인PC 성인피씨 성인피시 매물 거래 및 창업 정보 커뮤니티',
-    type: 'website',
-    url: SITE_CONFIG.url,
-    siteName: SITE_CONFIG.businessName,
-    locale: 'ko_KR',
-    images: [buildOgImageEntry('성피요 성인PC 매물 플랫폼')],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '성인PC 성인피씨 성인피시 창업',
-    description: '성인PC 성인피씨 성인피시 창업 정보 및 매물 거래',
-    images: [getOgImageUrl()],
-  },
-};
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
+      naver: process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION || '',
+    },
+    alternates: {
+      canonical: SITE_CONFIG.url,
+    },
+    openGraph: {
+      title: meta.ogTitle || meta.title,
+      description: meta.ogDescription || meta.description,
+      type: 'website',
+      url: SITE_CONFIG.url,
+      siteName: SITE_CONFIG.businessName,
+      locale: 'ko_KR',
+      images: [buildOgImageEntry('성피요 성인PC 매물 플랫폼')],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: meta.ogTitle || meta.title,
+      description: meta.ogDescription || meta.description,
+      images: [ogImage],
+    },
+  };
+}
 
 export default async function HomePage() {
   const supabase = createPublicClient();

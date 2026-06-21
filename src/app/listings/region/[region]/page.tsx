@@ -9,6 +9,7 @@ import { ListingGrid } from '@/components/listings/ListingGrid';
 import { Button } from '@/components/ui/Button';
 import { REGIONS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
+import { formatSeoCount } from '@/lib/seo-metadata';
 
 export const revalidate = 3600; // 1시간마다 재검증
 
@@ -20,7 +21,7 @@ interface Props {
 const ITEMS_PER_PAGE = 20;
 
 function buildRegionTitle(region: string, count: number): string {
-  return `${region} 성인PC방 매매·양도양수 매물 ${count}개`;
+  return `${region} 성인PC방 매매·양도양수 매물 ${formatSeoCount(count)}`;
 }
 
 function buildRegionDescription(region: string, count: number): string {
@@ -68,7 +69,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   // 0개: noindex + nofollow
   if (listingCount === 0) {
     return {
-      title: `${decodedRegion} PC방 매물 | 성피요`,
+      title: `${decodedRegion} PC방 매물`,
       robots: {
         index: false,
         follow: false,

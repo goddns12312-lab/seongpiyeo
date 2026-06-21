@@ -8,6 +8,13 @@ import { autoFixTitleByType, ContentMetadata } from './seo-title-auto-fix';
  * 모든 페이지에서 일관된 메타데이터를 생성하기 위한 중앙집중식 관리
  */
 
+/** GSC/CTR용 매물 수 표기 (641 → 640+건) */
+export function formatSeoCount(count: number): string {
+  if (count <= 0) return '0건';
+  if (count >= 100) return `${Math.floor(count / 10) * 10}+건`;
+  return `${count}건`;
+}
+
 export interface SEOMetadataOptions {
   title: string;
   description: string;
@@ -34,6 +41,130 @@ export interface SEOMetadataOptions {
     title?: string;
     description?: string;
     images?: string[];
+  };
+}
+
+/**
+ * 홈페이지 SEO 메타데이터
+ */
+export function buildHomeSeoMetadata(listingCount: number): SEOMetadataOptions {
+  const countLabel = formatSeoCount(listingCount);
+  const seoTitle = `PC방 매매 사이트 | 전국 성인PC방 매물 ${countLabel}`;
+  const seoDescription =
+    `전국 성인PC방·성인PC 매물 ${countLabel} 실시간 갱신. 권리금·보증금·월세 비교, 지역별 검색. PC방 매매·양도양수·임대 ${SITE_CONFIG.businessName}`.slice(
+      0,
+      160
+    );
+
+  return {
+    title: seoTitle,
+    description: seoDescription,
+    keywords: [
+      'PC방 매매',
+      '성인PC방',
+      '성인PC',
+      '성인피씨',
+      'PC방 매물',
+      'PC방 양도양수',
+      '권리금',
+      'PC방 창업',
+    ],
+    ogTitle: seoTitle,
+    ogDescription: seoDescription,
+    ogImage: getOgImageUrl(),
+    canonicalUrl: SITE_CONFIG.url,
+  };
+}
+
+/**
+ * 구인 허브 SEO 메타데이터
+ */
+export function buildJobsHubMetadata(jobCount: number): SEOMetadataOptions {
+  const countLabel = formatSeoCount(jobCount);
+  const seoTitle = `PC방 구인구직 ${countLabel} | 성인PC방 채용·알바`;
+  const seoDescription =
+    `성인PC방 구인구직 ${countLabel}. ${SITE_CONFIG.businessName}에서 지역별 PC방 채용공고·아르바이트·구직 정보를 확인하세요.`.slice(
+      0,
+      160
+    );
+
+  return {
+    title: seoTitle,
+    description: seoDescription,
+    keywords: ['PC방 구인', 'PC방 알바', '성인PC방 채용', 'PC방 구직', '성인PC', '성피요'],
+    ogTitle: seoTitle,
+    ogDescription: seoDescription,
+    ogImage: getOgImageUrl(),
+    canonicalUrl: createCanonicalUrl('/jobs'),
+  };
+}
+
+/**
+ * 커뮤니티 허브 SEO 메타데이터
+ */
+export function buildCommunityHubMetadata(postCount: number): SEOMetadataOptions {
+  const countLabel = formatSeoCount(postCount);
+  const seoTitle = `PC방 커뮤니티 ${countLabel} | 성인PC 창업·운영 정보`;
+  const seoDescription =
+    `PC방 창업·운영 정보 ${countLabel}. 인테리어, 장비, 창업 후기, 성인PC 운영 팁을 ${SITE_CONFIG.businessName} 커뮤니티에서 확인하세요.`.slice(
+      0,
+      160
+    );
+
+  return {
+    title: seoTitle,
+    description: seoDescription,
+    keywords: ['PC방 커뮤니티', '성인PC', 'PC방 창업', 'PC방 운영', '성인피씨'],
+    ogTitle: seoTitle,
+    ogDescription: seoDescription,
+    ogImage: getOgImageUrl(),
+    canonicalUrl: createCanonicalUrl('/community'),
+  };
+}
+
+/**
+ * 중고장터 허브 SEO 메타데이터
+ */
+export function buildSecondhandHubMetadata(itemCount: number): SEOMetadataOptions {
+  const countLabel = formatSeoCount(itemCount);
+  const seoTitle = `PC방 중고장터 ${countLabel} | 성인PC 장비·물품`;
+  const seoDescription =
+    `PC방·성인PC 관련 중고물품 ${countLabel}. PC, 모니터, 의자 등 장비 거래 ${SITE_CONFIG.businessName} 중고장터.`.slice(
+      0,
+      160
+    );
+
+  return {
+    title: seoTitle,
+    description: seoDescription,
+    keywords: ['PC방 중고', '성인PC 장비', 'PC방 물품', '중고장터'],
+    ogTitle: seoTitle,
+    ogDescription: seoDescription,
+    ogImage: getOgImageUrl(),
+    canonicalUrl: createCanonicalUrl('/secondhand'),
+  };
+}
+
+/**
+ * 환전정보 허브 SEO 메타데이터
+ */
+export function buildExchangeHubMetadata(postCount: number): SEOMetadataOptions {
+  const countLabel = formatSeoCount(postCount);
+  const seoTitle = `성인PC 환수·운영정보 ${countLabel} | PC방 거래 팁`;
+  const seoDescription =
+    `성인PC 환수율·운영정보 ${countLabel}. PC방 매출, 환수, 거래 팁 ${SITE_CONFIG.businessName} 환수정보 게시판.`.slice(
+      0,
+      160
+    );
+
+  return {
+    title: seoTitle,
+    description: seoDescription,
+    keywords: ['성인PC 환수', 'PC방 운영', '환수율', 'PC방 정보'],
+    ogTitle: seoTitle,
+    ogDescription: seoDescription,
+    ogImage: getOgImageUrl(),
+    canonicalUrl: createCanonicalUrl('/exchange-info'),
   };
 }
 
@@ -83,10 +214,14 @@ export function buildListingMetadata(listing: any): SEOMetadataOptions {
  */
 export function buildRegionListingMetadata(region: string, count: number): SEOMetadataOptions {
   const noindex = count === 0;
+  const countLabel = formatSeoCount(count);
 
-  // 키워드 포함: 지역 + 성인PC + 매매 + 개수
-  const seoTitle = `${region} 성인피씨 매매·창업 매물 ${count}개 | 성인pc 거래정보`;
-  const seoDescription = `${region} 성인피씨 ${count}개 매물. 권리금·보증금·월세 정보와 함께 성인피시 매매, 임대, 양도양수 정보를 ${SITE_CONFIG.businessName}에서 확인하세요.`.slice(0, 160);
+  const seoTitle = `${region} 성인PC방 매매·양도양수 매물 ${countLabel}`;
+  const seoDescription =
+    `${region} 성인PC방 매물 ${countLabel}. 권리금·보증금·월세 정보와 PC방 매매·임대·양도양수 ${SITE_CONFIG.businessName}.`.slice(
+      0,
+      160
+    );
 
   return {
     title: seoTitle,
@@ -122,7 +257,7 @@ export function buildPostMetadata(post: any): SEOMetadataOptions {
   const contentPreview = content?.slice(0, 160) || '';
 
   // 키워드 포함: 제목 + PC방 + 카테고리 + 커뮤니티
-  const seoTitle = `${title} | PC방 ${category || '커뮤니티'} | 성인피씨 정보`;
+  const seoTitle = `${title} | PC방 ${category || '커뮤니티'}`;
   const seoDescription = contentPreview || title;
 
   return {
@@ -153,22 +288,34 @@ export function buildPostMetadata(post: any): SEOMetadataOptions {
  * 매물 목록 메타데이터 생성
  */
 export function buildListingsMetadata(region?: string, count?: number): SEOMetadataOptions {
-  const regionText = region && region !== 'all' && region !== 'undefined' ? `${region} ` : '';
+  const isRegion = region && region !== 'all' && region !== 'undefined';
+  const countLabel = count !== undefined ? formatSeoCount(count) : '';
 
-  const seoTitle = `${regionText}성인피씨 성인피시 성인pc 매물 | 창업 정보`;
-  const seoDescription = `${regionText ? `${region} 지역의 ` : '전국'}성인피씨 성인피시 성인pc 매물 거래 정보 | PC방 창업, 매매, 임대 정보 한눈에 | 성피요 매물 검색`.slice(0, 160);
+  const seoTitle = isRegion
+    ? `${region} 성인PC방 매물 ${countLabel} | 권리금·보증금·월세`
+    : `전국 성인PC방 매물 ${countLabel} | 권리금·보증금·월세`;
+
+  const seoDescription = isRegion
+    ? `${region} 성인PC방 매물 ${countLabel}. 권리금·보증금·월세 비교, PC방 매매·양도양수·임대 ${SITE_CONFIG.businessName}.`.slice(
+        0,
+        160
+      )
+    : `전국 성인PC방 매물 ${countLabel} 실시간 갱신. 권리금·보증금·월세 비교, 지역별 PC방 매매 검색 ${SITE_CONFIG.businessName}.`.slice(
+        0,
+        160
+      );
 
   return {
     title: seoTitle,
     description: seoDescription,
     keywords: [
-      '성인피씨',
-      '성인피시',
-      '성인피씨창업',
-      '성인pc',
-      `성인피씨${regionText ? region : '매물'}`,
-      'PC방창업정보',
-      '성인피시방',
+      'PC방 매매',
+      '성인PC방',
+      '성인PC',
+      isRegion ? `${region} PC방 매물` : '전국 PC방 매물',
+      '권리금',
+      'PC방 양도양수',
+      'PC방 임대',
     ],
     ogTitle: seoTitle,
     ogDescription: seoDescription,
@@ -186,7 +333,7 @@ export function buildSecondhandMetadata(item: any): SEOMetadataOptions {
   const isIndexable = status === 'active';
 
   // 키워드 포함: 지역 + 중고 + 물품명 + 가격
-  const seoTitle = `${region} 중고 성인피씨 물품 | ${title} | ${price?.toLocaleString() || '상담'}만원`;
+  const seoTitle = `${region} PC방 중고 | ${title} | ${price?.toLocaleString() || '상담'}만원`;
   const seoDescription = `${region} 중고 물품: ${title}. ${price}만원에 판매 중. 성인피씨 중고 물품 거래 플랫폼 ${SITE_CONFIG.businessName}`.slice(0, 160);
 
   return {
@@ -217,8 +364,9 @@ export function buildJobMetadata(job: { title: string; region: string; slug: str
   const { title, region, slug } = job;
   const jobPath = `/jobs/${encodeURIComponent(slug)}`;
 
-  const seoTitle = `${region} 성인피씨 ${title} 구인 | 성인pc 구직정보`;
-  const seoDescription = `성인피시 구인구직: ${title} in ${region}. ${SITE_CONFIG.businessName}에서 채용공고를 확인하세요.`.slice(0, 160);
+  const seoTitle = `${title} | ${region} PC방 구인 | 채용공고`;
+  const seoDescription =
+    `${region} PC방 구인 「${title}」. 성인PC방 채용·알바 정보 ${SITE_CONFIG.businessName}.`.slice(0, 160);
 
   return {
     title: seoTitle,
@@ -272,9 +420,8 @@ export function buildPageMetadata(
 
   const config = pageConfig[pageName];
 
-  // 키워드 포함: 제목 + 페이지 타입 + PC방
   return {
-    title: `${title} | ${config.keyword} | ${SITE_CONFIG.businessName}`,
+    title: `${title} | ${config.keyword}`,
     description,
     keywords: [
       '성인피씨',
@@ -433,35 +580,31 @@ export function buildListingSeoTitle(listing: any, businessName: string = SITE_C
 
   const userTitle = originalTitle?.trim() || '';
 
-  // 사용자 제목이 있으면 SEO 메타용으로 "제목 | 지역 | 가격" 조합
+  // 사용자 제목: PC존 스타일 "제목 | 지역 PC방 매매 | 가격"
   if (userTitle) {
-    let title = `${userTitle} | ${fullLocation}${priceInfo}`;
+    let title = `${userTitle} | ${fullLocation} PC방 매매${priceInfo}`;
     if (title.length > 60) {
-      title = `${userTitle} | ${fullLocation}`;
+      title = `${userTitle} | ${fullLocation} PC방 매매`;
     }
     if (title.length > 60) {
-      title = userTitle.slice(0, 60);
+      title = `${userTitle.slice(0, 40)} | ${fullLocation}`;
     }
     return title;
   }
 
-  // 제목 없을 때만 지역+가격 자동 생성
-  let title = `${fullLocation} 성인PC 매물${priceInfo}`;
+  let title = `${fullLocation} PC방 매매${priceInfo}`;
 
   // 60자 제한: 너무 길면 "매물" 제거
   if (title.length > 60) {
-    title = `${fullLocation} 성인PC${priceInfo}`;
+    title = `${fullLocation} PC방 매매${priceInfo ? ` | ${priceParts[0]}` : ''}`;
   }
 
-  // 여전히 길면 가격을 1개만 유지
   if (title.length > 60 && priceParts.length > 1) {
-    const shortPriceInfo = ` | ${priceParts[0]}`;
-    title = `${fullLocation} 성인PC${shortPriceInfo}`;
+    title = `${fullLocation} PC방 매매 | ${priceParts[0]}`;
   }
 
-  // 마지막 수단: 가격 제거
   if (title.length > 60) {
-    title = `${fullLocation} 성인PC`;
+    title = `${fullLocation} PC방 매매`;
   }
 
   return title;

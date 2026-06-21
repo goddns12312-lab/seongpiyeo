@@ -4,43 +4,48 @@ import { SITE_CONFIG } from '@/lib/site';
 import { createCanonicalUrl } from '@/lib/url-utils';
 import { getOgImageUrl } from '@/lib/seo-assets';
 import { buildCollectionPageSchema } from '@/lib/seo-schema';
+import { buildSecondhandHubMetadata } from '@/lib/seo-metadata';
+import { getSeoHubCounts } from '@/lib/listing-queries';
 import { fetchSecondhandItems } from '@/lib/secondhand-data';
 
 const ogImage = getOgImageUrl();
 
-export const metadata: Metadata = {
-  title: 'PC방 중고장터 | 성인피씨 중고물품 거래',
-  description: 'PC방 관련 중고 물품을 안전하게 거래하는 공간. 성인PC 장비, PC방 물품 구매, 판매, 렌탈 정보를 한곳에서 찾으세요.',
-  keywords: ['중고', '중고장터', '성인피씨', '성인피시', 'PC방', '물품', '장비', '거래'],
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+export async function generateMetadata(): Promise<Metadata> {
+  const { secondhand } = await getSeoHubCounts();
+  const meta = buildSecondhandHubMetadata(secondhand);
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    keywords: meta.keywords,
+    robots: {
       index: true,
       follow: true,
-      'max-snippet': -1,
-      'max-image-preview': 'large',
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-snippet': -1,
+        'max-image-preview': 'large',
+      },
     },
-  },
-  alternates: {
-    canonical: createCanonicalUrl('/secondhand'),
-  },
-  openGraph: {
-    title: 'PC방 중고장터 | 성피요',
-    description: 'PC방 관련 중고물품 거래',
-    type: 'website',
-    url: `${SITE_CONFIG.url}/secondhand`,
-    siteName: SITE_CONFIG.businessName,
-    locale: 'ko_KR',
-    images: [{ url: ogImage, width: 1200, height: 630, alt: '성피요 PC방 중고장터', type: 'image/png' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'PC방 중고장터',
-    description: 'PC방 관련 중고물품 거래',
-    images: [ogImage],
-  },
-};
+    alternates: { canonical: createCanonicalUrl('/secondhand') },
+    openGraph: {
+      title: meta.ogTitle || meta.title,
+      description: meta.ogDescription || meta.description,
+      type: 'website',
+      url: `${SITE_CONFIG.url}/secondhand`,
+      siteName: SITE_CONFIG.businessName,
+      locale: 'ko_KR',
+      images: [{ url: ogImage, width: 1200, height: 630, alt: '성피요 PC방 중고장터', type: 'image/png' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: meta.ogTitle || meta.title,
+      description: meta.ogDescription || meta.description,
+      images: [ogImage],
+    },
+  };
+}
 
 export default async function SecondhandLayout({
   children,
