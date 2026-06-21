@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { fetchJobsList } from '@/lib/jobs-data';
+import { getTopListingRegions } from '@/lib/listing-queries';
 import JobsPageClient from './jobs-page-client';
 
 type Props = {
@@ -33,12 +34,15 @@ export default async function JobsPage({ searchParams }: Props) {
       ? [sp.employment_type]
       : [];
 
-  const { jobs, total } = await fetchJobsList({
-    category,
-    region: sp.region || undefined,
-    employmentTypes: employmentTypes.length ? employmentTypes : undefined,
-    search: sp.search || undefined,
-  });
+  const [{ jobs, total }, topRegions] = await Promise.all([
+    fetchJobsList({
+      category,
+      region: sp.region || undefined,
+      employmentTypes: employmentTypes.length ? employmentTypes : undefined,
+      search: sp.search || undefined,
+    }),
+    getTopListingRegions(5),
+  ]);
 
-  return <JobsPageClient initialJobs={jobs} totalCount={total} />;
+  return <JobsPageClient initialJobs={jobs} totalCount={total} topRegions={topRegions} />;
 }

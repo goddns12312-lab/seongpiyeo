@@ -2,6 +2,8 @@ import Script from 'next/script';
 import Link from 'next/link';
 import { FAQAccordion } from '@/components/faq/FAQAccordion';
 import { buildFAQPageSchema } from '@/lib/seo-schema';
+import { RegionHubLinks } from '@/components/seo/RegionHubLinks';
+import { getTopListingRegions } from '@/lib/listing-queries';
 import {
   PageShell,
   PageHero,
@@ -92,7 +94,8 @@ const faqs = [
   }
 ];
 
-export default function FAQPage() {
+export default async function FAQPage() {
+  const topRegions = await getTopListingRegions(5);
   const faqSchema = buildFAQPageSchema(
     faqs.flatMap((cat) =>
       cat.items.map((item) => ({ question: item.q, answer: item.a }))
@@ -131,24 +134,7 @@ export default function FAQPage() {
           </Link>
         </SurfaceCard>
 
-        <SurfaceCard>
-          <h2 className="text-2xl font-bold text-text-primary mb-6 text-center">
-            지역별 매물 확인
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {['서울', '경기도', '인천', '부산', '대구'].map((region) => (
-              <Link
-                key={region}
-                href={`/listings/region/${region}`}
-                className="block p-4 bg-bg-tertiary hover:bg-gold/20 border border-border-light hover:border-gold rounded-lg text-center transition-colors"
-              >
-                <span className="font-semibold text-text-primary hover:text-gold">
-                  {region}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </SurfaceCard>
+        <RegionHubLinks regions={topRegions} />
       </PageContainer>
     </PageShell>
   );

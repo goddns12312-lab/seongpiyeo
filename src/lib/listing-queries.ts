@@ -167,6 +167,19 @@ export const getCachedRegionCounts = unstable_cache(
   { revalidate: 120 }
 );
 
+/** SEO 내부링크용 — 매물 수 상위 지역 (sitemap thin content 정책과 동일: 5건 이상) */
+export async function getTopListingRegions(
+  limit = 5,
+  minCount = 5
+): Promise<Array<{ region: string; count: number }>> {
+  const counts = await getCachedRegionCounts();
+  return Object.entries(counts)
+    .filter(([, count]) => count >= minCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([region, count]) => ({ region, count }));
+}
+
 export const getCachedSidebarBanners = unstable_cache(
   async () => {
     const supabase = createPublicClient();
