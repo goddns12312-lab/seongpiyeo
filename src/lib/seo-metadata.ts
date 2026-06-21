@@ -614,44 +614,81 @@ export function buildListingSeoTitle(listing: any, businessName: string = SITE_C
  * Listings 상세페이지 SEO Description 생성 (120~160자)
  * 목표: 100% 고유성 + 데이터 기반 + 120~160자 달성
  */
+const SEO_DESC_MIN = 120;
+const SEO_DESC_MAX = 160;
+
+function formatListingPriceClause(listing: {
+  premium_price?: number;
+  deposit?: number;
+  monthly_rent?: number;
+}): string {
+  const { premium_price, deposit, monthly_rent } = listing;
+  if (premium_price && monthly_rent) {
+    return `권리금 ${premium_price}만원, 월세 ${monthly_rent}만원.`;
+  }
+  if (premium_price && deposit) {
+    return `권리금 ${premium_price}만원, 보증금 ${deposit}만원.`;
+  }
+  if (premium_price) {
+    return `권리금 ${premium_price}만원.`;
+  }
+  if (monthly_rent) {
+    return `월세 ${monthly_rent}만원.`;
+  }
+  return '가격 조건은 상세 페이지에서 확인할 수 있습니다.';
+}
+
+function padListingSeoDescription(
+  desc: string,
+  locationPart: string,
+  region: string
+): string {
+  const fillers = [
+    ` ${locationPart} 성인PC방 매물 비교와 창업 정보는 성피요에서 확인하세요.`,
+    ` 권리금·월세 조건을 비교한 뒤 상담할 수 있습니다.`,
+    ` 성인피씨 창업·양도 검토에 활용해 보세요.`,
+    ` ${region} 지역 매물과 함께 비교 검토할 수 있습니다.`,
+  ];
+
+  let padded = desc;
+  for (const filler of fillers) {
+    if (padded.length >= SEO_DESC_MIN) break;
+    padded += filler;
+  }
+
+  if (padded.length > SEO_DESC_MAX) {
+    return padded.slice(0, SEO_DESC_MAX - 3) + '...';
+  }
+  return padded;
+}
+
 export function buildListingSeoDescription(listing: any): string {
   const resolved = resolveListingLocationData(listing);
   const locationPart = resolved.displayLocation;
   const { premium_price, deposit, monthly_rent, area_sqm, pc_count } = listing;
-
-  // 핵심 가격 (중복 최소화)
-  let priceInfo = '';
-  if (premium_price && monthly_rent) {
-    priceInfo = `권리금 ${premium_price}만원, 월세 ${monthly_rent}만원`;
-  } else if (premium_price && deposit) {
-    priceInfo = `권리금 ${premium_price}만원, 보증금 ${deposit}만원`;
-  } else if (premium_price) {
-    priceInfo = `권리금 ${premium_price}만원`;
-  } else if (monthly_rent) {
-    priceInfo = `월세 ${monthly_rent}만원`;
-  }
+  const priceClause = formatListingPriceClause(listing);
 
   // 데이터 기반 특성화된 설명
   let desc = '';
 
   // 가격 + 규모 조합
   if (pc_count && area_sqm) {
-    desc = `${locationPart} 성인PC. ${priceInfo}. ${area_sqm}평 규모에 PC ${pc_count}대. 체계적으로 운영할 수 있는 환경이 갖춰져 있습니다.`;
+    desc = `${locationPart} 성인PC. ${priceClause} ${area_sqm}평 규모에 PC ${pc_count}대. 체계적으로 운영할 수 있는 환경이 갖춰져 있습니다.`;
   } else if (pc_count) {
     const scale = pc_count >= 20 ? '중대형' : '중규모';
-    desc = `${locationPart} 성인PC. ${priceInfo}. PC ${pc_count}대 규모의 ${scale} 점포. 안정적인 사업 운영이 가능합니다.`;
+    desc = `${locationPart} 성인PC. ${priceClause} PC ${pc_count}대 규모의 ${scale} 점포. 안정적인 사업 운영이 가능합니다.`;
   } else if (area_sqm) {
-    desc = `${locationPart} 성인PC. ${priceInfo}. ${area_sqm}평 규모. 충분한 공간에서 사업을 시작할 수 있습니다.`;
+    desc = `${locationPart} 성인PC. ${priceClause} ${area_sqm}평 규모. 충분한 공간에서 사업을 시작할 수 있습니다.`;
   } else if ((premium_price || 0) + (deposit || 0) >= 3000) {
-    desc = `${locationPart} 성인PC. ${priceInfo}. 프리미엄 상권의 수익성 높은 매물. 성장 잠재력이 큰 점포입니다.`;
+    desc = `${locationPart} 성인PC. ${priceClause} 프리미엄 상권의 수익성 높은 매물. 성장 잠재력이 큰 점포입니다.`;
   } else if (premium_price && premium_price < 500) {
-    desc = `${locationPart} 성인PC. ${priceInfo}. 저가 진입 조건으로 작은 자본금으로도 창업할 수 있습니다.`;
+    desc = `${locationPart} 성인PC. ${priceClause} 저가 진입 조건으로 작은 자본금으로도 창업할 수 있습니다.`;
   } else {
-    desc = `${locationPart} 성인PC 거래 중. ${priceInfo}. 투명한 거래 절차와 함께 맞춤형 컨설팅을 받을 수 있습니다.`;
+    desc = `${locationPart} 성인PC 거래 중. ${priceClause} 투명한 거래 절차와 함께 맞춤형 컨설팅을 받을 수 있습니다.`;
   }
 
   // 상권 정보 추가로 길이 확대
-  const remainingChars = 160 - desc.length;
+  const remainingChars = SEO_DESC_MAX - desc.length;
   if (remainingChars > 35) {
     if (resolved.district) {
       desc += ` ${resolved.district} 상권의 성인PC 사업 정보를 성피요에서 확인해보세요.`;
@@ -664,7 +701,7 @@ export function buildListingSeoDescription(listing: any): string {
     desc += ` 성피요에서 확인.`;
   }
 
-  return desc.length > 160 ? desc.slice(0, 157) + '...' : desc;
+  return padListingSeoDescription(desc, locationPart, resolved.region);
 }
 
 function listingContentVariant(id: string): number {
