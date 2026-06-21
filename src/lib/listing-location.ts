@@ -46,6 +46,29 @@ const REGION_ALIASES: Record<string, string> = {
   제주도: '제주도',
 };
 
+const FALSE_REGION_PREFIXES: Record<string, string[]> = {
+  강원: ['강원랜드'],
+};
+
+function isValidRegionTermMatch(text: string, index: number, term: string): boolean {
+  for (const blocked of FALSE_REGION_PREFIXES[term] || []) {
+    if (text.slice(index, index + blocked.length) === blocked) {
+      return false;
+    }
+  }
+
+  if (index > 0 && !/[\s([{·]/.test(text[index - 1]!)) {
+    return false;
+  }
+
+  const nextChar = text[index + term.length];
+  if (nextChar && !/[\s,./)|\-]/.test(nextChar)) {
+    return false;
+  }
+
+  return true;
+}
+
 const REGION_MATCH_TERMS = [...new Set([...REGIONS, ...Object.keys(REGION_ALIASES)])].sort(
   (a, b) => b.length - a.length
 );
@@ -82,7 +105,7 @@ export function extractLocationFromTitle(title?: string | null): {
 
   for (const term of REGION_MATCH_TERMS) {
     const idx = text.indexOf(term);
-    if (idx !== -1) {
+    if (idx !== -1 && isValidRegionTermMatch(text, idx, term)) {
       matchedTerm = term;
       matchIndex = idx;
       break;
@@ -94,7 +117,7 @@ export function extractLocationFromTitle(title?: string | null): {
   const region = REGION_ALIASES[matchedTerm] || normalizeListingRegion(matchedTerm) || matchedTerm;
   const afterRegion = text.slice(matchIndex + matchedTerm.length).trim();
 
-  const districtMatch = afterRegion.match(/^([가-힣]{2,12}(?:시|군|구))/);
+  const districtMatch = afterRegion.match(/^([가-힣]{2,12}(?:시|군|구))(?![가-힣])/);
   const district = districtMatch?.[1];
 
   const remainder = district ? afterRegion.slice(district.length).trim() : afterRegion;
