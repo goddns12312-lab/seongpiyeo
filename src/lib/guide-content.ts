@@ -7,7 +7,20 @@ export type GuideEntry = {
   date: string;
   keywords: string[];
   content: string;
+  /** pickGuidesForListing 매칭용 태그 */
+  tags?: string[];
 };
+
+export const GUIDE_CATEGORY_LABELS: Record<string, string> = {
+  법규: '규제·세무',
+  거래: '매매·계약',
+  창업: '창업·비용',
+  '지역·시세': '지역·시세',
+};
+
+export function getGuideHref(guideId: string): string {
+  return `/guide#${guideId}`;
+}
 
 export const GUIDES: GuideEntry[] = [
   {
@@ -18,6 +31,7 @@ export const GUIDES: GuideEntry[] = [
     readTime: '10분',
     date: '2026-05-27',
     keywords: ['PC방 소방기준', 'PC방 소방시설', '성인PC 법규', '소방검사'],
+    tags: ['regulation', 'fire', 'adult'],
     content: `# PC방 소방기준 완벽 가이드 | 필수 시설부터 법규까지 2026년 최신
 
 ## PC방 필수 소방시설
@@ -98,6 +112,7 @@ PC방은 다중이용업소 중 하나로 엄격한 소방기준을 따릅니다
     readTime: '11분',
     date: '2026-05-27',
     keywords: ['PC방 양도양수', '권리금', '보증금', 'PC방 인수'],
+    tags: ['transfer', 'contract', 'adult'],
     content: `# PC방 양도양수 완벽 가이드 | 권리금 이해부터 계약까지
 
 ## PC방 양도양수란?
@@ -246,6 +261,7 @@ PC방은 다중이용업소 중 하나로 엄격한 소방기준을 따릅니다
     readTime: '12분',
     date: '2026-05-27',
     keywords: ['PC방 창업 비용', 'PC방 수익', '성인PC방', '창업 가이드'],
+    tags: ['startup', 'adult'],
     content: `# PC방 창업 완벽 가이드 | 초기비용부터 수익까지 2026년 최신판
 
 ## PC방 창업에 드는 정확한 비용
@@ -313,4 +329,259 @@ PC방 창업은 2억 원 초반대 투자로 월 2-4천만 원 수익을 기대�
 
 더 자세한 상담은 [고객센터](/support)에 문의하세요.`,
   },
+  {
+    id: 'adult-pc-permit',
+    title: '성인PC방 허가 조건과 신고 절차 2026',
+    description: '성인PC방 개업 전 필수 허가·신고 절차, 학교 반경 규제, 영업 신고 서류를 정리했습니다.',
+    category: '법규',
+    readTime: '8분',
+    date: '2026-06-15',
+    keywords: ['성인PC방 허가', '영업신고', '게임제공업', '성인PC 신고'],
+    tags: ['regulation', 'permit', 'adult'],
+    content: `# 성인PC방 허가 조건과 신고 절차 2026
+
+## 필수 신고·허가
+
+1. **게임제공업 신고** (관할 구청)
+2. **다중이용업소 소방완비증명** (소방서)
+3. **위생·환기 기준 충족** (관할 보건소)
+4. **학교환경위생정화구역 확인** (200m 이내 제한)
+
+## 학교 반경 기준
+
+- 50m 이내: 원칙적 불가
+- 50~200m: 심의·조건부 가능
+- 200m 초과: 일반 절차
+
+## 인수 시 확인
+
+양도양수 매물은 **기존 영업 신고 명의 이전** 가능 여부를 반드시 확인하세요.
+
+[양도양수 가이드](/guide#transfer) · [전국 매물](/listings)`,
+  },
+  {
+    id: 'adult-pc-inspection',
+    title: '성인PC방 단속 기준과 과태료 2026',
+    description: '성인PC방 단속 항목, 청소년 출입 금지, 사행성 게임 규제 위반 시 과태료를 정리했습니다.',
+    category: '법규',
+    readTime: '7분',
+    date: '2026-06-15',
+    keywords: ['성인PC방 단속', '과태료', '청소년 출입', '성인PC 규제'],
+    tags: ['regulation', 'inspection', 'adult'],
+    content: `# 성인PC방 단속 기준과 과태료 2026
+
+## 주요 단속 항목
+
+- 청소년 출입·이용 금지
+- 사행성·불법 게임 제공 여부
+- 소방·피난 시설 기준
+- 영업시간·간판·안내 표시
+
+## 위반 시 제재
+
+| 위반 | 제재 |
+|------|------|
+| 청소년 출입 | 과태료 + 영업정지 |
+| 소방 미비 | 과태료 + 시정명령 |
+| 무허가 영업 | 영업정지 + 형사처벌 가능 |
+
+매물 인수 전 **최근 행정처분 이력**을 확인하세요.
+
+[소방기준 가이드](/guide#fire-safety) · [FAQ](/faq)`,
+  },
+  {
+    id: 'contract-checklist',
+    title: 'PC방 양도양수 계약서 필수 조항 12개',
+    description: '권리금·보증금·월세·채무·인수일·위약금 등 계약서에 반드시 넣어야 할 조항을 정리했습니다.',
+    category: '거래',
+    readTime: '9분',
+    date: '2026-06-15',
+    keywords: ['PC방 계약서', '양도양수 계약', '권리금 계약', 'PC방 필수조항'],
+    tags: ['contract', 'transfer', 'adult'],
+    content: `# PC방 양도양수 계약서 필수 조항 12개
+
+## 반드시 명시할 항목
+
+1. 권리금 금액 및 지급 일정
+2. 보증금·월세 금액 (임대차 계약과 일치)
+3. 인수·인계 일자
+4. 시설·집기 목록 및 상태
+5. 기존 채무(전기·수도·세금) 부담 주체
+6. 임대차 승계·갱신 조건
+7. 영업 신고·허가 이전 책임
+8. 위약금·해제 조건
+9. 분쟁 해결 관할
+10. 특약 사항(직원·재고·포인트 등)
+11. 허위·누락 진술 책임
+12. 계약서 부본 보관
+
+서면 계약 없이 구두 합의만 하는 것은 피하세요.
+
+[양도양수 가이드](/guide#transfer) · [고객센터](/support)`,
+  },
+  {
+    id: 'adult-transfer-terms',
+    title: '성인PC방 양도양수 특수 조항',
+    description: '성인PC방만 해당하는 게임제공업 승계, 청소년 출입 관리, 사행성 게임 점검 등 특수 조항입니다.',
+    category: '거래',
+    readTime: '8분',
+    date: '2026-06-15',
+    keywords: ['성인PC 양도양수', '게임제공업 승계', '성인PC 계약'],
+    tags: ['contract', 'transfer', 'adult'],
+    content: `# 성인PC방 양도양수 특수 조항
+
+## 성인PC방만 해당
+
+- **게임제공업 신고 명의 변경** 일정·비용 부담
+- **청소년 출입 방지 시스템** 인수·유지
+- **사행성 게임 설치 여부** 확인 및 책임
+- **성인 인증 장치** 정상 작동 확인
+- **단속·행정처분 이력** 진술·보증
+
+## 인수 전 현장 체크
+
+- 신분증 확인 시스템 작동
+- CCTV·출입 통제
+- 게임 목록·라이선스
+- 소방·피난 동선
+
+[계약서 필수 조항](/guide#contract-checklist) · [매물 목록](/listings)`,
+  },
+  {
+    id: 'region-pricing-capital',
+    title: '서울·경기·인천 PC방 시세 가이드 2026',
+    description: '수도권 성인PC방 권리금·보증금·월세 시세 범위와 입지별 차이를 정리했습니다.',
+    category: '지역·시세',
+    readTime: '6분',
+    date: '2026-06-15',
+    keywords: ['서울 PC방 시세', '경기 PC방 권리금', '인천 PC방 매물', '수도권 PC방'],
+    tags: ['region-capital', 'district', 'adult'],
+    content: `# 서울·경기·인천 PC방 시세 가이드 2026
+
+## 수도권 시세 범위 (참고)
+
+| 구분 | 권리금 | 보증금 | 월세 |
+|------|--------|--------|------|
+| 서울 핵심상권 | 5,000만~3억+ | 3,000만~1억 | 800만~1,500만 |
+| 서울 외곽 | 2,000만~8,000만 | 2,000만~5,000만 | 500만~900만 |
+| 경기·인천 | 1,500만~1억 | 1,500만~5,000만 | 400만~800만 |
+
+실제 매물은 입지·매출·시설에 따라 크게 다릅니다. [수도권 매물](/listings/region/서울)에서 비교해 보세요.`,
+  },
+  {
+    id: 'region-pricing-metro',
+    title: '부산·대구·대전·광주 PC방 시세 비교',
+    description: '광역시별 성인PC방 권리금·월세 시세와 상권 특성을 비교합니다.',
+    category: '지역·시세',
+    readTime: '6분',
+    date: '2026-06-15',
+    keywords: ['부산 PC방 시세', '대구 PC방', '대전 PC방', '광주 PC방 권리금'],
+    tags: ['region-metro', 'adult'],
+    content: `# 부산·대구·대전·광주 PC방 시세 비교
+
+## 광역시 시세 (참고)
+
+| 지역 | 권리금 | 월세 |
+|------|--------|------|
+| 부산 | 2,000만~7,000만 | 400만~700만 |
+| 대구 | 1,500만~5,000만 | 350만~600만 |
+| 대전 | 1,500만~5,000만 | 350만~600만 |
+| 광주 | 1,200만~4,500만 | 300만~550만 |
+
+지역별 [매물 목록](/listings)에서 실제 등록가를 확인하세요.`,
+  },
+  {
+    id: 'region-pricing-local',
+    title: '지방·중소도시 PC방 시세 가이드',
+    description: '지방 중소도시 성인PC방 권리금·월세 범위와 창업·인수 시 유의점입니다.',
+    category: '지역·시세',
+    readTime: '5분',
+    date: '2026-06-15',
+    keywords: ['지방 PC방 시세', '중소도시 PC방', '지방 권리금'],
+    tags: ['region-local', 'adult'],
+    content: `# 지방·중소도시 PC방 시세 가이드
+
+## 지방 시세 (참고)
+
+- 권리금: 500만~3,000만원
+- 보증금: 500만~2,000만원
+- 월세: 250만~500만원
+
+인구·유동·대학·유흥가 밀집도에 따라 차이가 큽니다. 저가 매물이라도 **매출·임대차 조건**을 꼭 확인하세요.
+
+[전국 매물](/listings) · [창업 비용 가이드](/guide#startup-cost)`,
+  },
 ];
+
+/**
+ * 매물 데이터 기준 관련 가이드 5개 선별 (PC존 스타일 내부 링크)
+ */
+export function pickGuidesForListing(listing: Record<string, unknown>, limit = 5): GuideEntry[] {
+  const region = String(listing.region || '');
+  const premium = listing.premium_price as number | undefined;
+  const monthly = listing.monthly_rent as number | undefined;
+  const district = listing.district as string | undefined;
+
+  const scored = GUIDES.map((guide) => {
+    let score = 0;
+    const tags = guide.tags || [];
+
+    if (tags.includes('transfer') && premium) score += 4;
+    if (tags.includes('contract') && (premium || monthly)) score += 3;
+    if (tags.includes('startup') && !premium) score += 2;
+    if (tags.includes('regulation')) score += 2;
+    if (tags.includes('fire')) score += 1;
+    if (tags.includes('permit')) score += 2;
+    if (tags.includes('inspection')) score += 2;
+
+    if (tags.includes('region-capital') && ['서울', '경기도', '인천'].includes(region)) score += 5;
+    if (tags.includes('region-metro') && ['부산', '대구', '대전', '광주', '울산'].includes(region)) score += 5;
+    if (
+      tags.includes('region-local') &&
+      region &&
+      !['서울', '경기도', '인천', '부산', '대구', '대전', '광주', '울산'].includes(region)
+    ) {
+      score += 5;
+    }
+
+    if (district && tags.includes('district')) score += 1;
+    if (tags.includes('adult')) score += 2;
+
+    return { guide, score };
+  });
+
+  const picked: GuideEntry[] = [];
+  const usedIds = new Set<string>();
+
+  for (const { guide, score } of scored.sort((a, b) => b.score - a.score)) {
+    if (score <= 0 || usedIds.has(guide.id)) continue;
+    picked.push(guide);
+    usedIds.add(guide.id);
+    if (picked.length >= limit) break;
+  }
+
+  if (picked.length < limit) {
+    for (const guide of GUIDES) {
+      if (usedIds.has(guide.id)) continue;
+      picked.push(guide);
+      usedIds.add(guide.id);
+      if (picked.length >= limit) break;
+    }
+  }
+
+  return picked;
+}
+
+export function getGuideDisplayTitle(guide: GuideEntry, region?: string): string {
+  if (region && guide.id === 'region-pricing-capital') {
+    return `${region}·수도권 PC방 시세 가이드`;
+  }
+  if (region && guide.id === 'region-pricing-metro') {
+    return `${region} PC방 시세 가이드`;
+  }
+  if (region && guide.id === 'region-pricing-local') {
+    return `${region} PC방 시세 가이드`;
+  }
+  const short = guide.title.split('|')[0]?.trim();
+  return short && short.length < guide.title.length ? short : guide.title;
+}

@@ -16,6 +16,8 @@ import { getOgImageUrl } from '@/lib/seo-assets';
 import { RelatedListings } from '@/components/listings/RelatedListings';
 import { ListingRegionNav } from '@/components/listings/ListingRegionNav';
 import { ListingBodySummary } from '@/components/listings/ListingBodySummary';
+import { ListingGuideLinks } from '@/components/listings/ListingGuideLinks';
+import { pickGuidesForListing } from '@/lib/guide-content';
 import { createPublicClient } from '@/lib/supabase/public';
 import {
   getListingById,
@@ -202,6 +204,7 @@ export default async function ListingDetailPage({ params }: Props) {
   const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
   const premiumPrice = listing.premium_price as number | undefined;
   const contact = listing.contact as string | undefined;
+  const relatedGuides = pickGuidesForListing(listing);
 
   return (
     <div className="bg-bg-primary min-h-screen py-12">
@@ -366,6 +369,8 @@ export default async function ListingDetailPage({ params }: Props) {
               premiumPrice={premiumPrice}
               monthlyRent={listing.monthly_rent as number | undefined}
             />
+
+            <ListingGuideLinks guides={relatedGuides} region={listing.region} />
           </div>
 
           <div>

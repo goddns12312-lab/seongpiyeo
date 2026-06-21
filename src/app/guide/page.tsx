@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { GUIDES } from '@/lib/guide-content';
+import { GuideHashOpener } from '@/components/guide/GuideHashOpener';
 
 export default function GuidePage() {
   return (
     <div className="bg-bg-primary min-h-screen py-8 lg:py-12">
+      <GuideHashOpener />
       <div className="max-w-4xl mx-auto px-4 lg:px-8">
         <div className="mb-12">
           <Link href="/" className="inline-flex items-center gap-2 text-gold hover:text-gold/80 text-sm font-medium mb-6 transition-colors">
@@ -23,7 +25,8 @@ export default function GuidePage() {
           {GUIDES.map((guide) => (
             <details
               key={guide.id}
-              className="group bg-bg-secondary border border-border-light rounded-lg overflow-hidden hover:border-gold transition-all"
+              id={guide.id}
+              className="group bg-bg-secondary border border-border-light rounded-lg overflow-hidden hover:border-gold transition-all scroll-mt-24"
             >
               <summary className="w-full p-6 text-left cursor-pointer list-none hover:bg-bg-tertiary transition-colors [&::-webkit-details-marker]:hidden">
                 <div className="flex items-start justify-between gap-4">
