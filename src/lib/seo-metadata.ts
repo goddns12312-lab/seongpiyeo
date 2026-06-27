@@ -3,6 +3,7 @@ import { createCanonicalUrl, createCanonicalUrlWithSegment } from './url-utils';
 import { getOgImageUrl } from './seo-assets';
 import { autoFixTitleByType, ContentMetadata } from './seo-title-auto-fix';
 import { resolveListingLocation as resolveListingLocationData } from './listing-location';
+import { getListingCanonicalUrl } from './listing-url';
 
 /**
  * SEO 메타데이터 생성 함수 모음
@@ -202,10 +203,10 @@ export function buildListingMetadata(listing: any): SEOMetadataOptions {
     ogTitle: seoTitle,
     ogDescription: seoDescription,
     ogImage: listing.main_image_url || listing.thumbnail_url || getOgImageUrl(),
-    canonicalUrl: createCanonicalUrl(`/listings/${id}`),
+    canonicalUrl: getListingCanonicalUrl(SITE_CONFIG.url, region, id),
     noindex: !isIndexable,
     alternates: {
-      canonical: createCanonicalUrl(`/listings/${id}`),
+      canonical: getListingCanonicalUrl(SITE_CONFIG.url, region, id),
     },
   };
 }
@@ -240,10 +241,10 @@ export function buildRegionListingMetadata(region: string, count: number): SEOMe
     ogTitle: seoTitle,
     ogDescription: seoDescription,
     ogImage: getOgImageUrl(),
-    canonicalUrl: createCanonicalUrlWithSegment('/listings/region', region),
+    canonicalUrl: createCanonicalUrlWithSegment('/pc-bangs', region),
     noindex,
     alternates: {
-      canonical: createCanonicalUrlWithSegment('/listings/region', region),
+      canonical: createCanonicalUrlWithSegment('/pc-bangs', region),
     },
   };
 }
@@ -321,7 +322,7 @@ export function buildListingsMetadata(region?: string, count?: number): SEOMetad
     ogTitle: seoTitle,
     ogDescription: seoDescription,
     ogImage: getOgImageUrl(),
-    canonicalUrl: createCanonicalUrl('/listings'),
+    canonicalUrl: createCanonicalUrl('/pc-bangs'),
   };
 }
 

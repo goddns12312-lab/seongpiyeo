@@ -20,6 +20,7 @@ import { ListingBodySummary } from '@/components/listings/ListingBodySummary';
 import { ListingGuideLinks } from '@/components/listings/ListingGuideLinks';
 import { shouldShowListingUserDescription } from '@/lib/listing-content';
 import { pickGuidesForListing } from '@/lib/guide-content';
+import { getListingCanonicalUrl } from '@/lib/listing-url';
 import { createPublicClient } from '@/lib/supabase/public';
 import {
   getListingById,
@@ -115,13 +116,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     },
     alternates: {
-      canonical: `${baseUrl}/listings/${id}`,
+      canonical: getListingCanonicalUrl(baseUrl, resolved.region, id),
     },
     openGraph: {
       title: `${title} | ${SITE_CONFIG.businessName}`,
       description,
       type: 'article',
-      url: `${baseUrl}/listings/${id}`,
+      url: getListingCanonicalUrl(baseUrl, resolved.region, id),
       locale: 'ko_KR',
       siteName: SITE_CONFIG.businessName,
       images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
@@ -191,28 +192,28 @@ export default async function ListingDetailPage({ params }: Props) {
   const productSchema = buildListingProductSchema(listing);
   const breadcrumbItems = [
     { name: '홈', url: SITE_CONFIG.url },
-    { name: '매물 목록', url: `${SITE_CONFIG.url}/listings` },
+    { name: '매물 목록', url: `${SITE_CONFIG.url}/pc-bangs` },
     {
       name: displayRegion,
-      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(displayRegion)}`,
+      url: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(displayRegion)}`,
     },
   ];
 
   if (displayDistrict) {
     breadcrumbItems.push({
       name: displayDistrict,
-      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(displayRegion)}`,
+      url: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(displayRegion)}`,
     });
   } else if (displayLocality) {
     breadcrumbItems.push({
       name: displayLocality,
-      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(displayRegion)}`,
+      url: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(displayRegion)}`,
     });
   }
 
   breadcrumbItems.push({
     name: listing.title,
-    url: `${SITE_CONFIG.url}/listings/${id}`,
+    url: getListingCanonicalUrl(SITE_CONFIG.url, displayRegion, id),
   });
 
   const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbItems);
@@ -237,12 +238,12 @@ export default async function ListingDetailPage({ params }: Props) {
             홈
           </Link>
           <span>/</span>
-          <Link href="/listings" className="hover:text-gold">
+          <Link href="/pc-bangs" className="hover:text-gold">
             매물
           </Link>
           <span>/</span>
           <Link
-            href={`/listings/region/${encodeURIComponent(displayRegion)}`}
+            href={`/pc-bangs/${encodeURIComponent(displayRegion)}`}
             className="hover:text-gold"
           >
             {displayRegion}
@@ -279,7 +280,11 @@ export default async function ListingDetailPage({ params }: Props) {
                 <div className="flex gap-2 items-center flex-shrink-0 flex-wrap">
                   <LikeButton listingId={listing.id} />
                   <ReportButton targetId={listing.id} type="listing" />
-                  <ListingActions listingId={listing.id} userId={listing.user_id as string | undefined} />
+                  <ListingActions
+                    listingId={listing.id}
+                    region={displayRegion}
+                    userId={listing.user_id as string | undefined}
+                  />
                 </div>
               </div>
             </div>

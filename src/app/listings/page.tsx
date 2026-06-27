@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Script from 'next/script';
+import { unstable_noStore as noStore } from 'next/cache';
 import { ListingGrid } from '@/components/listings/ListingGrid';
 import { Button } from '@/components/ui/Button';
 import { RegionFilter } from '@/components/listings/RegionFilter';
@@ -11,16 +12,22 @@ import { createCanonicalUrl } from '@/lib/url-utils';
 import { getOgImageUrl } from '@/lib/seo-assets';
 import { createPublicClient } from '@/lib/supabase/public';
 import { getCachedRegionCounts, LISTING_LIST_SELECT, getActiveListingCount, getRegionListingCount } from '@/lib/listing-queries';
+import { getListingPublicPath } from '@/lib/listing-url';
+import {
+  buildFreshPageHref,
+  createFreshSeed,
+  orderListingsFresh,
+} from '@/lib/fresh-listing-order';
 
 export const revalidate = 120;
 
 export async function generateMetadata(
   { searchParams }: Props,
 ): Promise<Metadata> {
-  const { region, page, search } = await searchParams;
+  const { region, page, search, seed } = await searchParams;
   const currentPage = Math.max(1, parseInt(page || '1', 10));
   const hasRegionFilter = region && region !== 'all' && region !== 'undefined';
-  const hasFilters = !!hasRegionFilter || !!search || currentPage > 1;
+  const hasFilters = !!hasRegionFilter || !!search || !!seed || currentPage > 1;
 
   if (hasFilters) {
     return { robots: { index: false, follow: true } };
@@ -43,13 +50,13 @@ export async function generateMetadata(
     authors: [{ name: SITE_CONFIG.managerName }],
     robots: metaWithRobots.robots,
     alternates: {
-      canonical: createCanonicalUrl('/listings'),
+      canonical: createCanonicalUrl('/pc-bangs'),
     },
     openGraph: {
       title: metaWithRobots.ogTitle,
       description: metaWithRobots.ogDescription,
       type: 'website',
-      url: `${SITE_CONFIG.url}/listings`,
+      url: `${SITE_CONFIG.url}/pc-bangs`,
       locale: 'ko_KR',
       siteName: SITE_CONFIG.businessName,
       images: [
@@ -72,15 +79,18 @@ export async function generateMetadata(
 }
 
 interface Props {
-  searchParams: Promise<{ region?: string; page?: string; search?: string }>;
+  searchParams: Promise<{ region?: string; page?: string; search?: string; seed?: string }>;
 }
 
 const ITEMS_PER_PAGE = 20;
 
 export default async function ListingsPage({ searchParams }: Props) {
-  const { region, page, search } = await searchParams;
+  noStore();
+
+  const { region, page, search, seed } = await searchParams;
   const currentPage = Math.max(1, parseInt(page || '1', 10));
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  const freshSeed = createFreshSeed(seed);
 
   const supabase = createPublicClient();
 
@@ -114,19 +124,26 @@ export default async function ListingsPage({ searchParams }: Props) {
       favoriteCount: 0,
     })) || [];
 
-  const filteredListings = listingsWithMeta;
+  const filteredListings = orderListingsFresh(listingsWithMeta, {
+    seed: freshSeed,
+    groupBy: (listing) => listing.region || listing.price_type,
+  });
   const totalPages = Math.ceil((totalCount || 0) / ITEMS_PER_PAGE);
+  const paginationParams = {
+    search,
+    region: region && region !== 'all' && region !== 'undefined' ? region : undefined,
+  };
 
   const collectionItems = filteredListings.slice(0, 10).map((listing) => ({
     name: listing.title,
-    url: `${SITE_CONFIG.url}/listings/${listing.id}`,
+    url: `${SITE_CONFIG.url}${getListingPublicPath(listing.region, listing.id)}`,
     description: `${listing.region} ${listing.district || ''}`,
   }));
 
   const collectionSchema = buildCollectionPageSchema(
     '성인PC 성인피씨 매물 거래',
     collectionItems,
-    `${SITE_CONFIG.url}/listings`
+    `${SITE_CONFIG.url}/pc-bangs`
   );
 
   return (
@@ -173,7 +190,7 @@ export default async function ListingsPage({ searchParams }: Props) {
                   검색
                 </button>
               </form>
-              <Link href="/listings/new">
+              <Link href="/pc-bangs/new">
                 <Button variant="primary" size="sm">
                   매물 등록
                 </Button>
@@ -199,7 +216,7 @@ export default async function ListingsPage({ searchParams }: Props) {
           <div className="flex items-center justify-center gap-2 flex-wrap">
             {currentPage > 1 && (
               <Link
-                href={`/listings?${search ? `search=${encodeURIComponent(search)}&` : ''}${region && region !== 'all' && region !== 'undefined' ? `region=${encodeURIComponent(region)}&` : ''}page=${currentPage - 1}`}
+                href={buildFreshPageHref('/pc-bangs', currentPage - 1, paginationParams)}
               >
                 <button className="pagination-btn">이전</button>
               </Link>
@@ -211,7 +228,7 @@ export default async function ListingsPage({ searchParams }: Props) {
                 return pageNum <= totalPages ? (
                   <Link
                     key={pageNum}
-                    href={`/listings?${search ? `search=${encodeURIComponent(search)}&` : ''}${region && region !== 'all' && region !== 'undefined' ? `region=${encodeURIComponent(region)}&` : ''}page=${pageNum}`}
+                    href={buildFreshPageHref('/pc-bangs', pageNum, paginationParams)}
                   >
                     <button
                       className={`px-3 py-2 rounded-xl text-sm transition ${
@@ -227,7 +244,7 @@ export default async function ListingsPage({ searchParams }: Props) {
 
             {currentPage < totalPages && (
               <Link
-                href={`/listings?${search ? `search=${encodeURIComponent(search)}&` : ''}${region && region !== 'all' && region !== 'undefined' ? `region=${encodeURIComponent(region)}&` : ''}page=${currentPage + 1}`}
+                href={buildFreshPageHref('/pc-bangs', currentPage + 1, paginationParams)}
               >
                 <button className="pagination-btn">다음</button>
               </Link>

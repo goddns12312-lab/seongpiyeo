@@ -7,6 +7,7 @@ import { getSession } from '@/lib/auth-session';
 import { Button } from '@/components/ui/Button';
 import { REGIONS, PRICE_TYPE_LABELS } from '@/types';
 import { createListing, createListingImages, updateListing, deleteListingImages } from '@/lib/actions';
+import { getListingPublicPath } from '@/lib/listing-url';
 
 interface ListingFormProps {
   initialData?: any;
@@ -179,7 +180,7 @@ export function ListingForm({ initialData, mode = 'create', listingId, existingI
           await createListingImages(images);
         }
 
-        router.push(`/listings/${listingId}`);
+        router.push(getListingPublicPath(formData.region, listingId));
       } else {
         // 생성 모드
         const createResult = await createListing({
@@ -206,7 +207,7 @@ export function ListingForm({ initialData, mode = 'create', listingId, existingI
           await createListingImages(images);
         }
 
-        router.push(`/listings/${createResult.listingId}`);
+        router.push(getListingPublicPath(formData.region, createResult.listingId));
       }
     } catch (err) {
       console.error('Submit error:', err);

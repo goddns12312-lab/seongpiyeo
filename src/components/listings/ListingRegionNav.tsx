@@ -9,9 +9,9 @@ interface ListingRegionNavProps {
 }
 
 const CATEGORY_LINKS = [
-  { href: '/listings/category/sale', label: '매매 매물' },
-  { href: '/listings/category/rent', label: '임대 매물' },
-  { href: '/listings/category/transfer', label: '양도양수 매물' },
+  { href: '/pc-bangs/sale', label: '매매 매물' },
+  { href: '/pc-bangs/rent', label: '임대 매물' },
+  { href: '/pc-bangs/transfer', label: '양도양수 매물' },
 ] as const;
 
 export function ListingRegionNav({
@@ -48,7 +48,7 @@ export function ListingRegionNav({
             현재 지역
           </p>
           <Link
-            href={`/listings/region/${encodeURIComponent(currentRegion)}`}
+            href={`/pc-bangs/${encodeURIComponent(currentRegion)}`}
             className="inline-flex items-center gap-2 text-gold-dark dark:text-gold font-semibold hover:underline"
           >
             {currentRegion} 성인PC 매물 {currentCount}건 전체 보기
@@ -64,7 +64,7 @@ export function ListingRegionNav({
               {relatedRegions.map((region) => (
                 <li key={region}>
                   <Link
-                    href={`/listings/region/${encodeURIComponent(region)}`}
+                    href={`/pc-bangs/${encodeURIComponent(region)}`}
                     className="inline-block px-3 py-1.5 text-sm rounded-lg border border-border-light text-text-secondary hover:border-gold hover:text-gold transition-colors"
                   >
                     {region} ({regionListingCounts[region]})
@@ -93,7 +93,7 @@ export function ListingRegionNav({
             {premiumPrice && premiumPrice > 0 ? (
               <li>
                 <Link
-                  href="/listings/category/sale"
+                  href="/pc-bangs/sale"
                   className="inline-block px-3 py-1.5 text-sm rounded-lg border border-border-light text-text-secondary hover:border-gold hover:text-gold transition-colors"
                 >
                   권리금 {premiumPrice}만원대 매물
@@ -103,7 +103,7 @@ export function ListingRegionNav({
             {monthlyRent && monthlyRent > 0 ? (
               <li>
                 <Link
-                  href="/listings/category/rent"
+                  href="/pc-bangs/rent"
                   className="inline-block px-3 py-1.5 text-sm rounded-lg border border-border-light text-text-secondary hover:border-gold hover:text-gold transition-colors"
                 >
                   월세 {monthlyRent}만원대 임대
@@ -113,7 +113,7 @@ export function ListingRegionNav({
           </ul>
         </div>
 
-        <Link href="/listings" className="inline-block text-sm text-text-secondary hover:text-gold">
+        <Link href="/pc-bangs" className="inline-block text-sm text-text-secondary hover:text-gold">
           ← 전국 매물 목록
         </Link>
       </div>

@@ -20,7 +20,7 @@ export function RegionHubLinks({
         {regions.map(({ region, count }) => (
           <Link
             key={region}
-            href={`/listings/region/${encodeURIComponent(region)}`}
+            href={`/pc-bangs/${encodeURIComponent(region)}`}
             className="block p-4 bg-bg-tertiary hover:bg-gold/20 border border-border-light hover:border-gold rounded-lg text-center transition-colors"
           >
             <span className="font-semibold text-text-primary hover:text-gold">

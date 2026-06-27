@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { unstable_noStore as noStore } from 'next/cache';
 import { createPublicClient } from '@/lib/supabase/public';
 import { LISTING_LIST_SELECT } from '@/lib/listing-queries';
+import { getListingPublicPath } from '@/lib/listing-url';
+import { createFreshSeed, orderListingsFresh } from '@/lib/fresh-listing-order';
 
 const LISTING_CATEGORIES = {
   rent: { label: '임대', color: 'text-blue-500' },
@@ -20,6 +23,8 @@ interface Props {
 }
 
 export default async function ListingCategoryPage({ params }: Props) {
+  noStore();
+
   const { category } = await params;
 
   if (!isCategoryValid(category)) {
@@ -38,11 +43,16 @@ export default async function ListingCategoryPage({ params }: Props) {
     .order('created_at', { ascending: false })
     .limit(100);
 
+  const freshListings = orderListingsFresh(listings || [], {
+    seed: createFreshSeed(),
+    groupBy: (listing) => listing.region || listing.district || listing.price_type,
+  });
+
   return (
     <div className="bg-bg-primary min-h-screen py-8 lg:py-12">
       <div className="max-w-6xl mx-auto px-4 lg:px-8">
         <Link
-          href="/listings"
+          href="/pc-bangs"
           className="inline-flex items-center gap-2 text-gold hover:text-gold/80 text-sm font-medium mb-8 transition-colors"
         >
           <span>←</span>
@@ -59,10 +69,10 @@ export default async function ListingCategoryPage({ params }: Props) {
           </p>
         </div>
 
-        {!listings || listings.length === 0 ? (
+        {freshListings.length === 0 ? (
           <div className="bg-bg-secondary border border-border-light rounded-xl p-12 text-center">
             <p className="text-text-secondary text-lg mb-4">아직 {categoryInfo.label} 매물이 없습니다.</p>
-            <Link href="/listings">
+            <Link href="/pc-bangs">
               <button className="text-gold hover:text-gold/80 font-semibold">
                 전체 매물 보기 →
               </button>
@@ -70,8 +80,8 @@ export default async function ListingCategoryPage({ params }: Props) {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {listings.map((listing) => (
-              <Link key={listing.id} href={`/listings/${listing.id}`}>
+            {freshListings.map((listing) => (
+              <Link key={listing.id} href={getListingPublicPath(listing.region, listing.id)}>
                 <div className="bg-bg-secondary border border-border-light rounded-lg overflow-hidden hover:border-gold hover:shadow-lg transition-all cursor-pointer">
                   <div className="relative w-full aspect-video bg-bg-tertiary overflow-hidden">
                     {listing.main_image_url ? (

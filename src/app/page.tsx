@@ -10,6 +10,7 @@ import { SITE_CONFIG } from '@/lib/site';
 import { buildOgImageEntry, getOgImageUrl } from '@/lib/seo-assets';
 import { getJobPublicPath } from '@/lib/jobs-data';
 import { getCachedRegionCounts } from '@/lib/listing-queries';
+import { getListingPublicPath } from '@/lib/listing-url';
 
 import { buildHomeSeoMetadata } from '@/lib/seo-metadata';
 import { getActiveListingCount } from '@/lib/listing-queries';
@@ -191,10 +192,10 @@ export default async function HomePage() {
 
           {/* CTA Buttons - 3개 */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
-            <Link href="/listings" className="btn-primary btn-lg">
+            <Link href="/pc-bangs" className="btn-primary btn-lg">
               매물 보기
             </Link>
-            <Link href="/listings/new" className="btn-secondary btn-lg">
+            <Link href="/pc-bangs/new" className="btn-secondary btn-lg">
               매물 등록
             </Link>
             <Link href="/jobs/new" className="btn-secondary btn-lg">
@@ -233,7 +234,7 @@ export default async function HomePage() {
           <div className="home-section-inner">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-text-primary">최신 매물</h2>
-              <Link href="/listings" className="text-gold-dark dark:text-gold text-sm font-medium hover:underline transition-colors">
+              <Link href="/pc-bangs" className="text-gold-dark dark:text-gold text-sm font-medium hover:underline transition-colors">
                 전체 보기 →
               </Link>
             </div>
@@ -242,7 +243,7 @@ export default async function HomePage() {
               {latestListings.map((listing: any) => (
                 <Link
                   key={listing.id}
-                  href={`/listings/${listing.id}`}
+                  href={getListingPublicPath(listing.region, listing.id)}
                   className="group relative rounded-2xl overflow-hidden surface-card-hover hover-lift"
                 >
                   <div className="relative w-full aspect-[4/3] bg-bg-secondary">
@@ -280,7 +281,7 @@ export default async function HomePage() {
           <div className="home-section-inner">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl md:text-3xl font-bold text-text-primary">지역별 매물</h2>
-              <Link href="/listings" className="text-gold-dark dark:text-gold text-sm font-medium hover:underline transition-colors">
+              <Link href="/pc-bangs" className="text-gold-dark dark:text-gold text-sm font-medium hover:underline transition-colors">
                 전체 보기 →
               </Link>
             </div>
@@ -290,7 +291,7 @@ export default async function HomePage() {
                 .map((region) => (
                   <Link
                     key={region}
-                    href={`/listings/region/${encodeURIComponent(region)}`}
+                    href={`/pc-bangs/${encodeURIComponent(region)}`}
                     className="px-3 py-2 rounded-xl border border-border-light text-sm text-text-secondary hover:border-gold hover:text-gold transition-colors"
                   >
                     {region} ({regionCounts[region]})

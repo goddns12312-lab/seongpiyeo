@@ -73,7 +73,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         follow: true,
       },
       alternates: {
-        canonical: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}/category/${encodeURIComponent(decodedCategory)}`,
+        canonical: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}/${encodeURIComponent(decodedCategory)}`,
       },
     };
   }
@@ -99,13 +99,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     },
     alternates: {
-      canonical: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}/category/${encodeURIComponent(decodedCategory)}`,
+      canonical: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}/${encodeURIComponent(decodedCategory)}`,
     },
     openGraph: {
       title,
       description,
       type: 'website',
-      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}/category/${encodeURIComponent(decodedCategory)}`,
+      url: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}/${encodeURIComponent(decodedCategory)}`,
       siteName: SITE_CONFIG.businessName,
       images: [buildOgImageEntry(`${decodedRegion} PC방 ${PRICE_TYPE_LABELS[decodedCategory]} - 성피요`)],
     },

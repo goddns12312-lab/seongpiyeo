@@ -9,6 +9,7 @@ import { REGIONS } from '@/types';
 import { createListing, createListingImages, updateListing, deleteListingImages } from '@/lib/actions';
 import { buildListingSeoTitle, buildListingSeoDescription, buildListingImageAlt } from '@/lib/seo-metadata';
 import { uploadFilesToStorage } from '@/lib/image-upload';
+import { getListingPublicPath } from '@/lib/listing-url';
 
 interface ListingFormNewProps {
   initialData?: any;
@@ -364,7 +365,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
           await createListingImages(images);
         }
 
-        router.push(`/listings/${listingId}`);
+        router.push(getListingPublicPath(formData.region, listingId));
       } else {
         // 신규 등록: status = 'active'
         const dataToSend = {
@@ -395,7 +396,7 @@ export function ListingFormNew({ initialData, mode = 'create', listingId, existi
           await createListingImages(images);
         }
 
-        router.push(`/listings/${createResult.listingId}`);
+        router.push(getListingPublicPath(formData.region, createResult.listingId));
       }
     } catch (err) {
       console.error('Submit error:', err);

@@ -22,7 +22,7 @@ export function Footer() {
             <h4 className="text-text-primary font-semibold mb-4 text-xs uppercase tracking-widest">서비스</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/listings" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
+                <Link href="/pc-bangs" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
                   매물 목록
                 </Link>
               </li>
@@ -37,7 +37,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/listings/new" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
+                <Link href="/pc-bangs/new" className="text-text-secondary hover:text-gold-dark dark:hover:text-gold transition-colors">
                   매물 등록
                 </Link>
               </li>

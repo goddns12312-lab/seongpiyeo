@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ensureAdminClient } from '@/lib/admin-client';
 import { Button } from '@/components/ui/Button';
 import { formatDateTime } from '@/lib/utils';
+import { getListingPublicPath } from '@/lib/listing-url';
 
 type ReportRow = {
   id: string;
@@ -15,7 +16,7 @@ type ReportRow = {
   status: string;
   created_at: string;
   post: { id: string; title: string; category: string; status: string } | null;
-  listing: { id: string; title: string; status: string } | null;
+  listing: { id: string; title: string; region?: string; status: string } | null;
 };
 
 export default function AdminReportsPage() {
@@ -75,7 +76,7 @@ export default function AdminReportsPage() {
 
   const getReportLink = (report: ReportRow) => {
     if (report.targetType === 'listing') {
-      return `/listings/${report.targetId}`;
+      return getListingPublicPath(report.listing?.region, report.targetId);
     }
     if (report.post?.category === 'exchange') {
       return `/exchange-info/${report.targetId}`;

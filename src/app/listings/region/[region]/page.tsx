@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import Script from 'next/script';
 import { notFound } from 'next/navigation';
+import { unstable_noStore as noStore } from 'next/cache';
 import { createPublicClient } from '@/lib/supabase/public';
 import { LISTING_LIST_SELECT, getRegionListingCount, getCachedRegionCounts } from '@/lib/listing-queries';
 import { getOgImageUrl } from '@/lib/seo-assets';
@@ -10,12 +11,18 @@ import { Button } from '@/components/ui/Button';
 import { REGIONS } from '@/types';
 import { SITE_CONFIG } from '@/lib/site';
 import { formatSeoCount } from '@/lib/seo-metadata';
+import { getListingPublicPath } from '@/lib/listing-url';
+import {
+  buildFreshPageHref,
+  createFreshSeed,
+  orderListingsFresh,
+} from '@/lib/fresh-listing-order';
 
 export const revalidate = 3600; // 1시간마다 재검증
 
 interface Props {
   params: Promise<{ region: string }>;
-  searchParams: Promise<{ page?: string; search?: string }>;
+  searchParams: Promise<{ page?: string; search?: string; seed?: string }>;
 }
 
 const ITEMS_PER_PAGE = 20;
@@ -51,12 +58,12 @@ function buildRegionSeoText(region: string, count: number): string {
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { region } = await params;
-  const { search } = await searchParams;
+  const { search, seed } = await searchParams;
   const decodedRegion = decodeURIComponent(region);
   const listingCount = await getRegionListingCount(decodedRegion);
 
   // 검색 결과 페이지는 noindex 처리
-  if (search) {
+  if (search || seed) {
     return {
       robots: {
         index: false,
@@ -87,7 +94,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
         follow: true,
       },
       alternates: {
-        canonical: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
+        canonical: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}`,
       },
     };
   }
@@ -115,13 +122,13 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
       },
     },
     alternates: {
-      canonical: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
+      canonical: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}`,
     },
     openGraph: {
       title,
       description,
       type: 'website',
-      url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
+      url: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}`,
       siteName: SITE_CONFIG.businessName,
       images: [
         {
@@ -148,11 +155,14 @@ export async function generateStaticParams() {
 }
 
 export default async function RegionListingsPage({ params, searchParams }: Props) {
+  noStore();
+
   const { region } = await params;
-  const { page, search } = await searchParams;
+  const { page, search, seed } = await searchParams;
   const decodedRegion = decodeURIComponent(region);
   const currentPage = Math.max(1, parseInt(page || '1', 10));
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  const freshSeed = createFreshSeed(seed);
 
   const supabase = createPublicClient();
 
@@ -189,23 +199,29 @@ export default async function RegionListingsPage({ params, searchParams }: Props
     notFound();
   }
 
+  const filteredListings = orderListingsFresh(listingsWithMeta, {
+    seed: freshSeed,
+    groupBy: (listing) => listing.district || listing.price_type || listing.region,
+  });
   const totalPages = Math.ceil(listingCount / ITEMS_PER_PAGE);
-  const filteredListings = listingsWithMeta;
+  const paginationParams = {
+    search,
+  };
 
   // CollectionPage JSON-LD Schema
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    '@id': `${SITE_CONFIG.url}/listings/region/${region}`,
+    '@id': `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}`,
     name: `${decodedRegion} PC방 매물`,
     description: `${decodedRegion} 지역 성인PC방 매물`,
-    url: `${SITE_CONFIG.url}/listings/region/${region}`,
+    url: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}`,
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: filteredListings?.slice(0, 10).map((listing: any, idx: number) => ({
         '@type': 'ListItem',
         position: idx + 1,
-        url: `${SITE_CONFIG.url}/listings/${listing.id}`,
+        url: `${SITE_CONFIG.url}${getListingPublicPath(listing.region, listing.id)}`,
         name: listing.title,
         description: `${listing.region} ${listing.district || ''} - ${listing.price}만원`,
       })) || [],
@@ -227,13 +243,13 @@ export default async function RegionListingsPage({ params, searchParams }: Props
         '@type': 'ListItem',
         position: 2,
         name: '성인PC 매물',
-        item: `${SITE_CONFIG.url}/listings`,
+        item: `${SITE_CONFIG.url}/pc-bangs`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: `${decodedRegion} PC방 매물`,
-        item: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
+        item: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}`,
       },
     ],
   };
@@ -244,7 +260,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
     '@type': 'LocalBusiness',
     name: `${decodedRegion} PC방 매물 - ${SITE_CONFIG.businessName}`,
     description: `${decodedRegion} 지역의 성인 PC방 매물 ${listingCount}개`,
-    url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
+    url: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}`,
     telephone: SITE_CONFIG.phone,
     image: getOgImageUrl(),
     areaServed: decodedRegion,
@@ -289,7 +305,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
               )}
             </div>
             <div className="flex gap-2 items-center">
-              <form className="flex gap-2" action={`/listings/region/${region}`} method="GET">
+              <form className="flex gap-2" action={`/pc-bangs/${encodeURIComponent(decodedRegion)}`} method="GET">
                 <input
                   type="text"
                   name="search"
@@ -304,7 +320,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
                   검색
                 </button>
               </form>
-              <Link href="/listings/new">
+              <Link href="/pc-bangs/new">
                 <Button variant="primary" size="sm">매물 등록</Button>
               </Link>
             </div>
@@ -314,7 +330,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
 
       {/* Back Button */}
       <section className="max-w-full mx-auto px-4 lg:px-8 py-4">
-        <Link href="/listings" className="text-gold hover:text-opacity-80 text-sm">
+        <Link href="/pc-bangs" className="text-gold hover:text-opacity-80 text-sm">
           ← 전체 매물로 돌아가기
         </Link>
       </section>
@@ -334,10 +350,10 @@ export default async function RegionListingsPage({ params, searchParams }: Props
                 : '현재 등록된 매물이 없습니다. 전국 매물을 확인하거나 새 매물을 등록해주세요.'}
             </p>
             <div className="flex gap-3 justify-center">
-              <Link href="/listings">
+              <Link href="/pc-bangs">
                 <Button variant="primary">전국 매물 보기</Button>
               </Link>
-              <Link href="/listings/new">
+              <Link href="/pc-bangs/new">
                 <Button variant="secondary">새 매물 등록</Button>
               </Link>
             </div>
@@ -351,7 +367,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
           <div className="flex items-center justify-center gap-2 flex-wrap">
             {currentPage > 1 && (
               <Link
-                href={`/listings/region/${region}?${search ? `search=${encodeURIComponent(search)}&` : ''}page=${currentPage - 1}`}
+                href={buildFreshPageHref(`/pc-bangs/${encodeURIComponent(decodedRegion)}`, currentPage - 1, paginationParams)}
               >
                 <button className="px-4 py-2 bg-bg-secondary border border-border-light text-text-primary rounded hover:bg-bg-tertiary transition">
                   이전
@@ -365,7 +381,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
                 return pageNum <= totalPages ? (
                   <Link
                     key={pageNum}
-                    href={`/listings/region/${region}?${search ? `search=${encodeURIComponent(search)}&` : ''}page=${pageNum}`}
+                    href={buildFreshPageHref(`/pc-bangs/${encodeURIComponent(decodedRegion)}`, pageNum, paginationParams)}
                   >
                     <button
                       className={`px-3 py-2 rounded transition ${
@@ -383,7 +399,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
 
             {currentPage < totalPages && (
               <Link
-                href={`/listings/region/${region}?${search ? `search=${encodeURIComponent(search)}&` : ''}page=${currentPage + 1}`}
+                href={buildFreshPageHref(`/pc-bangs/${encodeURIComponent(decodedRegion)}`, currentPage + 1, paginationParams)}
               >
                 <button className="px-4 py-2 bg-bg-secondary border border-border-light text-text-primary rounded hover:bg-bg-tertiary transition">
                   다음
@@ -409,7 +425,7 @@ export default async function RegionListingsPage({ params, searchParams }: Props
               .map((region) => (
                 <Link
                   key={region}
-                  href={`/listings/region/${encodeURIComponent(region)}`}
+                  href={`/pc-bangs/${encodeURIComponent(region)}`}
                   className="px-3 py-1.5 text-sm rounded-lg border border-border-light text-text-secondary hover:border-gold hover:text-gold transition-colors"
                 >
                   {region} ({regionCounts[region]})

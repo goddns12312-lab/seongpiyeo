@@ -85,9 +85,49 @@ const nextConfig = {
     ];
   },
 
-  // 리다이렉트 (HTTP → HTTPS)
+  // 리다이렉트 (SEO URL 정리 + HTTP → HTTPS)
   async redirects() {
     return [
+      {
+        source: '/listings/region/:region/category/:category',
+        destination: '/pc-bangs/:region/:category',
+        statusCode: 301,
+      },
+      {
+        source: '/listings/region/:region',
+        destination: '/pc-bangs/:region',
+        statusCode: 301,
+      },
+      {
+        source: '/listings/region',
+        destination: '/pc-bangs',
+        statusCode: 301,
+      },
+      {
+        source: '/listings/category/:category',
+        destination: '/pc-bangs/:category',
+        statusCode: 301,
+      },
+      {
+        source: '/listings/new',
+        destination: '/pc-bangs/new',
+        statusCode: 301,
+      },
+      {
+        source: '/listings/:id/edit',
+        destination: '/pc-bangs/:id/edit',
+        statusCode: 301,
+      },
+      {
+        source: '/listings/:id',
+        destination: '/pc-bangs/:id',
+        statusCode: 301,
+      },
+      {
+        source: '/listings',
+        destination: '/pc-bangs',
+        statusCode: 301,
+      },
       {
         source: '/:path*',
         has: [

@@ -43,7 +43,7 @@ export function AdjacentRegions({
           return (
             <Link
               key={region}
-              href={`/listings?region=${encodeURIComponent(region)}`}
+              href={`/pc-bangs?region=${encodeURIComponent(region)}`}
               className="group relative overflow-hidden rounded-lg bg-bg-tertiary border border-border-light hover:border-gold transition-colors p-4 text-center"
             >
               {/* Hover gradient */}

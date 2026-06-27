@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: Omit<Props, 'children'>): Pro
     '성인피시',
     ...info.keywords,
   ];
-  const url = createCanonicalUrl(`/listings/category/${category}`);
+  const url = createCanonicalUrl(`/pc-bangs/${category}`);
 
   return {
     title,

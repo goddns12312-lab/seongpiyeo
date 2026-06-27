@@ -30,7 +30,7 @@ export function RegionFilter({ selectedRegion, regionCounts }: RegionFilterProps
   return (
     <div className="flex flex-wrap gap-2">
       {/* 전체 버튼 */}
-      <Link href="/listings">
+      <Link href="/pc-bangs">
         <button
           className={`px-3 py-1.5 border rounded-lg transition-all text-xs font-medium ${getAllButtonStyles()}`}
         >
@@ -40,7 +40,7 @@ export function RegionFilter({ selectedRegion, regionCounts }: RegionFilterProps
 
       {/* 지역별 버튼 (매물이 있는 지역만) */}
       {REGIONS.filter((region) => regionCounts[region] > 0).map((region) => (
-        <Link key={region} href={`/listings/region/${encodeURIComponent(region)}`}>
+        <Link key={region} href={`/pc-bangs/${encodeURIComponent(region)}`}>
           <button
             className={`px-3 py-1.5 border rounded-lg transition-all text-xs font-medium ${getButtonStyles(region)}`}
           >

@@ -38,8 +38,8 @@ export async function GET(request: Request) {
       ? supabase.from('posts').select('id, title, category, status').in('id', postIds)
       : Promise.resolve({ data: [] as { id: string; title: string; category: string; status: string }[] }),
     listingIds.length
-      ? supabase.from('listings').select('id, title, status').in('id', listingIds)
-      : Promise.resolve({ data: [] as { id: string; title: string; status: string }[] }),
+      ? supabase.from('listings').select('id, title, region, status').in('id', listingIds)
+      : Promise.resolve({ data: [] as { id: string; title: string; region: string; status: string }[] }),
   ]);
 
   const postMap = new Map((postsResult.data || []).map((p) => [p.id, p]));

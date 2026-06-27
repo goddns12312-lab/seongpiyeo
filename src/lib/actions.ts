@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { sanitizeListingBeforeSave, sanitizeJobBeforeSave, sanitizeSecondhandBeforeSave, sanitizePostBeforeSave } from '@/lib/seo-title-auto-fix';
 import { buildListingSeoDescription, buildListingImageAlt } from '@/lib/seo-metadata';
+import { getListingPublicPath } from '@/lib/listing-url';
 
 export async function deleteZeroPriceListings() {
   const supabase = await createClient();
@@ -31,6 +32,7 @@ export async function deleteZeroPriceListings() {
 
     revalidatePath('/');
     revalidatePath('/listings');
+    revalidatePath('/pc-bangs');
 
     return { success: true, count: listings.length };
   }
@@ -128,7 +130,10 @@ export async function createListing(data: any) {
   // 캐시 무효화
   revalidatePath('/');
   revalidatePath('/listings');
+  revalidatePath('/pc-bangs');
   revalidatePath(`/listings/${newListing.id}`);
+  revalidatePath(`/pc-bangs/${newListing.id}`);
+  revalidatePath(getListingPublicPath(newListing.region, newListing.id));
 
   return { success: true, listingId: newListing.id };
 }
@@ -191,7 +196,12 @@ export async function updateListing(id: string, data: any) {
 
   revalidatePath('/');
   revalidatePath('/listings');
+  revalidatePath('/pc-bangs');
   revalidatePath(`/listings/${id}`);
+  revalidatePath(`/pc-bangs/${id}`);
+  if (data.region) {
+    revalidatePath(getListingPublicPath(data.region, id));
+  }
 
   return { success: true };
 }
@@ -377,6 +387,7 @@ export async function deleteListing(id: string) {
 
   revalidatePath('/');
   revalidatePath('/listings');
+  revalidatePath('/pc-bangs');
 
   return { success: true };
 }

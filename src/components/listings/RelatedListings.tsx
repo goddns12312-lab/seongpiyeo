@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { formatPrice, formatDate } from '@/lib/utils';
 import { getOptimizedImageUrl } from '@/lib/image-url';
+import { getListingPublicPath } from '@/lib/listing-url';
 
 interface RelatedListing {
   id: string;
@@ -53,7 +54,7 @@ export function RelatedListings({
         {listings.map((listing) => (
           <Link
             key={listing.id}
-            href={`/listings/${listing.id}`}
+            href={getListingPublicPath(listing.region, listing.id)}
             className="group bg-bg-primary rounded-lg border border-border-light overflow-hidden hover:border-gold transition-colors"
           >
             {/* Image */}
@@ -116,7 +117,7 @@ export function RelatedListings({
       {listings.length > 0 && (
         <div className="mt-6 flex justify-center">
           <Link
-            href={`/listings/region/${encodeURIComponent(currentRegion)}`}
+            href={`/pc-bangs/${encodeURIComponent(currentRegion)}`}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gold-dark dark:text-gold hover:bg-gold/10 rounded-lg transition-colors"
           >
             {locationDisplay} 전체 매물 보기

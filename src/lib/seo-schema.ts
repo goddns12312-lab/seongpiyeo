@@ -2,6 +2,7 @@ import { SITE_CONFIG } from './site';
 import { getOgImageUrl } from './seo-assets';
 import { resolveListingLocation } from './listing-location';
 import { buildListingSeoDescription } from './seo-metadata';
+import { getListingCanonicalUrl } from './listing-url';
 
 /**
  * JSON-LD 구조화된 데이터 생성 함수 모음
@@ -20,7 +21,7 @@ export function buildWebsiteSchema() {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${SITE_CONFIG.url}/listings?search={search_term_string}`,
+        urlTemplate: `${SITE_CONFIG.url}/pc-bangs?search={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
@@ -105,7 +106,7 @@ export function buildListingProductSchema(listing: Record<string, unknown>): obj
     name: title,
     description: seoDescription || location,
     image: imageUrl,
-    url: `${SITE_CONFIG.url}/listings/${id}`,
+    url: getListingCanonicalUrl(SITE_CONFIG.url, resolved.region, id),
     datePosted: created_at,
     address: {
       '@type': 'PostalAddress',

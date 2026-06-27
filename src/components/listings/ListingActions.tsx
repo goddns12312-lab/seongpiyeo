@@ -6,13 +6,15 @@ import Link from 'next/link';
 import { getSession } from '@/lib/auth-session';
 import { deleteListing } from '@/lib/actions';
 import { Button } from '@/components/ui/Button';
+import { getListingEditPath } from '@/lib/listing-url';
 
 interface ListingActionsProps {
   listingId: string;
+  region?: string;
   userId?: string;
 }
 
-export function ListingActions({ listingId, userId }: ListingActionsProps) {
+export function ListingActions({ listingId, region, userId }: ListingActionsProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -36,7 +38,7 @@ export function ListingActions({ listingId, userId }: ListingActionsProps) {
       }
 
       alert('매물이 삭제되었습니다.');
-      router.push('/listings');
+      router.push('/pc-bangs');
     } catch (err) {
       console.error('Delete error:', err);
       alert('삭제 중 오류가 발생했습니다.');
@@ -52,7 +54,7 @@ export function ListingActions({ listingId, userId }: ListingActionsProps) {
     <>
       {isOwner && (
         <div className="flex gap-2">
-          <Link href={`/listings/${listingId}/edit`}>
+          <Link href={getListingEditPath(region, listingId)}>
             <Button variant="secondary" size="sm">
               수정
             </Button>

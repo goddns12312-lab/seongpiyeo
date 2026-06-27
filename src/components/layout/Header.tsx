@@ -87,8 +87,8 @@ export function Header() {
             {/* Main Menu - Button Style */}
             <div className="flex gap-2 lg:gap-3">
               <Link
-                href="/listings"
-                className={`cursor-pointer px-3 py-1.5 rounded-lg border-2 transition-all duration-300 font-semibold text-xs sm:text-sm whitespace-nowrap ${isActive('/listings') ? 'border-gold bg-gold/10 text-gold-dark dark:text-gold-light' : 'border-gold text-gold-dark dark:text-gold hover:bg-gold/10'}`}
+                href="/pc-bangs"
+                className={`cursor-pointer px-3 py-1.5 rounded-lg border-2 transition-all duration-300 font-semibold text-xs sm:text-sm whitespace-nowrap ${isActive('/pc-bangs') || isActive('/listings') ? 'border-gold bg-gold/10 text-gold-dark dark:text-gold-light' : 'border-gold text-gold-dark dark:text-gold hover:bg-gold/10'}`}
               >
                 성인PC 팝니다
               </Link>
@@ -215,7 +215,7 @@ export function Header() {
             {/* Main Menu */}
             <div className="flex flex-col gap-2">
               <span className="text-gold-dark dark:text-gold text-xs font-bold uppercase tracking-wider">주요메뉴</span>
-              <Link href="/listings" className="cursor-pointer px-3 py-2 rounded border-2 border-gold text-gold-dark dark:text-gold hover:bg-gold/10 font-semibold transition-all">
+              <Link href="/pc-bangs" className="cursor-pointer px-3 py-2 rounded border-2 border-gold text-gold-dark dark:text-gold hover:bg-gold/10 font-semibold transition-all">
                 성인PC 팝니다
               </Link>
               <Link href="/jobs" className="cursor-pointer px-3 py-2 rounded border-2 border-gold text-gold-dark dark:text-gold hover:bg-gold/10 font-semibold transition-all">

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: '매물 등록',
     description: '성인PC 매물을 등록하고 판매하세요.',
     type: 'website',
-    url: `${SITE_CONFIG.url}/listings/new`,
+    url: `${SITE_CONFIG.url}/pc-bangs/new`,
     siteName: SITE_CONFIG.businessName,
   },
 };

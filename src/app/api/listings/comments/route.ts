@@ -1,5 +1,6 @@
 import { createServiceRoleClient, getSessionFromRequest } from '@/lib/admin-session';
 import { revalidatePath } from 'next/cache';
+import { getListingPublicPath } from '@/lib/listing-url';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
 
     const { data: listing } = await supabase
       .from('listings')
-      .select('id, status')
+      .select('id, region, status')
       .eq('id', listingId)
       .single();
 
@@ -67,6 +68,8 @@ export async function POST(request: Request) {
     }
 
     revalidatePath(`/listings/${listingId}`);
+    revalidatePath(`/pc-bangs/${listingId}`);
+    revalidatePath(getListingPublicPath(listing.region, listingId));
 
     return Response.json({ comment: data });
   } catch (error) {

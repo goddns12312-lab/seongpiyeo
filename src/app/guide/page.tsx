@@ -78,7 +78,7 @@ export default async function GuidePage() {
               자주 묻는 질문 보기
             </Link>
             <Link
-              href="/listings"
+              href="/pc-bangs"
               className="border border-gold text-gold hover:bg-gold/10 font-bold px-6 py-3 rounded-lg transition-colors"
             >
               전국 PC방 매물 보기

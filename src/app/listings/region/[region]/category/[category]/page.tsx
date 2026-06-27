@@ -1,11 +1,14 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Script from 'next/script';
+import { unstable_noStore as noStore } from 'next/cache';
 import { createPublicClient } from '@/lib/supabase/public';
 import { LISTING_LIST_SELECT } from '@/lib/listing-queries';
 import { ListingGrid } from '@/components/listings/ListingGrid';
 import { Button } from '@/components/ui/Button';
 import { SITE_CONFIG } from '@/lib/site';
+import { getListingPublicPath } from '@/lib/listing-url';
+import { createFreshSeed, orderListingsFresh } from '@/lib/fresh-listing-order';
 
 export const revalidate = 3600; // 1시간마다 재검증
 
@@ -33,6 +36,8 @@ function buildRegionCategorySeoText(region: string, category: string, count: num
 }
 
 export default async function ListingsRegionCategoryPage({ params }: Props) {
+  noStore();
+
   const { region, category } = await params;
   const decodedRegion = decodeURIComponent(region);
   const decodedCategory = decodeURIComponent(category);
@@ -62,6 +67,11 @@ export default async function ListingsRegionCategoryPage({ params }: Props) {
       favoriteCount: 0,
     })) || [];
 
+  const freshListings = orderListingsFresh(listingsWithMeta, {
+    seed: createFreshSeed(),
+    groupBy: (listing) => listing.district || listing.region || listing.price_type,
+  });
+
   const categoryLabel = PRICE_TYPE_LABELS[decodedCategory] || decodedCategory;
   const title = buildRegionCategoryTitle(decodedRegion, decodedCategory, listingCount);
   const seoText = buildRegionCategorySeoText(decodedRegion, decodedCategory, listingCount);
@@ -70,16 +80,16 @@ export default async function ListingsRegionCategoryPage({ params }: Props) {
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    '@id': `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}/category/${encodeURIComponent(decodedCategory)}`,
+    '@id': `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}/${encodeURIComponent(decodedCategory)}`,
     name: `${decodedRegion} 성인PC ${categoryLabel} 매물`,
     description: `${decodedRegion} 지역 성인PC ${categoryLabel} 매물`,
-    url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}/category/${encodeURIComponent(decodedCategory)}`,
+    url: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}/${encodeURIComponent(decodedCategory)}`,
     mainEntity: {
       '@type': 'ItemList',
-      itemListElement: listingsWithMeta?.slice(0, 10).map((listing: any, idx: number) => ({
+      itemListElement: freshListings?.slice(0, 10).map((listing: any, idx: number) => ({
         '@type': 'ListItem',
         position: idx + 1,
-        url: `${SITE_CONFIG.url}/listings/${listing.id}`,
+        url: `${SITE_CONFIG.url}${getListingPublicPath(listing.region, listing.id)}`,
         name: listing.title,
         description: `${listing.region} ${listing.district || ''} - ${listing.price}만원`,
       })) || [],
@@ -101,19 +111,19 @@ export default async function ListingsRegionCategoryPage({ params }: Props) {
         '@type': 'ListItem',
         position: 2,
         name: '성인PC 매물',
-        item: `${SITE_CONFIG.url}/listings`,
+        item: `${SITE_CONFIG.url}/pc-bangs`,
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: `${decodedRegion} PC방 매물`,
-        item: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}`,
+        item: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}`,
       },
       {
         '@type': 'ListItem',
         position: 4,
         name: `${decodedRegion} 성인PC ${categoryLabel}`,
-        item: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(decodedRegion)}/category/${encodeURIComponent(decodedCategory)}`,
+        item: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(decodedRegion)}/${encodeURIComponent(decodedCategory)}`,
       },
     ],
   };
@@ -135,7 +145,7 @@ export default async function ListingsRegionCategoryPage({ params }: Props) {
       <section className="bg-gradient-to-br from-bg-secondary via-bg-primary to-bg-primary border-b border-border-light">
         <div className="max-w-full mx-auto px-4 lg:px-8 py-6">
           <div className="flex flex-col gap-2 mb-4">
-            <Link href={`/listings/region/${encodeURIComponent(decodedRegion)}`} className="text-gold hover:text-gold/80 text-sm">
+            <Link href={`/pc-bangs/${encodeURIComponent(decodedRegion)}`} className="text-gold hover:text-gold/80 text-sm">
               ← {decodedRegion} 전체 매물로
             </Link>
           </div>
@@ -149,7 +159,7 @@ export default async function ListingsRegionCategoryPage({ params }: Props) {
               </p>
             </div>
             <div className="flex gap-2 items-center">
-              <Link href="/listings/new">
+              <Link href="/pc-bangs/new">
                 <Button variant="primary" size="sm">매물 등록</Button>
               </Link>
             </div>
@@ -159,7 +169,7 @@ export default async function ListingsRegionCategoryPage({ params }: Props) {
 
       {/* Back Button */}
       <section className="max-w-full mx-auto px-4 lg:px-8 py-4">
-        <Link href="/listings" className="text-gold hover:text-opacity-80 text-sm">
+        <Link href="/pc-bangs" className="text-gold hover:text-opacity-80 text-sm">
           ← 전체 매물로 돌아가기
         </Link>
       </section>
@@ -167,7 +177,7 @@ export default async function ListingsRegionCategoryPage({ params }: Props) {
       {/* Listings Grid */}
       <section className="max-w-full mx-auto px-4 lg:px-8 py-6">
         {listingCount > 0 ? (
-          <ListingGrid listings={listingsWithMeta as any} />
+          <ListingGrid listings={freshListings as any} />
         ) : (
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold text-text-primary mb-4">
@@ -177,10 +187,10 @@ export default async function ListingsRegionCategoryPage({ params }: Props) {
               다른 지역의 매물을 확인하거나 새로운 매물을 등록해주세요.
             </p>
             <div className="flex gap-3 justify-center">
-              <Link href="/listings">
+              <Link href="/pc-bangs">
                 <Button variant="primary">전국 매물 보기</Button>
               </Link>
-              <Link href="/listings/new">
+              <Link href="/pc-bangs/new">
                 <Button variant="secondary">새 매물 등록</Button>
               </Link>
             </div>

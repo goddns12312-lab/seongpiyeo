@@ -127,7 +127,7 @@ export default async function FAQPage() {
             성피요에서는 전국 638개 이상의 성인PC 매물을 한눈에 볼 수 있습니다.
           </p>
           <Link
-            href="/listings"
+            href="/pc-bangs"
             className="inline-flex px-8 py-3 bg-gold text-bg-primary font-semibold rounded-xl hover:bg-gold-light transition-colors"
           >
             전체 매물 보기

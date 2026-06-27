@@ -207,7 +207,7 @@ export default function MyPage() {
           <SectionHeader
             title="내 매물"
             action={
-              <Link href="/listings/new">
+              <Link href="/pc-bangs/new">
                 <Button variant="primary" size="sm">새 매물 등록</Button>
               </Link>
             }
@@ -223,7 +223,7 @@ export default function MyPage() {
             <EmptyState
               title="등록된 매물이 없습니다"
               action={
-                <Link href="/listings/new">
+                <Link href="/pc-bangs/new">
                   <Button variant="primary">첫 매물 등록하기</Button>
                 </Link>
               }
@@ -244,7 +244,7 @@ export default function MyPage() {
             <EmptyState
               title="좋아요한 매물이 없습니다"
               action={
-                <Link href="/listings">
+                <Link href="/pc-bangs">
                   <Button variant="primary">매물 둘러보기</Button>
                 </Link>
               }

@@ -3,6 +3,7 @@ import { createPublicClient } from '@/lib/supabase/public';
 import { SITE_CONFIG } from '@/lib/site';
 import { REGIONS } from '@/types';
 import { COMMUNITY_CATEGORIES } from '@/lib/community-categories';
+import { getListingCanonicalUrl } from '@/lib/listing-url';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createPublicClient();
@@ -51,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 매물 상세 페이지
   const listingEntries =
     listings?.map((listing: any) => ({
-      url: `${SITE_CONFIG.url}/listings/${listing.id}`,
+      url: getListingCanonicalUrl(SITE_CONFIG.url, listing.region, listing.id),
       lastModified: new Date(listing.updated_at || new Date()),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
@@ -93,13 +94,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.65,
     })) || [];
 
-  // Listings 카테고리 페이지
+  // PC방 매물 카테고리 페이지
   const listingCategoryEntries = [
     { name: 'rent', priority: 0.75 },
     { name: 'sale', priority: 0.75 },
     { name: 'transfer', priority: 0.7 },
   ].map(cat => ({
-    url: `${SITE_CONFIG.url}/listings/category/${cat.name}`,
+    url: `${SITE_CONFIG.url}/pc-bangs/${cat.name}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
     priority: cat.priority,
@@ -149,7 +150,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const count = regionListingCounts.get(region) || 0;
     return count >= 5; // 5개 이상만 포함
   }).map((region) => ({
-    url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(region)}`,
+    url: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(region)}`,
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
     priority: 0.85,
@@ -170,7 +171,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     categoryMap.forEach((count, category) => {
       if (count >= 5) { // 5개 이상만 포함
         listingsRegionCategoryEntries.push({
-          url: `${SITE_CONFIG.url}/listings/region/${encodeURIComponent(region)}/category/${encodeURIComponent(category)}`,
+          url: `${SITE_CONFIG.url}/pc-bangs/${encodeURIComponent(region)}/${encodeURIComponent(category)}`,
           lastModified: new Date(),
           changeFrequency: 'daily' as const,
           priority: 0.8,
@@ -223,7 +224,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${SITE_CONFIG.url}/listings`,
+      url: `${SITE_CONFIG.url}/pc-bangs`,
       lastModified: new Date(),
       changeFrequency: 'hourly' as const,
       priority: 0.9,

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useState, memo } from 'react';
 import { formatPrice, formatDate } from '@/lib/utils';
 import { getOptimizedImageUrl } from '@/lib/image-url';
+import { getListingPublicPath } from '@/lib/listing-url';
 import { Listing, ListingImage } from '@/types';
 
 interface ListingCardProps {
@@ -31,7 +32,7 @@ function ListingCardComponent({ listing, images = [] }: ListingCardProps) {
   };
 
   return (
-    <Link href={`/listings/${listing.id}`}>
+    <Link href={getListingPublicPath(listing.region, listing.id)}>
       <div className="bg-gradient-to-br from-bg-card to-bg-light border border-border-light rounded-2xl overflow-hidden hover:shadow-hover hover:border-gold/40 transition-all duration-300 group cursor-pointer h-full flex flex-col hover-lift">
         {/* Image with Overlay */}
         <div className="relative w-full aspect-[16/9] sm:aspect-[4/3] md:aspect-[16/9] bg-gradient-to-br from-bg-tertiary via-bg-secondary to-bg-light flex items-center justify-center overflow-hidden">
